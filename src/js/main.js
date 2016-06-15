@@ -14,27 +14,27 @@ var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
 var allTransfers;
 var starTransfers;
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data;
-var premClubs= [ 'Arsenal',
-'Burnley',
-'Bournemouth',
-'Chelsea',
-'Crystal Palace',
-'Everton',
-'Hull City',
-'Leicester City',
-'Liverpool',
-'Manchester City',
-'Manchester United',
-'Middlesbrough',
-'Stoke City', 
-'Southampton',
-'Sunderland',
-'Swansea City',
-'Tottenham Hotspur',
-'West Bromwich Albion',
-'Watford', 
-'West Ham United'
-];
+// var premClubs= [ 'Arsenal',
+// 'Burnley',
+// 'Bournemouth',
+// 'Chelsea',
+// 'Crystal Palace',
+// 'Everton',
+// 'Hull City',
+// 'Leicester City',
+// 'Liverpool',
+// 'Manchester City',
+// 'Manchester United',
+// 'Middlesbrough',
+// 'Stoke City', 
+// 'Southampton',
+// 'Sunderland',
+// 'Swansea City',
+// 'Tottenham Hotspur',
+// 'West Bromwich Albion',
+// 'Watford', 
+// 'West Ham United'
+// ];
 
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
@@ -66,7 +66,9 @@ function initData(r){
                 item.ageGroup = getAgeGroup(item);                
                 if(item.newleague == "Premier League (England)"){ item.buy=true; item.premClub = item.to; }
                 if(item.previousleague == "Premier League (England)"){ item.sell=true; item.premClub = item.from;}
+
                 item.cost = checkForNumber(item.price);
+
                 item.value = checkForNumber(item.price)+1000000;
         }) 
 
@@ -83,34 +85,14 @@ function buildNest(a){
   var root = {};
 
   root.key = 'DATA'
-    
-      // Build an object for each of the sort vars in a
 
       _.forEach(a, function (s,count){
 
         var parent = {};
 
-        // var valObj =  _.chain(allTransfers)
-        //       .groupBy(s)
-        //       .map(function(value, key) {
-        //         //console.log(key,value)
-
-        //           return {
-        //               key: key,
-        //               //areaVal: 1000000,
-        //               values: value
-        //           }
-        //       })
-        //   .value();
-
-        // _.forEach(valObj, function(o) { console.log(o); });
-
           var nested_data = d3.nest()
               .key(function(d)  { return d[s]; })
-              //.rollup(function(leaves) { return { leaves, "length": leaves.length, "value": d3.sum(leaves, function(d) {return d.value;})} })
-            
-              .key(function(d)  { return d.playername; })
-              //.value( function(d) {  console.log ("work out her/ something to do with d3 rollup"); return {"areaVal": d3.sum(leaves, function(d) { return parseFloat(d.value); })} })
+              .key(function(d)  { return d.playername; })     
           .entries(allTransfers);
    
 
@@ -141,9 +123,7 @@ function buildNest(a){
 
       // DEBUG
       // document.getElementById("rawdata").innerHTML=JSON.stringify(root);
-
-     
-      
+    
 }
 
 
@@ -170,5 +150,13 @@ function getZeroValueObjects(arrIn, sortStr){
               });
                
          return tempArr;
+}
+
+function roundDisplayNum(num,decimals) {
+    var sign="£";
+    num = (num/1000000)
+    var newNum = num.toFixed(1);
+    num = (newNum*1)+0;
+    return (num);
 }
 

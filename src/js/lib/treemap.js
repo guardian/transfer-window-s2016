@@ -5,7 +5,19 @@
 
 var root;          
 
-export default function treemap(dataIn, ){
+export default function treemap(dataIn){
+
+            _.each(dataIn.values, function(item){
+              console.log(item.values)
+            });
+
+        //     _.each(allTransfers, function(item){                
+        //         item.ageGroup = getAgeGroup(item);                
+        //         if(item.newleague == "Premier League (England)"){ item.buy=true; item.premClub = item.to; }
+        //         if(item.previousleague == "Premier League (England)"){ item.sell=true; item.premClub = item.from;}
+        //         item.cost = checkForNumber(item.price);
+        //         item.value = checkForNumber(item.price)+1000000;
+        // }) 
 
             // root = dataIn.values[1];
 
@@ -15,6 +27,7 @@ export default function treemap(dataIn, ){
                 width = 960,
                 height = 500 - margin.top - margin.bottom,
                 formatNumber = d3.format(",d"),
+                transTime = 0,
                 transitioning;
 
             var x = d3.scale.linear()
@@ -53,11 +66,14 @@ export default function treemap(dataIn, ){
                 .attr("y", 6 - margin.top)
                 .attr("dy", ".75em");
 
-
               initialize(root);
               accumulate(root);
               layout(root);
+
               display(root);
+
+            
+
 
               function initialize(root) {
                 root.x = root.y = 0;
@@ -86,23 +102,29 @@ export default function treemap(dataIn, ){
               function layout(d) {
                 if (d._children) {
                   treemap.nodes({_children: d._children});
-                  d._children.forEach(function(c) {
-                    c.x = d.x + c.x * d.dx;
-                    c.y = d.y + c.y * d.dy;                    
-                    c.dx *= d.dx;
-                    c.dy *= d.dy;
-                    c.parent = d;
-                    layout(c);
-                  });
+
+                      d._children.forEach(function(c) {
+                          c.x = d.x + c.x * d.dx;
+                          c.y = d.y + c.y * d.dy;                    
+                          c.dx *= d.dx;
+                          c.dy *= d.dy;
+                          c.parent = d;
+                          
+                          layout(c);
+                       
+                        if(c._children!=null){ console.log(c)}
+                        
+                      });
+
+
                 }
               }
 
               function display(d) {
 
-                console.log(d)
                 grandparent
                     .datum(d.parent)
-                    .on("click", transition)
+                    .on("click",  transition )
                   .select("text")
                     .text(name(d));
 
@@ -116,7 +138,7 @@ export default function treemap(dataIn, ){
 
                 g.filter(function(d) { return d._children; })
                     .classed("children", true)
-                    .on("click", transition);
+                    .on("click",  transition  );
 
                 g.selectAll(".child")
                     .data(function(d) { return d._children || [d]; })
@@ -126,9 +148,7 @@ export default function treemap(dataIn, ){
 
                 g.append("rect")
                     .attr("class", "parent")
-                    .call(rect)
-                  .append("title")
-                    .text(function(d) { return formatNumber(d.value); });
+                    .call(rect);
 
                 g.append("text")
                     .attr("class", "text-name")
@@ -139,43 +159,57 @@ export default function treemap(dataIn, ){
                 g.append("text")
                     .attr("class", "text-value")
                     .attr("dy", "1.2em")
-                    .text(function(d) { console.log(d); return d.value; })
+                    .text(function(d) { return roundDisplayNum(d.value); })
                     .call(text);    
 
                 function transition(d) {
                   if (transitioning || !d) return;
-                  transitioning = true;
+                    transitioning = true;
+                    console.log(d);
 
                   var g2 = display(d),
-                      t1 = g1.transition().duration(750),
-                      t2 = g2.transition().duration(750);
+                      t1 = g1.transition().duration(transTime),
+                      t2 = g2.transition().duration(transTime);
 
-                  // Update the domain only after entering new elements.
-                  x.domain([d.x, d.x + d.dx]);
-                  y.domain([d.y, d.y + d.dy]);
+                      // Update the domain only after entering new elements.
+                      x.domain([d.x, d.x + d.dx]);
+                      y.domain([d.y, d.y + d.dy]);
 
-                  // Enable anti-aliasing during the transition.
-                  svg.style("shape-rendering", null);
+                      // Enable anti-aliasing during the transition.
+                      svg.style("shape-rendering", null);
 
-                  // Draw child nodes on top of parent nodes.
-                  svg.selectAll(".depth").sort(function(a, b) { return a.depth - b.depth; });
+                      // Draw child nodes on top of parent nodes.
+                      svg.selectAll(".depth").sort(function(a, b) { return a.depth - b.depth; });
 
-                  // Fade-in entering text.
-                  g2.selectAll("text").style("fill-opacity", 0);
+                      // Fade-in entering text.
+                      g2.selectAll("text").style("fill-opacity", 0);
 
-                  // Transition to the new view.
-                  t1.selectAll("text").call(text).style("fill-opacity", 0);
-                  t2.selectAll("text").call(text).style("fill-opacity", 1);
-                  t1.selectAll("rect").call(rect);
-                  t2.selectAll("rect").call(rect);
+                      // Transition to the new view.
+                      t1.selectAll("text").call(text).style("fill-opacity", 0);
+                      t2.selectAll("text").call(text).style("fill-opacity", 1);
+                      t1.selectAll("rect").call(rect);
+                      t2.selectAll ("rect").call(rect);
 
-                  // Remove the old node when the transition is finished.
-                  t1.remove().each("end", function() {
-                    svg.style("shape-rendering", "crispEdges");
-                    transitioning = false;
-                  });
+                      // Remove the old node when the transition is finished.
+                      t1.remove().each("end", function() {
+                        svg.style("shape-rendering", "crispEdges");
+                        transitioning = false;
+                      });
                 }
 
+                //use dropdown to move between views
+                  d3.select("#dropdownSel").on("change", function() {
+                    transTime = 0;
+                      if(this.value == 'premClub'){ transition(root._children[0]); }
+                      if(this.value == 'nationality'){ transition(root._children[1]); }
+                      if(this.value == 'ageGroup'){ transition(root._children[2]); }
+                      if(this.value == 'position'){ transition(root._children[3]); }
+
+                    transTime = 750;  
+
+                  });
+                transition(root._children[0]);   
+                // transTime = 750;
                 return g;
               }
 
@@ -201,6 +235,13 @@ export default function treemap(dataIn, ){
               }
 
 
+              function roundDisplayNum(num,decimals) {
+                  var sign="£";
+                  num = (num/1000000)
+                  var newNum = num.toFixed(1);
+                  num = (newNum*1)+0;
+                  return (num);
+              }
 
 
 
