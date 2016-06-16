@@ -44,26 +44,25 @@ export default function treemap(dataIn){
                 .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
                 .round(false);
 
-            var svg = d3.select("#chart").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.bottom + margin.top)
+            var div = d3.select("#chart").append("div")
+                .style("position", "relative")
+                .style("width", width + margin.left + margin.right + "px")
+                .style("height", height + margin.bottom + margin.top + "px")
                 .style("margin-left", -margin.left + "px")
                 .style("margin.right", -margin.right + "px")
-              .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                .style("shape-rendering", "crispEdges");
+            
 
-            var grandparent = svg.append("g")
+            var grandparent = div.append("div")
                 .attr("class", "grandparent");
 
-            grandparent.append("rect")
-                .attr("y", -margin.top)
-                .attr("width", width)
-                .attr("height", margin.top);
+            grandparent.append("div")
+                .attr("y", -margin.top + "px")
+                .attr("width", width + "px")
+                .attr("height", margin.top + "px");
 
             grandparent.append("text")
-                .attr("x", 6)
-                .attr("y", 6 - margin.top)
+                .attr("x", 6 + "px")
+                .attr("y", 6 - margin.top + "px")
                 .attr("dy", ".75em");
 
               initialize(root);
@@ -111,8 +110,13 @@ export default function treemap(dataIn){
                           c.parent = d;
                           
                           layout(c);
-                       
-                        if(c._children!=null){ console.log(c)}
+
+                        //prune data where _children is empty
+                          if(c._children==null){ 
+                              delete c._children; console.log(c)
+                            }
+
+
                         
                       });
 
@@ -128,11 +132,11 @@ export default function treemap(dataIn){
                   .select("text")
                     .text(name(d));
 
-                var g1 = svg.insert("g", ".grandparent")
+                var g1 = div.insert("div", ".grandparent")
                     .datum(d)
                     .attr("class", "depth");
 
-                var g = g1.selectAll("g")
+                var g = g1.selectAll("div")
                     .data(d._children)
                   .enter().append("g");
 
@@ -142,11 +146,11 @@ export default function treemap(dataIn){
 
                 g.selectAll(".child")
                     .data(function(d) { return d._children || [d]; })
-                  .enter().append("rect")
+                  .enter().append("div")
                     .attr("class", "child")
                     .call(rect);
 
-                g.append("rect")
+                g.append("div")
                     .attr("class", "parent")
                     .call(rect);
 
@@ -197,8 +201,9 @@ export default function treemap(dataIn){
                       });
                 }
 
-                //use dropdown to move between views
+                //set dropdown to move between views
                   d3.select("#dropdownSel").on("change", function() {
+
                     transTime = 0;
                       if(this.value == 'premClub'){ transition(root._children[0]); }
                       if(this.value == 'nationality'){ transition(root._children[1]); }
@@ -208,23 +213,29 @@ export default function treemap(dataIn){
                     transTime = 750;  
 
                   });
+
                 transition(root._children[0]);   
-                // transTime = 750;
+                
                 return g;
               }
 
+
+              
+
+
+
               function text(text) {
-                text.attr("x", function(d) { return x(d.x) + 6; })
-                    .attr("y", function(d) { return y(d.y) + 6; });
+                text.attr("x", function(d) { return (x(d.x) + 6)+"px"; })
+                    .attr("y", function(d) { return (y(d.y) + 6)+"px"; });
               }
 
               function rect(rect) {
-                rect.attr("x", function(d) { return x(d.x); })
-                    .attr("y", function(d) { return y(d.y); })
-                    .attr("rx", 6)
-                    .attr("rx", 6)
-                    .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
-                    .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
+                rect.attr("x", function(d) { return (x(d.x))+"px"; })
+                    .attr("y", function(d) { return (y(d.y))+"px"; })
+                    // .attr("rx", 6)
+                    // .attr("rx", 6)
+                    .attr("width", function(d) { return (x(d.x + d.dx) - x(d.x))+"px"; })
+                    .attr("height", function(d) { return (y(d.y + d.dy) - y(d.y))+"px"; });
               }
 
               function name(d) {

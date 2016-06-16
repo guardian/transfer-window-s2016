@@ -103,8 +103,6 @@ function buildNest(a){
               //.key(function(d)  { return d.playername; })
               //.value( function(d) {  console.log ("work out her/ something to do with d3 rollup"); return {"areaVal": d3.sum(leaves, function(d) { return parseFloat(d.value); })} })
           .entries(allTransfers);
-          
-          console.log(valTotal)
 
            parent.key = s;
            parent.values = nested_data;
@@ -114,6 +112,12 @@ function buildNest(a){
       })
       
       root.values = tempArr;
+
+
+
+
+
+
       console.log(root)
 
       var tree = new treemap(root);
