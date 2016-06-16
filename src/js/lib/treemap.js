@@ -112,7 +112,7 @@ export default function treemap(dataIn){
                           
                           layout(c);
                        
-                        if(c._children!=null){ console.log(c)}
+                        // if(c._children!=null){ console.log(c)}
                         
                       });
 
@@ -137,8 +137,14 @@ export default function treemap(dataIn){
                   .enter().append("g");
 
                 g.filter(function(d) { return d._children; })
-                    .classed("children", true)
-                    .on("click",  transition  );
+                    .classed( "children", true )
+                    .on( "click", function(d) { if(d.values){ console.log(d+"CARRY ON HERE"); transition(d) } } );
+
+                // .on("click", function(d) { 
+                //     if(!d.children){
+                //       window.open(d.url); 
+                //   }
+                // })    
 
                 g.selectAll(".child")
                     .data(function(d) { return d._children || [d]; })
@@ -165,7 +171,7 @@ export default function treemap(dataIn){
                 function transition(d) {
                   if (transitioning || !d) return;
                     transitioning = true;
-                    console.log(d);
+                    //console.log(d);
 
                   var g2 = display(d),
                       t1 = g1.transition().duration(transTime),

@@ -56,4 +56,8 @@ rect.parent,
   fill: #bbb;
 }
 
-
+.textdiv { /* text in the boxes */
+  @include fs-headline(8);
+  font-weight: lighter;
+  padding: 5px;
+}
