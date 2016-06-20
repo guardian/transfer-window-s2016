@@ -8,6 +8,16 @@ var _ = lodash;
 	    return numIn;
 	}
 
+
+	export function getDisplayCost(numIn){
+	    isNaN(numIn) ? numIn = 0 : numIn = numIn;
+	    numIn = Number(numIn);
+	    numIn = numIn/1000000;
+	    numIn == 0 ? numIn = numIn - Math.ceil((Math.random() * 10)) :  numIn = numIn;
+	    console.log(numIn)
+	    return numIn;
+	}
+
 	export function getAgeGroup(objIn){
       var ageGroup;
       var ageIn = parseInt(objIn.age);

@@ -1,0 +1,81 @@
+#chart {
+  width: 960px;
+  height: 500px;
+  background: #FFFFFF;
+}
+
+text {
+  pointer-events: none;
+}
+
+.grandparent text {
+  font-weight: bold;
+}
+
+.text-name {
+  font-weight: bold;
+}
+.text-name, .text-value {
+	fill:#FFF;
+
+}
+.text-value {
+	@include fs-headline(8);
+  font-weight: lighter;
+}
+
+rect {
+  fill: none;
+  stroke: #fff;
+}
+
+rect.parent,
+.grandparent rect {
+  stroke-width: 2px;
+}
+
+.grandparent rect {
+  fill: white;
+}
+
+.grandparent:hover rect {
+  fill: white;
+}
+
+.children rect.parent,
+.grandparent rect {
+  cursor: pointer;
+}
+
+.children rect.parent {
+  fill: #bbb;
+  fill-opacity: .5;
+}
+
+.children:hover rect.child {
+  fill: #bbb;
+}
+
+.textdiv { /* text in the boxes */
+  @include fs-data(3);
+  font-weight: lighter;
+  padding: 5px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #CFCFCF;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  fill: $neutral-1;
+}
+
+.dot {
+  cursor: pointer;
+  fill: rgba($neutral-4,.6);
+}
+
+

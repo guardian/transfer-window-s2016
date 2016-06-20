@@ -4,8 +4,8 @@ import d3 from 'd3'
 
 import mainHTML from './text/main.html!text'
 import share from './lib/share'
-import treemap from './lib/treemap'
-import { getUniqueObjects, getAgeGroup, checkForNumber } from './lib/utils'
+import scatterplot from './lib/scatterplot'
+import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost } from './lib/utils'
 
 var _ = lodash;
 var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
@@ -14,6 +14,8 @@ var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
 var allTransfers;
 var starTransfers;
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data;
+
+
 // var premClubs= [ 'Arsenal',
 // 'Burnley',
 // 'Bournemouth',
@@ -39,6 +41,7 @@ var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ag
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
 export function init(el, context, config, mediator) {
+
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
 
     reqwest({
@@ -55,6 +58,12 @@ export function init(el, context, config, mediator) {
 }
 
 
+function randomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+
+
 function initData(r){
 
     allTransfers = r.sheets.Data;
@@ -68,83 +77,29 @@ function initData(r){
                 if(item.previousleague == "Premier League (England)"){ item.sell=true; item.premClub = item.from;}
 
                 item.cost = checkForNumber(item.price);
-
+                item.displayCost = getDisplayCost(item.price);
+                item.date = randomDate(new Date(2016, 5, 1), new Date(2016, 8, 1));
                 item.value = checkForNumber(item.price)+1000000;
 
         }) 
 
-    buildNest(['premClub','nationality','ageGroup','position'])
+    buildDataView()    
+
   
 }
 
-
-
-function buildNest(a){
-//attempt to omit empty children
-  // _.each(allTransfers, function(item){
-
-        
-  //       // if(_.isUndefined(item._children)){ omit. item._children}
-
-  //       item = _(item).omitBy(_.isUndefined).omitBy(_.isNull).value();
-  //       console.log(item)
-
-  // })
-
-  var tempArr = [];
-  
-  var root = {};
-
-  root.key = 'DATA'
-
-      _.forEach(a, function (s,count){
-
-        var parent = {};
-
-          var nested_data = d3.nest()
-              .key(function(d)  { return d[s]; })
-              .key(function(d)  { return d.playername; })     
-          .entries(allTransfers);
-   
-
-          var valTotal = d3.nest()
-              .key(function(d)  { return d[s]; })
-              .rollup(function(leaves) { return { leaves, "length": leaves.length, "value": d3.sum(leaves, function(d) {return d.value;})} })
-            
-              //.key(function(d)  { return d.playername; })
-              //.value( function(d) {  console.log ("work out her/ something to do with d3 rollup"); return {"areaVal": d3.sum(leaves, function(d) { return parseFloat(d.value); })} })
-          .entries(allTransfers);
-          
-          console.log(valTotal)
-
-           parent.key = s;
-           parent.values = nested_data;
-           
-          tempArr.push(parent)
-          
-      })
-      console.log(tempArr)
-      root.values = tempArr;
       
-
-      var tree = new treemap(root);
-      //var tree = new treemap(root);
-
-      // Change the key names and children values from .next and add values for a chosen column to define the size of the blocks
-
-      // DEBUG
-      // document.getElementById("rawdata").innerHTML=JSON.stringify(root);
-    
+function buildDataView(){
+    var scatterPlot = new scatterplot(allTransfers);
 }
-
-
+      
 
 
 function getZeroValueObjects(arrIn, sortStr){
 // check for zero values in previous leagues and nationalitites - theses will be bundled to OTHERS
         var tempArr = [];
         var names = _.map(arrIn, sortStr);    
-        var uniqleaguesArray = _.uniq(names);//, values
+        var uniqleaguesArray = _.uniq(names); //, values
 
           _.each(uniqleaguesArray, function(one){
                     var newObj = {}
@@ -162,6 +117,7 @@ function getZeroValueObjects(arrIn, sortStr){
                
          return tempArr;
 }
+
 
 function roundDisplayNum(num,decimals) {
     var sign="£";
