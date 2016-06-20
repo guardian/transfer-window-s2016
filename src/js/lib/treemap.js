@@ -8,7 +8,7 @@ var root;
 export default function treemap(dataIn){
 
             _.each(dataIn.values, function(item){
-              console.log(item.values)
+              //console.log(item.values)
             });
 
         //     _.each(allTransfers, function(item){                
@@ -39,7 +39,7 @@ export default function treemap(dataIn){
                 .range([0, height]);
 
             var treemap = d3.layout.treemap()
-                .children(function(d, depth) { return depth ? null : d._children; })
+                .children(function(d, depth) {  return depth ? null : d._children; }) //console.log(d.playername);
                 .sort(function(a, b) { return a.value - b.value; })
                 .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
                 .round(false);
@@ -72,9 +72,6 @@ export default function treemap(dataIn){
 
               display(root);
 
-            
-
-
               function initialize(root) {
                 root.x = root.y = 0;
                 root.dx = width;
@@ -87,9 +84,8 @@ export default function treemap(dataIn){
               // We also take a snapshot of the original children (_children) to avoid
               // the children being overwritten when when layout is computed.
               function accumulate(d) {
-                return (d._children = d.values)
-                    ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0)
-                    : d.value;
+
+                return (d._children = d.values) ? d.value = d.values.reduce(function(p, v) { return p + accumulate(v); }, 0) : d.value;
               }
 
               // Compute the treemap layout recursively such that each group of siblings
@@ -99,34 +95,46 @@ export default function treemap(dataIn){
               // the parent’s dimensions are not discarded as we recurse. Since each group
               // of sibling was laid out in 1×1, we must rescale to fit using absolute
               // coordinates. This lets us use a viewport to zoom.
+
               function layout(d) {
-                if (d._children) {
-                  treemap.nodes({_children: d._children});
 
-                      d._children.forEach(function(c) {
-                          c.x = d.x + c.x * d.dx;
-                          c.y = d.y + c.y * d.dy;                    
-                          c.dx *= d.dx;
-                          c.dy *= d.dy;
-                          c.parent = d;
-                          
-                          layout(c);
-                       
-                        // if(c._children!=null){ console.log(c)}
-                        
-                      });
+                  switch(d._children==undefined) {
+                        case false:
+                            treemap.nodes({ _children: d._children });
+                                d._children.forEach(function(c) {
+                                    c.x = d.x + c.x * d.dx;
+                                    c.y = d.y + c.y * d.dy;                    
+                                    c.dx *= d.dx;
+                                    c.dy *= d.dy;
+                                    c.parent = d;
+                                    layout(c);
+                                })
+                            // console.log("children")
+                            break;
+                        case true:
+                            // console.log("no children")
+                            break;
+                        default:
+                            // console.log("no children")
+                    }
+                
+              }
+              
+              function checkForChildren(d){
+                console.log(d._children.length);
 
-
-                }
+                return d._children;
               }
 
               function display(d) {
+
+                console.log(d)
 
                 grandparent
                     .datum(d.parent)
                     .on("click",  transition )
                   .select("text")
-                    .text(name(d));
+                    .text("back to "+d.key);
 
                 var g1 = svg.insert("g", ".grandparent")
                     .datum(d)
@@ -136,15 +144,18 @@ export default function treemap(dataIn){
                     .data(d._children)
                   .enter().append("g");
 
-                g.filter(function(d) { return d._children; })
+                var nullCheck;   
+
+                g.filter(function(d) {  return checkForChildren(d); }  ) //console.log(d._children.length > 0); 
                     .classed( "children", true )
-                    .on( "click", function(d) { if(d.values){ console.log(d+"CARRY ON HERE"); transition(d) } } );
+                    .attr("id", function(d,i) { return "rect_"+i; })
+                    .on("click", transition );
 
                 // .on("click", function(d) { 
                 //     if(!d.children){
                 //       window.open(d.url); 
                 //   }
-                // })    
+                // })   
 
                 g.selectAll(".child")
                     .data(function(d) { return d._children || [d]; })
@@ -156,22 +167,45 @@ export default function treemap(dataIn){
                     .attr("class", "parent")
                     .call(rect);
 
+                // g.append("foreignObject")
+                //       .call(rect)
+                //       /* open new window based on the json's URL value for leaf nodes */
+                //       /* Firefox displays this on top */
+                //       .on("click", function(d) { 
+                //         if(!d._children){
+                //           window.open(d.url); 
+                //       }
+                //     })
+                //       .attr("class","foreignobj")
+                //       .append("xhtml:div") 
+                //       .attr("dy", ".75em")
+                //       .html(function(d) { return d.key; })
+                //       .attr("class","textdiv")
+                //      .call(text);
+
                 g.append("text")
                     .attr("class", "text-name")
                     .attr("dy", ".75em")
-                    .text(function(d) { return d.key; })
+                    .attr("id", function(d,i) { return "textName_"+i; })
+                    .text(function(d,i) { return d.key; })
                     .call(text);
 
                 g.append("text")
                     .attr("class", "text-value")
                     .attr("dy", "1.2em")
+                    .attr("id", function(d,i) { return "textVal_"+i; })
                     .text(function(d) { return roundDisplayNum(d.value); })
                     .call(text);    
 
                 function transition(d) {
-                  if (transitioning || !d) return;
+
+                  console.log(d)
+
+                  //console.log(d._children.length);
+
+                  if (transitioning || !d ) return;
                     transitioning = true;
-                    //console.log(d);
+                 
 
                   var g2 = display(d),
                       t1 = g1.transition().duration(transTime),
@@ -221,7 +255,8 @@ export default function treemap(dataIn){
 
               function text(text) {
                 text.attr("x", function(d) { return x(d.x) + 6; })
-                    .attr("y", function(d) { return y(d.y) + 6; });
+                    .attr("y", function(d) { return y(d.y) + 6; }) //console.log(this); 
+                    .style("display","block");
               }
 
               function rect(rect) {
@@ -234,12 +269,8 @@ export default function treemap(dataIn){
               }
 
               function name(d) {
-
-                return d.parent
-                    ? name(d.parent) + "." + d.name : d.name;
-              
+                return d.parent ? name(d.parent) + "." + d.name : d.name; 
               }
-
 
               function roundDisplayNum(num,decimals) {
                   var sign="£";

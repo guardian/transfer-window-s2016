@@ -57,7 +57,7 @@ rect.parent,
 }
 
 .textdiv { /* text in the boxes */
-  @include fs-headline(8);
+  @include fs-data(3);
   font-weight: lighter;
   padding: 5px;
 }

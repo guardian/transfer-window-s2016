@@ -70,6 +70,7 @@ function initData(r){
                 item.cost = checkForNumber(item.price);
 
                 item.value = checkForNumber(item.price)+1000000;
+
         }) 
 
     buildNest(['premClub','nationality','ageGroup','position'])
@@ -79,6 +80,16 @@ function initData(r){
 
 
 function buildNest(a){
+//attempt to omit empty children
+  // _.each(allTransfers, function(item){
+
+        
+  //       // if(_.isUndefined(item._children)){ omit. item._children}
+
+  //       item = _(item).omitBy(_.isUndefined).omitBy(_.isNull).value();
+  //       console.log(item)
+
+  // })
 
   var tempArr = [];
   
@@ -112,9 +123,9 @@ function buildNest(a){
           tempArr.push(parent)
           
       })
-      
+      console.log(tempArr)
       root.values = tempArr;
-      console.log(root)
+      
 
       var tree = new treemap(root);
       //var tree = new treemap(root);
