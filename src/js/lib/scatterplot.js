@@ -2,13 +2,14 @@
  * If running inside bl.ocks.org we want to resize the iframe to fit both graphs
  * This bit of code was shared originally at https://gist.github.com/benjchristensen/2657838
  */
-  
+var data, sort;  
 
-export default function scatterplot(data, sort){
+export default function scatterplot(a, s){
+          sort = s;
+          data = a;
 
          addDropDown (data,sort);
           
-
           var margin = {top: 20, right: 24, bottom: 30, left: 24},
               width = 640 - margin.left - margin.right,
               height = 360 - margin.top - margin.bottom;
@@ -110,7 +111,7 @@ export default function scatterplot(data, sort){
    
 
     function dotClick(d,i){
-
+        var ddEl = document.getElementsByClassName('gv-select');
         d3.selectAll(".dot").classed("highlight", false);
 
         console.log(d, i);
@@ -119,13 +120,27 @@ export default function scatterplot(data, sort){
           if(item[sort] == d[sort]){
             console.log(item);
             d3.select("#dot_"+i).classed("highlight",true)
+
+            setSelectedIndex(ddEl, item[sort]);
+
+            ddEl.selected = item[sort];
           }
             
         })
     } 
 } 
 
+function updateDots(s){
+  d3.selectAll(".dot").classed("highlight", false);
+     _.each(data, function(item,i){
+              if(item[sort] == s){
+                console.log(item[sort], s, ("#dot_"+i));
+                d3.select("#dot_"+i).classed("highlight",true)
+              }
+            
+        })
 
+}
 
 function getRadius(n){
         n < 1 ? n = 0 : n = n;
@@ -134,8 +149,26 @@ function getRadius(n){
 }
 
 
+function setSelectedIndex(s, v) {
+
+  console.log(s[0])
+
+    for ( var i = 0; i < s[0].length; i++ ) {
+
+        if ( s[0][i].text == v ) {
+
+            s[0][i].selected = true;
+
+            return;
+
+        }
+
+    }
+
+}
+
 function addDropDown(data,sort){
-        var htmlStr = "<select class='chart__dropdown'>";
+        var htmlStr = "<div class='chart__dropdown-container'><div class='styled-select'><select class='gv-select'>";
         var selectArr = [];
 
         _.each (data, function(item){
@@ -149,28 +182,19 @@ function addDropDown(data,sort){
         _.each(selectArr, function(item){
               htmlStr += "<option value='"+item+"'>"+item+"</option>"
         })
-        htmlStr+='</select>'
+        htmlStr+='</select></div></div>'
 
 
         var el = document.getElementById("chart").innerHTML = htmlStr;
          //el.innerHTML()
 
-        var dropEl = document.getElementsByClassName("chart__dropdown");
+        var sel = d3.select(".gv-select");
 
-        //addDropListener(dropEl)
+        addDropListener(sel)
 }
 
 function addDropListener(sel){
-        function getSelectedOption(sel) {
-        var opt;
-        for ( var i = 0, len = sel.options.length; i < len; i++ ) {
-            opt = sel.options[i];
-            if ( opt.selected === true ) {
-                break;
-            }
-        }
-        return opt;
-    }
+        sel.on("change", function() { updateDots(this.value) });
 }
 
        
