@@ -4,9 +4,10 @@
  */
   
 
-export default function scatterplot(data){
+export default function scatterplot(data, sort){
 
-          console.log(data);
+         addDropDown (data,sort);
+          
 
           var margin = {top: 20, right: 24, bottom: 30, left: 24},
               width = 640 - margin.left - margin.right,
@@ -30,11 +31,17 @@ export default function scatterplot(data){
           var svg = d3.select("#chart").append("svg")
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
+
             .append("g")
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             x.domain(d3.extent(data, function(d,i) { return (new Date(d.date)); }));
             y.domain(d3.extent(data, function(d) { return d.displayCost; })).nice();
+
+            svg.append("g").append("rect")
+              .attr("width", width)
+              .attr("height",height)
+              .attr("fill","#EFEFEF")
 
             svg.append("g")
                 .attr("class", "x axis")
@@ -64,8 +71,8 @@ export default function scatterplot(data){
                 .attr("id", function(d,i) { return "dot_"+i; })
                 .attr("r", function(d) { return getRadius(d.displayCost); })
                 .attr("class", "dot")
-                .on("click", function(d){ console.log(d)})
-                .attr("cx", function(d) { console.log (this);return x(new Date(d.date)); })
+                .on("click", function(d,i){ dotClick(d,i) })
+                .attr("cx", function(d) { return x(new Date(d.date)); })
                 .attr("cy", height)
                 .transition().duration(1000).attr("cy", function(d) { return y(d.displayCost); });
                 
@@ -82,35 +89,89 @@ export default function scatterplot(data){
                 //.on("mouseover", function(d){console.log(d)})
                  //return color(d.premClub)
 
-            // var legend = svg.selectAll(".legend")
-            //     .data(color.domain())
-            //   .enter().append("g")
-            //     .attr("class", "legend")
-            //     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+                // var legend = svg.selectAll(".legend")
+                //     .data(color.domain())
+                //   .enter().append("g")
+                //     .attr("class", "legend")
+                //     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-            // legend.append("rect")
-            //     .attr("x", width - 18)
-            //     .attr("width", 18)
-            //     .attr("height", 18)
-            //     .style("fill", color);
+                // legend.append("rect")
+                //     .attr("x", width - 18)
+                //     .attr("width", 18)
+                //     .attr("height", 18)
+                //     .style("fill", color);
 
-            // legend.append("text")
-            //     .attr("x", width - 24)
-            //     .attr("y", 9)
-            //     .attr("dy", ".35em")
-            //     .style("text-anchor", "end")
-            //     .text(function(d) { return d; });
-function getRadius(n){
-  n < 1 ? n = 0 : n = n;
-  n = n+5;
-  return n;
-}
+                // legend.append("text")
+                //     .attr("x", width - 24)
+                //     .attr("y", 9)
+                //     .attr("dy", ".35em")
+                //     .style("text-anchor", "end")
+                //     .text(function(d) { return d; });
+   
+
+    function dotClick(d,i){
+
+        d3.selectAll(".dot").classed("highlight", false);
+
+        console.log(d, i);
+
+        _.each(data, function(item,i){
+          if(item[sort] == d[sort]){
+            console.log(item);
+            d3.select("#dot_"+i).classed("highlight",true)
+          }
+            
+        })
+    } 
 } 
 
 
 
+function getRadius(n){
+        n < 1 ? n = 0 : n = n;
+        n = n+5;
+        return n;
+}
 
 
+function addDropDown(data,sort){
+        var htmlStr = "<select class='chart__dropdown'>";
+        var selectArr = [];
+
+        _.each (data, function(item){
+            selectArr.push(item[sort]);
+        })
+
+        selectArr = _.uniqBy(selectArr).sort();
+
+        console.log(selectArr)
+
+        _.each(selectArr, function(item){
+              htmlStr += "<option value='"+item+"'>"+item+"</option>"
+        })
+        htmlStr+='</select>'
+
+
+        var el = document.getElementById("chart").innerHTML = htmlStr;
+         //el.innerHTML()
+
+        var dropEl = document.getElementsByClassName("chart__dropdown");
+
+        //addDropListener(dropEl)
+}
+
+function addDropListener(sel){
+        function getSelectedOption(sel) {
+        var opt;
+        for ( var i = 0, len = sel.options.length; i < len; i++ ) {
+            opt = sel.options[i];
+            if ( opt.selected === true ) {
+                break;
+            }
+        }
+        return opt;
+    }
+}
 
        
 

@@ -76,6 +76,11 @@ rect.parent,
 .dot {
   cursor: pointer;
   fill: rgba($neutral-4,.6);
+
 }
+.highlight{
+    fill: rgba($light-blue,.9);
+    transition: fill .3s ease-out;
+  }
 
 

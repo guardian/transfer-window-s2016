@@ -90,7 +90,8 @@ function initData(r){
 
       
 function buildDataView(){
-    var scatterPlot = new scatterplot(allTransfers);
+    var scatterPlot = new scatterplot(allTransfers, 'premClub');
+
 }
       
 

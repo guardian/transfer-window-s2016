@@ -9,13 +9,14 @@ var _ = lodash;
 	}
 
 
-	export function getDisplayCost(numIn){
-	    isNaN(numIn) ? numIn = 0 : numIn = numIn;
-	    numIn = Number(numIn);
-	    numIn = numIn/1000000;
-	    numIn == 0 ? numIn = numIn - Math.ceil((Math.random() * 10)) :  numIn = numIn;
-	    console.log(numIn)
-	    return numIn;
+	export function getDisplayCost(n){
+	    isNaN(n) ? n = 0 : n = n;
+	    n = Number(n);
+	    n = n/1000000;
+	    n == 0 ? n = n - Math.ceil((Math.random() * 10)) :  n = n;
+
+	    n == 1 ? n = 2 : n = n; 
+	    return n;
 	}
 
 	export function getAgeGroup(objIn){
