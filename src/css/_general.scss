@@ -9,16 +9,26 @@ $neutral-5:#eaeaea;
 $neutral-6:#f6f6f6;
 
 
+.gv__interactive-container{
 
-body,
-figure.interactive {
-    margin: 0;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+    box-sizing: border-box;
+    background-color: white;
+    background-color: #FFF;
     padding: 0;
-    background-color: #dcdcdc;
-}
+    font-family: "Guardian Text Egyptian Web";
+    color:#767676;
+    font-size:18px;
+    line-height:1.25em;
 
-// Link styles don't exist on the app
-a {
+    h1,h2,h3,h4,h5,h6{
+        font-family: "Guardian Egyptian Web";
+        color:#333;
+    }
+    a {
     &,
     &:hover,
     &:active {
@@ -30,44 +40,37 @@ a {
         text-decoration: underline;
     }
 }
-
-.gv__interactive-container {
-    margin: 0 auto;
-    box-sizing: border-box;
-    background-color: white;
-
-    padding: 10px;
-    @include mq(mobileLandscape) {
-        padding: 20px;
-    }
+   
 
     @each $bp in (tablet, desktop, leftCol, wide) {
         @include mq($bp) {
             max-width: map-get($mq-breakpoints, $bp);
         }
     }
-}
+
 
 .interactive-es6-headline {
-	@include fs-headline(5);
+    @include fs-headline(5);
 }
 
 .test-msg {
-	color: #005689;
-	@include fs-textSans(3);
+    color: #005689;
+    @include fs-textSans(3);
 }
 
 .fonts {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	margin-top: 24px;
-	li {
-		margin-bottom: 6px;
-	}
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    margin-top: 24px;
+    li {
+        margin-bottom: 6px;
+    }
 }
 
 .fonts__egyptian { @include fs-headline(3); }
 .fonts__text-egyptian { @include fs-bodyCopy(2); }
 .fonts__sans { @include f-headlineSans; }
 .fonts__text-sans { @include fs-textSans(4); }
+
+}

@@ -4,11 +4,11 @@
  */
 var data, sort;  
 
-export default function scatterplot(a, s){
+export default function scatterplot(a, s ){
           sort = s;
           data = a;
-
-         addDropDown (data,sort);
+          var targetDiv='graphHolder'
+          addDropDown (data,sort);
           
           var margin = {top: 20, right: 24, bottom: 30, left: 24},
               width = 640 - margin.left - margin.right,
@@ -16,8 +16,7 @@ export default function scatterplot(a, s){
 
           var x = d3.time.scale().domain([ new Date('2016-05-01'), d3.time.day.offset(new Date('2015-0-01'), 1)]).rangeRound([0, width - margin.left - margin.right]);
 
-          var y = d3.scale.linear()
-              .range([height, 0]);
+          var y = d3.scale.linear().domain([-10, 25]).range([height, 0]);
 
           var color = d3.scale.category10();
 
@@ -29,7 +28,7 @@ export default function scatterplot(a, s){
               .scale(y).ticks(5).tickSize(width, 0, 0)
               .orient("right");
 
-          var svg = d3.select("#chart").append("svg")
+          var svg = d3.select('#'+targetDiv).append("svg")
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
 
@@ -37,7 +36,7 @@ export default function scatterplot(a, s){
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             x.domain(d3.extent(data, function(d,i) { return (new Date(d.date)); }));
-            y.domain(d3.extent(data, function(d) { return d.displayCost; })).nice();
+            //y.domain(d3.extent(data, function(d) { return d.displayCost; })).nice();
 
             svg.append("g").append("rect")
               .attr("width", width)
@@ -185,7 +184,7 @@ function addDropDown(data,sort){
         htmlStr+='</select></div></div>'
 
 
-        var el = document.getElementById("chart").innerHTML = htmlStr;
+        var el = document.getElementById("dropDownSelect").innerHTML = htmlStr;
          //el.innerHTML()
 
         var sel = d3.select(".gv-select");

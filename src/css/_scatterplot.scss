@@ -70,6 +70,7 @@ rect.parent,
 }
 
 .axis text {
+   @include fs-data(4);
   fill: $neutral-1;
 }
 
