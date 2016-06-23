@@ -4,7 +4,8 @@ import d3 from 'd3'
 
 import mainHTML from './text/main.html!text'
 import share from './lib/share'
-import scatterplot from './lib/scatterplot'
+// import scatterplot from './lib/scatterplot'
+import scattergrid from './lib/scattergrid'
 import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost } from './lib/utils'
 
 var _ = lodash;
@@ -90,7 +91,9 @@ function initData(r){
 
       
 function buildDataView(){
-    var scatterPlot = new scatterplot(allTransfers, 'premClub');
+    // var scatterPlot = new scatterplot(allTransfers, 'premClub', 'graphHolder');
+
+     var scatterGrid = new scattergrid(allTransfers, 'ageGroup', 'graphHolder');
 
 }
       

@@ -2,91 +2,140 @@
  * If running inside bl.ocks.org we want to resize the iframe to fit both graphs
  * This bit of code was shared originally at https://gist.github.com/benjchristensen/2657838
  */
-var data, sort;  
+var data, sort, selectArr, yAxisLabels;  
 
-export default function scattergrid(a, s){
-    var w = 940,
-    h = 300,
-    pad = 20,
-    left_pad = 100,
-    Data_url = a;
- 
-var svg = d3.select("#punchcard")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h);
- 
-var x = d3.scale.linear().domain([0, 23]).range([left_pad, w-pad]),
-    y = d3.scale.linear().domain([0, 6]).range([pad, h-pad*2]);
- 
-var xAxis = d3.svg.axis().scale(x).orient("bottom")
-        .ticks(24)
-        .tickFormat(function (d, i) {
-            var m = (d &gt; 12) ? "p" : "a";
-            return (d%12 == 0) ? 12+m :  d%12+m;
-        }),
-    yAxis = d3.svg.axis().scale(y).orient("left")
-        .ticks(7)
-        .tickFormat(function (d, i) {
-            return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d];
-        });
- 
-svg.append("g")
-    .attr("class", "axis")
-    .attr("transform", "translate(0, "+(h-pad)+")")
-    .call(xAxis);
- 
-svg.append("g")
-    .attr("class", "axis")
-    .attr("transform", "translate("+(left_pad-pad)+", 0)")
-    .call(yAxis);
- 
-svg.append("text")
-    .attr("class", "loading")
-    .text("Loading ...")
-    .attr("x", function () { return w/2; })
-    .attr("y", function () { return h/2-5; });
- 
-d3.json(Data_url, function (punchcard_data) {
-    var max_r = d3.max(punchcard_data.map(
-                       function (d) { return d[2]; })),
-        r = d3.scale.linear()
-            .domain([0, d3.max(punchcard_data, function (d) { return d[2]; })])
-            .range([0, 12]);
- 
-    svg.selectAll(".loading").remove();
- 
-    svg.selectAll("circle")
-        .data(punchcard_data)
-        .enter()
-        .append("circle")
-        .attr("class", "dot")
-        .attr("cx", function (d) { return x(d[1]); })
-        .attr("cy", function (d) { return y(d[0]); })
-        .transition()
-        .duration(800)
-        .attr("r", function (d) { return r(d[2]); });
-});
-                
+export default function scattergrid(a, s, t){
+var w = 780;//document.getElementById("graphHolder").offsetWidth,
+var widthUnit = 30;
+var margin = {top: 60, right: 150, bottom: 60, left: 150},
+              width = w - margin.left - margin.right,
+              height = 800 + margin.top + margin.bottom;
 
-    function dotClick(d,i){
-        var ddEl = document.getElementsByClassName('gv-select');
-        d3.selectAll(".dot").classed("highlight", false);
+          sort = s;
+          data = a;
+          var targetDiv = t;
+          selectArr = [];
 
-        console.log(d, i);
+            _.each (data, function(item){
+                selectArr.push(item[sort]);
+            })
 
-        _.each(data, function(item,i){
-          if(item[sort] == d[sort]){
-            console.log(item);
-            d3.select("#dot_"+i).classed("highlight",true)
+          selectArr = _.uniqBy(selectArr).sort().reverse();
 
-            setSelectedIndex(ddEl, item[sort]);
+          height = widthUnit * selectArr.length;
 
-            ddEl.selected = item[sort];
-          }
+          yAxisLabels = selectArr; //bale out the axis labels here
+            var cyPositioner = height/selectArr.length;
+            var tempArr = [];
+
+            _.each(selectArr, function(item,i){
+                var tempObj = {};
+                tempObj[sort] = item;
+                tempObj.cy = cyPositioner*(selectArr.length-i);
+               
+                // item.cy = i * cyPositioner;
+                tempArr.push(tempObj)
+            });
+          selectArr = tempArr;  
+          console.log(tempArr)
+          addDropDown (data,sort); 
+          
+          
+
+          var x = d3.time.scale().domain([ new Date('2016-05-01'), d3.time.day.offset(new Date('2016-08-31'), 1)]).rangeRound([0, width]);
+
+          var y = d3.scale.linear().domain([0, selectArr.length]).range([height, 0]);
+
+          var color = d3.scale.category10();
+
+          var xAxis = d3.svg.axis().scale(x).ticks(3).tickSize(-(height), 0, 0).orient("bottom");
+
+          var yAxis = d3.svg.axis().scale(y).ticks(selectArr.length).tickSize(-(width), 0, 0).tickFormat(function (d, i) { return yAxisLabels[i]; }).orient("left");  
+
+          var svg = d3.select('#'+targetDiv).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom)
+              .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
+
+
+            svg.append("g").append("rect")
+              .attr("width", width)
+              .attr("height",height)
+              .attr("fill","#EFEFEF")
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis)
+              // .append("text")
+              //   .attr("class", "label")
+              //   .attr("x", width)
+              //   .attr("y", -6)
+              //   .style("text-anchor", "end")
+              //   .text("Date");
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+              .append("text")
+                .attr("class", "label")
+                .attr("y", -18)
+                .attr("x", width+18)
+                .attr("dy", ".71em")
+                .style("text-anchor", "start")
+                .text("£m")
+
+            svg.append("text")
+              .attr("class", "loading")
+              .text("Loading ...")
+              .attr("x", function () { return width/2; })
+              .attr("y", function () { return height/2-5; }); 
+
+
+        var max_r = d3.max(data.map(function (d) { return d.value; })),
+          r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([3, widthUnit]);
+
+          console.log(max_r)
+ 
+          svg.selectAll(".loading").remove()
+
+          svg.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("class", "dot")
+            .attr("cx", function (d) { return x(d.date); })
+            .attr("cy", function (d) { var tempCy = getCyPos(d); return y(tempCy); })
+            .attr("r", function (d) { return r(d.value); })
+            .on("click", function(d,i){ dotClick(d,i) });      
+        
+
+        function getCyPos(d){
+        var t = 1;
+          _.each(selectArr, function(item,i){
             
-        })
-    } 
+                if (d[sort] == item[sort]){ t = i };
+          })
+        return t;  
+        }            
+
+        function dotClick(d,i){
+            var ddEl = document.getElementsByClassName('gv-select');
+            d3.selectAll(".dot").classed("highlight", false);
+
+            console.log(d, i);
+
+            _.each(data, function(item,i){
+              if(item[sort] == d[sort]){
+                console.log(item);
+                d3.select("#dot_"+i).classed("highlight",true)
+
+                setSelectedIndex(ddEl, item[sort]);
+
+                ddEl.selected = item[sort];
+              }
+                
+            })
+        } 
 } 
 
 function updateDots(s){
@@ -128,15 +177,6 @@ function setSelectedIndex(s, v) {
 
 function addDropDown(data,sort){
         var htmlStr = "<div class='chart__dropdown-container'><div class='styled-select'><select class='gv-select'>";
-        var selectArr = [];
-
-        _.each (data, function(item){
-            selectArr.push(item[sort]);
-        })
-
-        selectArr = _.uniqBy(selectArr).sort();
-
-        console.log(selectArr)
 
         _.each(selectArr, function(item){
               htmlStr += "<option value='"+item+"'>"+item+"</option>"

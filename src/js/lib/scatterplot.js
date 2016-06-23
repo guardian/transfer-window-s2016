@@ -4,14 +4,15 @@
  */
 var data, sort;  
 
-export default function scatterplot(a, s ){
+export default function scatterplot(a, s, t){
+          var w = document.getElementById("graphHolder").offsetWidth,
           sort = s;
           data = a;
-          var targetDiv='graphHolder'
+          var targetDiv = t;
           addDropDown (data,sort);
           
           var margin = {top: 20, right: 24, bottom: 30, left: 24},
-              width = 640 - margin.left - margin.right,
+              width = w - margin.left - margin.right,
               height = 360 - margin.top - margin.bottom;
 
           var x = d3.time.scale().domain([ new Date('2016-05-01'), d3.time.day.offset(new Date('2015-0-01'), 1)]).rangeRound([0, width - margin.left - margin.right]);
