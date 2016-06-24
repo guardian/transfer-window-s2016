@@ -65,8 +65,16 @@ rect.parent,
 .axis path,
 .axis line {
   fill: none;
-  stroke: #CFCFCF;
+  stroke: $neutral-5;
   shape-rendering: crispEdges;
+}
+
+.y.axis path {
+  display: none;
+}
+
+.y.axis line {
+  stroke-dasharray: 1,2;
 }
 
 .axis text {
@@ -77,16 +85,25 @@ rect.parent,
 .dot {
   cursor: pointer;
   fill: rgba($neutral-4,.6);
-
 }
-.highlight{
-    fill: rgba($light-blue,.9);
-    transition: fill .3s ease-out;
+
+.sell{
+     fill: rgba($sell-color, .5);
+  }  
+
+.buy{
+     fill: rgba($buy-color, .5);
   }
+
+.highlight{
+    fill: rgba($light-blue, .5);
+    transition: fill .3s ease-out;
+ } 
 
 .chart__dropdown-container{
   width:100%;
 }
+
 .chart__dropdown{
   width:400px;
   height:36px;

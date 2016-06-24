@@ -89,12 +89,17 @@ function initData(r){
   
 }
 
+
+function getMonday( date ) {
+    var day = date.getDay() || 7;  
+    if( day !== 1 ) 
+        date.setHours(-24 * (day - 1)); 
+    return date;
+}
+
       
 function buildDataView(){
-    // var scatterPlot = new scatterplot(allTransfers, 'premClub', 'graphHolder');
-
-     var scatterGrid = new scattergrid(allTransfers, 'ageGroup', 'graphHolder');
-
+     var scatterGrid = new scattergrid(allTransfers, 'premClub', 'graphHolder');
 }
       
 

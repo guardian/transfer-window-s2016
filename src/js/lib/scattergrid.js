@@ -42,13 +42,13 @@ var margin = {top: 60, right: 150, bottom: 60, left: 150},
           
           
 
-          var x = d3.time.scale().domain([ new Date('2016-05-01'), d3.time.day.offset(new Date('2016-08-31'), 1)]).rangeRound([0, width]);
+          var x = d3.time.scale().domain([ new Date('2016-06-01'), new Date('2016-08-31') ]).rangeRound([0, width]);
 
           var y = d3.scale.linear().domain([0, selectArr.length]).range([height, 0]);
 
           var color = d3.scale.category10();
 
-          var xAxis = d3.svg.axis().scale(x).ticks(3).tickSize(-(height), 0, 0).orient("bottom");
+          var xAxis = d3.svg.axis().scale(x).ticks(d3.time.months).tickSize(18, 0, 0).orient("bottom");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])
 
           var yAxis = d3.svg.axis().scale(y).ticks(selectArr.length).tickSize(-(width), 0, 0).tickFormat(function (d, i) { return yAxisLabels[i]; }).orient("left");  
 
@@ -81,8 +81,7 @@ var margin = {top: 60, right: 150, bottom: 60, left: 150},
                 .attr("y", -18)
                 .attr("x", width+18)
                 .attr("dy", ".71em")
-                .style("text-anchor", "start")
-                .text("£m")
+                .style("text-anchor", "start");
 
             svg.append("text")
               .attr("class", "loading")
@@ -91,10 +90,8 @@ var margin = {top: 60, right: 150, bottom: 60, left: 150},
               .attr("y", function () { return height/2-5; }); 
 
 
-        var max_r = d3.max(data.map(function (d) { return d.value; })),
-          r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([3, widthUnit]);
-
-          console.log(max_r)
+        var max_r = d3.max(data.map(function (d) { return d.value; }));
+        var r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([3, widthUnit*0.6]);
  
           svg.selectAll(".loading").remove()
 
@@ -102,7 +99,9 @@ var margin = {top: 60, right: 150, bottom: 60, left: 150},
             .data(data)
             .enter()
             .append("circle")
-            .attr("class", "dot")
+            .attr("class", function(d) { return d.sell ? "dot sell" : "dot buy"})
+            //.attr("class", function(d) { return "dot"})
+            .attr("id",function (d,i) { return "dot_"+i; })
             .attr("cx", function (d) { return x(d.date); })
             .attr("cy", function (d) { var tempCy = getCyPos(d); return y(tempCy); })
             .attr("r", function (d) { return r(d.value); })
@@ -110,17 +109,17 @@ var margin = {top: 60, right: 150, bottom: 60, left: 150},
         
 
         function getCyPos(d){
-        var t = 1;
-          _.each(selectArr, function(item,i){
-            
-                if (d[sort] == item[sort]){ t = i };
-          })
-        return t;  
+            var t = 1;
+              _.each(selectArr, function(item,i){
+                
+                    if (d[sort] == item[sort]){ t = i };
+              })
+            return t;  
         }            
 
         function dotClick(d,i){
             var ddEl = document.getElementsByClassName('gv-select');
-            d3.selectAll(".dot").classed("highlight", false);
+            d3.selectAll(".highlight").classed("highlight", false);
 
             console.log(d, i);
 
@@ -139,7 +138,7 @@ var margin = {top: 60, right: 150, bottom: 60, left: 150},
 } 
 
 function updateDots(s){
-  d3.selectAll(".dot").classed("highlight", false);
+  d3.selectAll(".sell").classed("highlight", false);
      _.each(data, function(item,i){
               if(item[sort] == s){
                 console.log(item[sort], s, ("#dot_"+i));
