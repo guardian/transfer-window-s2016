@@ -5,7 +5,7 @@ import d3 from 'd3'
 import mainHTML from './text/main.html!text'
 import share from './lib/share'
 // import scatterplot from './lib/scatterplot'
-import scattergrid from './lib/scattergrid'
+import scattergridFee from './lib/scattergridFee'
 import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost } from './lib/utils'
 
 var _ = lodash;
@@ -99,7 +99,7 @@ function getMonday( date ) {
 
       
 function buildDataView(){
-     var scatterGrid = new scattergrid(allTransfers, 'premClub', 'graphHolder');
+     var scatterGrid = new scattergridFee(allTransfers, 'premClub', 'graphHolder');
 }
       
 

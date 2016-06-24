@@ -69,17 +69,17 @@ rect.parent,
   shape-rendering: crispEdges;
 }
 
-.y.axis path {
+.x.axis path {
   display: none;
 }
 
-.y.axis line {
+.x.axis line {
   stroke-dasharray: 1,2;
 }
 
 .axis text {
-   @include fs-data(4);
-  fill: $neutral-1;
+   @include fs-data(1);
+  fill: $neutral-3;
 }
 
 .dot {
@@ -88,11 +88,11 @@ rect.parent,
 }
 
 .sell{
-     fill: rgba($sell-color, .5);
+     fill: rgba($sell-color, .75);
   }  
 
 .buy{
-     fill: rgba($buy-color, .5);
+     fill: rgba($buy-color, .4);
   }
 
 .highlight{
