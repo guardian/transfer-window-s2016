@@ -14,34 +14,13 @@ var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
 //define globals
 var allTransfers;
 var starTransfers;
-var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data;
+var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data, rowWidth;
 
-
-// var premClubs= [ 'Arsenal',
-// 'Burnley',
-// 'Bournemouth',
-// 'Chelsea',
-// 'Crystal Palace',
-// 'Everton',
-// 'Hull City',
-// 'Leicester City',
-// 'Liverpool',
-// 'Manchester City',
-// 'Manchester United',
-// 'Middlesbrough',
-// 'Stoke City', 
-// 'Southampton',
-// 'Sunderland',
-// 'Swansea City',
-// 'Tottenham Hotspur',
-// 'West Bromwich Albion',
-// 'Watford', 
-// 'West Ham United'
-// ];
 
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
 export function init(el, context, config, mediator) {
+
 
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
 
@@ -66,6 +45,7 @@ function randomDate(start, end) {
 
 
 function initData(r){
+    var rowWidth = document.getElementById("graphHolder").offsetWidth;
 
     allTransfers = r.sheets.Data;
     starTransfers = r.sheets.Star_Men;
@@ -84,7 +64,7 @@ function initData(r){
 
         }) 
 
-    buildDataView()    
+    buildDataView(rowWidth)    
 
   
 }
@@ -98,9 +78,15 @@ function getMonday( date ) {
 }
 
       
-function buildDataView(){
-     var scatterGrid = new scattergridFee(allTransfers, 'premClub', 'graphHolder');
+function buildDataView(rowWidth){
+     var scatterGrid = new scattergridFee(allTransfers, 'premClub', 'graphHolder', rowWidth);
+
+     var clubArr = _.groupBy(allTransfers, 'premClub');
+
+     addAllPlayers(clubArr);
 }
+
+
       
 
 

@@ -4,10 +4,68 @@
  */
 var data, sort, selectArr, axisLabels;  
 
-export default function scattergridFee(a, s, t){
-var w = 620; //document.getElementById("graphHolder").offsetWidth;
-var widthUnit = 22;
-var margin = { top: 60, right: 150, bottom: 60, left: 150}, width = w - margin.left - margin.right, height = 100 + margin.top + margin.bottom;
+var isoArr = [ 
+    { premClub:'Arsenal', iso:'ARS'},
+    { premClub:'Aston Villa', iso:'AV'},  
+    { premClub:'Burnley', iso:'BUR'}, 
+    { premClub:'Bournemouth', iso:'BOU'}, 
+    { premClub:'Chelsea', iso:'CHE'}, 
+    { premClub:'Crystal Palace', iso:'PAL'}, 
+    { premClub:'Everton', iso:'EVE'}, 
+    { premClub:'Hull City', iso:'HUL'}, 
+    { premClub:'Leicester City', iso:'LEI'}, 
+    { premClub:'Liverpool', iso:'LIV'}, 
+    { premClub:'Manchester City', iso:'MCY'}, 
+    { premClub:'Manchester United', iso:'MUN'}, 
+    { premClub:'Middlesbrough', iso:'MID'}, 
+    { premClub:'Newcastle United', iso:'NEW'}, 
+    { premClub:'Norwich City', iso:'NOR'}, 
+    { premClub:'Stoke City', iso:'STO'},  
+    { premClub:'Southampton', iso:'SOT'}, 
+    { premClub:'Sunderland', iso:'SUN'}, 
+    { premClub:'Swansea City', iso:'SWA'}, 
+    { premClub:'Tottenham Hotspur', iso:'TOT'}, 
+    { premClub:'West Bromwich Albion', iso:'WBA'}, 
+    { premClub:'Watford', iso:'WAT'},  
+    { premClub:'West Ham United', iso:'WHU'}
+ ];
+
+
+
+function getAxisLabels(a){
+  
+    var reformattedArray = a.map(function(obj){ 
+       var rObj = {};
+       rObj.longName = obj;
+       rObj.shortName = get3Letter(obj);
+       return rObj;
+    });
+  
+
+  return reformattedArray;
+}
+
+function get3Letter(v){
+  var tempArr = v.split(" ");
+  var tempStr = "";
+
+  if(tempArr.length  == 1){ tempStr = tempArr[0].slice(0,3) }
+  if(tempArr[0]=='Stoke' || tempArr[0]=='Swansea'){ tempStr = tempArr[0].slice(0,3) } 
+  if(tempArr.length  == 2 && (tempArr[0]!='Stoke' || tempArr[0]!='Swansea')){ tempStr = tempArr[0].slice(0,1) + tempArr[1].slice(0,1)  }  
+  if(tempArr.length  > 2){ tempStr = tempArr[0].slice(0,1) + tempArr[1].slice(0,1) + tempArr[2].slice(0,1) }    
+  
+
+  return tempStr.toUpperCase();
+
+}
+
+export default function scattergridFee(a, s, t, rowWidth){
+  var width = rowWidth > 780 ? 780 : rowWidth; //set a maxW
+  var height = rowWidth > 780 ? 300 : 60;
+
+  console.log(width)
+  
+  var margin = { top: 30, right: 60, bottom: 72, left: 0}, width = width - margin.left - margin.right, height = height + margin.top + margin.bottom;
 
           sort = s;
           data = a;
@@ -16,13 +74,17 @@ var margin = { top: 60, right: 150, bottom: 60, left: 150}, width = w - margin.l
 
             _.each (data, function(item){
                 selectArr.push(item[sort]);
+                console.log(item[sort])
+
             })
 
           selectArr = _.uniqBy(selectArr).sort().reverse();
 
+          var widthUnit = width/selectArr.length;
+          console.log(selectArr.length)
           height = 180;
+          axisLabels = selectArr; //bale out the axis labels heregetAxisLabels()
 
-          axisLabels = selectArr; //bale out the axis labels here
             var cyPositioner = height/selectArr.length;
             var tempArr = [];
 
@@ -34,10 +96,8 @@ var margin = { top: 60, right: 150, bottom: 60, left: 150}, width = w - margin.l
             });
 
           selectArr = tempArr;  
-          console.log(tempArr)
+          
           addDropDown (data,sort); 
-          
-          
 
           var x = d3.scale.linear().domain([0, selectArr.length]).range([width, 0]);
 
@@ -49,23 +109,21 @@ var margin = { top: 60, right: 150, bottom: 60, left: 150}, width = w - margin.l
 
           var color = d3.scale.category10();
 
-          var xAxis = d3.svg.axis().scale(x).ticks(selectArr.length).tickSize(-(height), 6, 0).tickFormat(function (d, i) { return axisLabels[i]; }).orient("bottom");
+          var xAxis = d3.svg.axis().scale(x).ticks(axisLabels.length-1).tickSize(-(height), 6, 0).tickFormat(function (d, i) { return axisLabels[i];  }).orient("bottom"); //axisLabels[i][]
 
-          var yAxis = d3.svg.axis().scale(y).ticks(5).tickSize(18, 0, 0).orient("left");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
+          var yAxis = d3.svg.axis().scale(y).ticks(5).tickSize(width+12, 0, 0).orient("right");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
 
           var svg = d3.select('#'+targetDiv).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom)
               .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
 
-         
-
             svg.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(-1," + height + ")")
                 .call(xAxis)
              .selectAll("text")
-                .attr("x", (widthUnit/2)+6)
-                .attr("y", widthUnit/2 )
-                .attr("transform", "rotate(45)")
+                .attr("x", (widthUnit/2) - 2 )
+                .attr("y", 0 )
+                .attr("transform", "rotate(90)")
                 .style("text-anchor", "start")
               //   .attr("class", "label")
               //   .attr("x", width)
