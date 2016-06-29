@@ -2,7 +2,10 @@
  * If running inside bl.ocks.org we want to resize the iframe to fit both graphs
  * This bit of code was shared originally at https://gist.github.com/benjchristensen/2657838
  */
-var data, sort, selectArr, axisLabels;  
+
+
+
+var data, sort, selectArr, axisLabels, customScrollTo;  
 
 var isoArr = [ 
     { premClub:'Arsenal', iso:'ARS'},
@@ -30,40 +33,20 @@ var isoArr = [
     { premClub:'West Ham United', iso:'WHU'}
  ];
 
+function adjustLayout(n){
+    var clubEl = d3.select("#gv__clubList");
 
+    var offsetHeight = document.getElementById('graphContainer').offsetHeight;
 
-function getAxisLabels(a){
-  
-    var reformattedArray = a.map(function(obj){ 
-       var rObj = {};
-       rObj.longName = obj;
-       rObj.shortName = get3Letter(obj);
-       return rObj;
-    });
-  
-
-  return reformattedArray;
+    clubEl.style("margin-top",offsetHeight+"px")
 }
 
-function get3Letter(v){
-  var tempArr = v.split(" ");
-  var tempStr = "";
 
-  if(tempArr.length  == 1){ tempStr = tempArr[0].slice(0,3) }
-  if(tempArr[0]=='Stoke' || tempArr[0]=='Swansea'){ tempStr = tempArr[0].slice(0,3) } 
-  if(tempArr.length  == 2 && (tempArr[0]!='Stoke' || tempArr[0]!='Swansea')){ tempStr = tempArr[0].slice(0,1) + tempArr[1].slice(0,1)  }  
-  if(tempArr.length  > 2){ tempStr = tempArr[0].slice(0,1) + tempArr[1].slice(0,1) + tempArr[2].slice(0,1) }    
-  
+export default function scattergridFee(a, s, t, rowWidth, scrollFn){
+  var width = rowWidth > 620 ? 620 : rowWidth; //set a maxW
+  var height = rowWidth > 620 ? 120 : 60;
 
-  return tempStr.toUpperCase();
-
-}
-
-export default function scattergridFee(a, s, t, rowWidth){
-  var width = rowWidth > 780 ? 780 : rowWidth; //set a maxW
-  var height = rowWidth > 780 ? 300 : 60;
-
-  console.log(width)
+  customScrollTo = scrollFn;
   
   var margin = { top: 30, right: 60, bottom: 72, left: 0}, width = width - margin.left - margin.right, height = height + margin.top + margin.bottom;
 
@@ -74,16 +57,15 @@ export default function scattergridFee(a, s, t, rowWidth){
 
             _.each (data, function(item){
                 selectArr.push(item[sort]);
-                console.log(item[sort])
-
-            })
+             })
 
           selectArr = _.uniqBy(selectArr).sort().reverse();
 
           var widthUnit = width/selectArr.length;
           console.log(selectArr.length)
-          height = 180;
+          height = 120;
           axisLabels = selectArr; //bale out the axis labels heregetAxisLabels()
+
 
             var cyPositioner = height/selectArr.length;
             var tempArr = [];
@@ -177,15 +159,14 @@ export default function scattergridFee(a, s, t, rowWidth){
         }            
 
         function dotClick(d,i){
+
             var ddEl = document.getElementsByClassName('gv-select');
             d3.selectAll(".highlight").classed("highlight", false);
 
-            console.log(d, i);
-
             _.each(data, function(item,i){
               if(item[sort] == d[sort]){
-                console.log(item);
-                d3.select("#dot_"+i).classed("highlight",true)
+                
+                updateDots(item[sort]);
 
                 setSelectedIndex(ddEl, item[sort]);
 
@@ -194,17 +175,47 @@ export default function scattergridFee(a, s, t, rowWidth){
                 
             })
         } 
+
+        adjustLayout(height)
 } 
+
+function getAxisLabels(a){
+  
+    var reformattedArray = a.map(function(obj){ 
+       var rObj = {};
+       rObj.longName = obj;
+       rObj.shortName = get3Letter(obj);
+       return rObj;
+    });
+  
+    return reformattedArray;
+
+}
+
+function get3Letter(v){
+    var tempArr = v.split(" ");
+    var tempStr = "";
+
+    if(tempArr.length  == 1){ tempStr = tempArr[0].slice(0,3) }
+    if(tempArr[0]=='Stoke' || tempArr[0]=='Swansea'){ tempStr = tempArr[0].slice(0,3) } 
+    if(tempArr.length  == 2 && (tempArr[0]!='Stoke' || tempArr[0]!='Swansea')){ tempStr = tempArr[0].slice(0,1) + tempArr[1].slice(0,1)  }  
+    if(tempArr.length  > 2){ tempStr = tempArr[0].slice(0,1) + tempArr[1].slice(0,1) + tempArr[2].slice(0,1) }      
+
+    return tempStr.toUpperCase();
+
+}
 
 function updateDots(s){
   d3.selectAll(".highlight").classed("highlight", false);
      _.each(data, function(item,i){
               if(item[sort] == s){
-                console.log(item[sort], s, ("#dot_"+i));
+                
                 d3.select("#dot_"+i).classed("highlight",true)
               }
             
         })
+     //console.log(scrollTo)
+     customScrollTo(document.getElementById("listEntry_"+stripSpace(s)));
 
 }
 
@@ -216,21 +227,12 @@ function getRadius(n){
 
 
 function setSelectedIndex(s, v) {
-
-  console.log(s[0])
-
     for ( var i = 0; i < s[0].length; i++ ) {
-
-        if ( s[0][i].text == v ) {
-
-            s[0][i].selected = true;
-
-            return;
-
+          if ( s[0][i].text == v ) {
+              s[0][i].selected = true;
+              return;
         }
-
     }
-
 }
 
 function addDropDown(data,sort){
@@ -256,12 +258,21 @@ function addDropListener(sel){
 }
 
 function compareObj(a,b) {
-  if (a[sort] < b[sort])
-    return -1;
-  if (a[sort] > b[sort])
-    return 1;
-  return 0;
+    if (a[sort] < b[sort])
+      return -1;
+    if (a[sort] > b[sort])
+      return 1;
+    return 0;
 }
+
+
+function stripSpace(s){
+      s = s.split(" ").join("_");
+      return s;
+  }
+
+
+
 
 
        

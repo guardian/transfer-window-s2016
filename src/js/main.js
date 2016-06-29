@@ -1,41 +1,43 @@
 import reqwest from 'reqwest'
+import ractive from 'ractive'
 import lodash from 'lodash'
 import d3 from 'd3'
+import iframeMessenger from './lib/iframeMessenger'
+import customScrollTo from './lib/customScrollTo'
 
+import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost } from './lib/utils'
 import mainHTML from './text/main.html!text'
 import share from './lib/share'
 // import scatterplot from './lib/scatterplot'
 import scattergridFee from './lib/scattergridFee'
-import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost } from './lib/utils'
+import clublistPrint from './lib/clublistPrint'
 
+
+var Ractive = ractive;
 var _ = lodash;
 var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
 
 //define globals
+var dataURL = 'https://interactive.guim.co.uk/docsdata/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json'
 var allTransfers;
 var starTransfers;
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data, rowWidth;
-
 
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
 export function init(el, context, config, mediator) {
 
+    console.log(customScrollTo)
 
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
 
     reqwest({
-        url: 'https://interactive.guim.co.uk/docsdata/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json',
-        type: 'json',
-        crossOrigin: true,
-        success: (resp) => initData(resp)
-    });
+            url: dataURL,
+            type: 'json',
+            crossOrigin: true,
+            success: (resp) => initData(resp)
+        }); 
 
-    [].slice.apply(el.querySelectorAll('.interactive-share')).forEach(shareEl => {
-        var network = shareEl.getAttribute('data-network');
-        shareEl.addEventListener('click',() => shareFn(network));
-    });
-}
 
 
 function randomDate(start, end) {
@@ -43,10 +45,8 @@ function randomDate(start, end) {
 }
 
 
-
 function initData(r){
-    var rowWidth = document.getElementById("graphHolder").offsetWidth;
-
+    
     allTransfers = r.sheets.Data;
     starTransfers = r.sheets.Star_Men;
     starTransfers = _.filter(starTransfers, function(o) { return o.topbuy=="y"; });
@@ -64,10 +64,14 @@ function initData(r){
 
         }) 
 
-    buildDataView(rowWidth)    
+    var clubArr = _.groupBy(allTransfers,'premClub') 
 
+    buildDataView(allTransfers, 940);
+
+    buildClubView(clubArr) 
   
 }
+
 
 
 function getMonday( date ) {
@@ -78,12 +82,17 @@ function getMonday( date ) {
 }
 
       
-function buildDataView(rowWidth){
-     var scatterGrid = new scattergridFee(allTransfers, 'premClub', 'graphHolder', rowWidth);
+function buildDataView(arr, rowWidth){
+     var scatterGrid = new scattergridFee(arr, 'premClub', 'graphHolder', rowWidth, customScrollTo);
 
-     var clubArr = _.groupBy(allTransfers, 'premClub');
 
-     addAllPlayers(clubArr);
+}
+
+function buildClubView(obj){
+ 
+    console.log(clublistPrint)
+    var clublist = new clublistPrint(obj);
+
 }
 
 
@@ -120,5 +129,8 @@ function roundDisplayNum(num,decimals) {
     var newNum = num.toFixed(1);
     num = (newNum*1)+0;
     return (num);
+}
+
+
 }
 

@@ -52,5 +52,10 @@ var _ = lodash;
 
 	}
 
+	export function stripSpace(s){
+	    s = s.split(" ").join("_");
+	    return s;
+	}
+
 
 

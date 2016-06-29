@@ -4,6 +4,17 @@
   background: #FFFFFF;
 }
 
+.gv__graph-holder{
+  position:fixed;
+  width:100%;
+  top:0px;
+  background:$neutral-4;
+}
+
+.gv__club-list{
+  
+}
+
 text {
   pointer-events: none;
 }
