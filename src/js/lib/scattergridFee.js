@@ -36,7 +36,7 @@ var isoArr = [
 function adjustLayout(n){
     var clubEl = d3.select("#gv__clubList");
 
-    var offsetHeight = document.getElementById('graphContainer').offsetHeight;
+    var offsetHeight = document.getElementById('filterArea').offsetHeight;
 
     clubEl.style("margin-top",offsetHeight+"px")
 }
@@ -63,7 +63,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
           var widthUnit = width/selectArr.length;
           console.log(selectArr.length)
-          height = 120;
+          height = 90;
           axisLabels = selectArr; //bale out the axis labels heregetAxisLabels()
 
 

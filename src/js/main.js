@@ -90,7 +90,7 @@ function buildDataView(arr, rowWidth){
 
 function buildClubView(obj){
  
-    console.log(clublistPrint)
+    console.log(obj)
     var clublist = new clublistPrint(obj);
 
 }
@@ -130,6 +130,26 @@ function roundDisplayNum(num,decimals) {
     num = (newNum*1)+0;
     return (num);
 }
+
+var elSticky = document.getElementById('filterAreaBG');
+var elStickyTop = elSticky.getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+
+window.addEventListener('scroll', function(){
+
+    console.log('scroll',document.documentElement.scrollTop)
+    if (document.documentElement.scrollTop > elStickyTop){
+        elSticky.style.position = 'fixed';
+        elSticky.style.top = '100px';
+    }
+    else
+    {
+        elSticky.style.position = 'static';
+        elSticky.style.top = 'auto';
+    }
+});
+
+
+
 
 
 }

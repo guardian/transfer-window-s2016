@@ -7,8 +7,13 @@
 .gv__graph-holder{
   position:fixed;
   width:100%;
+  max-width:1300px;
   top:0px;
-  background:$neutral-4;
+  background:$neutral-1;
+}
+
+.gv__graph-container{
+  background:$neutral-1;
 }
 
 .gv__club-list{

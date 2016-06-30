@@ -17,12 +17,25 @@ export default function clublistPrint(obj) {
 function constructInnerHtml(o){
     var s= "";
 
+    
+
+
     // use _.forOwn to iterate through object
      _.forOwn(o, function(value, key) { 
-         s += "<div class='gv__club-list' id=listEntry_"+stripSpace(key)+">"
-         s += "<h2>"+ key+"</h2>";
-         s += getPlayerList(value, key);
-         s+="</div>";
+
+        s+="<div class='dig-slice' id='listEntry_"+stripSpace(key)+"'>"
+        s+="<div class='dig-slice__inner'>"
+        s+="<div class='dig-slice__inner__left'>"
+        s+="<h2 class='dig-section-title' style='color:#333;'>"+key+"</h2>"
+        s+="<a class='dig-back-to-top js-back-to-top' href='#'><span><svg height='14' width='15' xmlns='http://www.w3.org/2000/svg'>"
+        s+="<path d='M0.5,7 L5.75,2.5 L5.75,14 L7.25,14 L7.25,2.5 L12.5,7 L13,6 L7.25,0 L5.75,6e-17 L0,6 L0.5,7 L0.5,7 Z' fill='#333'></path></svg></span> <span>Back to top</span></a>"
+        s+="</div>"
+        s+="<div class='dig-slice__inner__main'>"
+            s += getPlayerList(value, key);        
+        s+="</div>"
+        s+="</div>"
+        s+="</div>"
+         
      } );
 
      return s;
@@ -31,27 +44,30 @@ function constructInnerHtml(o){
 }
 
 function getPlayerList(a, k){
-    var buyS = "<div class='gv-flex-2'><h4>Bought</h4>";
-    var sellS = "<div class='gv-flex-2'><h4>Sold</h4>";
-  
+
+    var buyS = "<div class='dig-slice__inner'><h5>Bought</h5><ul class='dig-days'>";
+    var sellS = "<div class='dig-slice__inner'><h5>Sold</h5><ul class='dig-days'>";
+
     _.each(a, function(o){
         
         if(o.buy && !o.sell){
-            buyS += "<span>";
-            buyS += o.playername +"</br>";
+            // buyS += "<span>";
+            buyS += "<li class='dig-days__day dig-days__day--HV' style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'>";
+            buyS += o.playername +", ";
             buyS += o.price;
-            buyS += "</span></br>" 
+            buyS += "</li>" 
         }
 
         if(o.sell && !o.buy){
-            sellS += "<span>";
-            sellS += o.playername +"</br>";
+            // sellS += "<span>";
+            sellS += "<li class='dig-days__day dig-days__day--HV' style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'>";;
+            sellS += o.playername +", ";
             sellS += o.price;
-            sellS += "</span></br>" 
+            sellS += "</li>" 
         }    
     });
 
-    buyS += "</div>"; sellS += "</div>"; 
+    buyS += "</ul></div>"; sellS += "</ul></div>"; 
 
     return buyS + sellS;
 }

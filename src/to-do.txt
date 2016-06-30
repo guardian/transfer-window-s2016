@@ -1,0 +1,9 @@
+• Fix nav and possibly graph
+• Show figures for each club
+• Introduce hierarchy for players
+	-Look at presentation of 'Best of books'
+	-Add fees
+• Add total spending area
+
+• Background image for head area
+
