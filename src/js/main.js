@@ -9,7 +9,7 @@ import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost } from '.
 import mainHTML from './text/main.html!text'
 import share from './lib/share'
 // import scatterplot from './lib/scatterplot'
-import scattergridFee from './lib/scattergridFee'
+import scattergridFee from './lib/scattergridDate'
 import clublistPrint from './lib/clublistPrint'
 
 

@@ -91,7 +91,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
           var color = d3.scale.category10();
 
-          var xAxis = d3.svg.axis().scale(x).ticks(axisLabels.length-1).tickSize(-(height), 6, 0).tickFormat(function (d, i) { return "CL";  }).orient("bottom"); //axisLabels[i][]
+          var xAxis = d3.svg.axis().scale(x).ticks(axisLabels.length-1).tickSize(-(height), 6, 0).tickFormat(function (d, i) { return "XX";  }).orient("bottom"); //axisLabels[i][]
 
           var yAxis = d3.svg.axis().scale(y).ticks(5).tickSize(width+12, 0, 0).orient("right");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
 

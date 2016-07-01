@@ -52,7 +52,7 @@ function getPlayerList(a, k){
         
         if(o.buy && !o.sell){
             // buyS += "<span>";
-            buyS += "<li class='dig-days__day dig-days__day--HV' style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'>";
+            buyS += "<li class='dig-days__day' style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'>";
             buyS += o.playername +", ";
             buyS += o.price;
             buyS += "</li>" 
@@ -60,7 +60,7 @@ function getPlayerList(a, k){
 
         if(o.sell && !o.buy){
             // sellS += "<span>";
-            sellS += "<li class='dig-days__day dig-days__day--HV' style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'>";;
+            sellS += "<li class='dig-days__day' style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'>";;
             sellS += o.playername +", ";
             sellS += o.price;
             sellS += "</li>" 

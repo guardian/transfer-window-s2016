@@ -34,6 +34,7 @@ $guardian-brand-dark: map-get($pasteup-palette, 'guardian-brand-dark');
 @import "layout";
 @import "layout-custom";
 @import "dropdown";
+@import "filters";
 @import "scatterplot";
 @import "feature-header";
 

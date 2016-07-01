@@ -4,7 +4,7 @@
  */
 var data, sort, selectArr, yAxisLabels;  
 
-export default function scattergrid(a, s, t){
+export default function scattergrid(a, s, t, rowWidth, scrollFn){
 var w = 780;//document.getElementById("graphHolder").offsetWidth,
 var widthUnit = 30;
 var margin = {top: 60, right: 150, bottom: 60, left: 150},
@@ -183,7 +183,7 @@ function addDropDown(data,sort){
         htmlStr+='</select></div></div>'
 
 
-        var el = document.getElementById("dropDownSelect").innerHTML = htmlStr;
+        //var el = document.getElementById("dropDownSelect").innerHTML = htmlStr;
          //el.innerHTML()
 
         var sel = d3.select(".gv-select");
