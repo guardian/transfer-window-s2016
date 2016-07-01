@@ -48,7 +48,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
   customScrollTo = scrollFn;
   
-  var margin = { top: 30, right: 60, bottom: 72, left: 0}, width = width - margin.left - margin.right, height = height + margin.top + margin.bottom;
+  var margin = { top: 30, right: 60, bottom: 72, left: 60}, width = width - margin.left - margin.right, height = height + margin.top + margin.bottom;
 
           sort = s;
           data = a;
@@ -63,7 +63,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
           var widthUnit = width/selectArr.length;
           console.log(selectArr.length)
-          height = 90;
+          height = 240;
           axisLabels = selectArr; //bale out the axis labels heregetAxisLabels()
 
 
@@ -81,7 +81,9 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
           
           addNavList (data,sort); 
 
-          var x = d3.scale.linear().domain([0, selectArr.length]).range([width, 0]);
+          var x = d3.time.scale().domain([ new Date('2016-06-01'), new Date('2016-08-31') ]).rangeRound([0, width]);
+
+          
 
     //       var x = d3.scale.log()
     // .domain([.0124123, 1230.4])
@@ -91,7 +93,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
           var color = d3.scale.category10();
 
-          var xAxis = d3.svg.axis().scale(x).ticks(axisLabels.length-1).tickSize(-(height), 6, 0).tickFormat(function (d, i) { return "XX";  }).orient("bottom"); //axisLabels[i][]
+          var xAxis = d3.svg.axis().scale(x).ticks(d3.time.months).tickSize(30, 0, 0).orient("bottom");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])
 
           var yAxis = d3.svg.axis().scale(y).ticks(5).tickSize(width+12, 0, 0).orient("right");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
 
@@ -102,10 +104,10 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
                 .attr("class", "x axis")
                 .attr("transform", "translate(-1," + height + ")")
                 .call(xAxis)
-             .selectAll("text")
-                .attr("x", (widthUnit/2) - 2 )
-                .attr("y", 0 )
-                .attr("transform", "rotate(90)")
+             // .selectAll("text")
+             //    .attr("x", 0 )
+             //    .attr("y", 0 )
+                // .attr("transform", "rotate(90)")
                 .style("text-anchor", "start")
               //   .attr("class", "label")
               //   .attr("x", width)
@@ -115,7 +117,62 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
             svg.append("g")
                 .attr("class", "y axis")
-                .call(yAxis)
+
+
+            var strikerateLabel = svg.append('g')
+              .attr('class','strikerate-label')
+              .attr("transform", "translate( -50 , 0 )");
+
+            var strikeText = strikerateLabel.append('text')
+              .attr('class','strikerate-label')
+              .attr('dx',10)
+              .attr('dy',-5)
+
+            strikeText.append('tspan')
+              .text('£')
+
+            strikeText.append('tspan')
+              .text(' ')
+              .attr('x',10)
+              .attr('dy',14)
+
+            strikerateLabel.append('line')
+              .attr('x1',0.5)
+              .attr('x2',0.5)
+              .attr('y1',-10)
+              .attr('y2',15)
+              .attr('stroke','#bebebe')
+              .attr('marker-start','url(#markerArrowTop)')
+
+
+
+            strikerateLabel.append('circle')
+              .attr('r',5)
+              .attr('cy',40)
+              .attr('stroke','#bebebe')
+              .attr('fill','transparent')
+
+            var circleText = strikerateLabel.append('text')
+              .attr('class','strikerate-label')
+              .attr('dx',10)
+              .attr('dy',44)
+
+            circleText.append('tspan')
+              .text('Cost of player')    
+
+
+            // <g class="strikerate-label" transform="translate(62,72)">
+            // <text class="strikerate-label" dx="10" dy="-5">
+            // <tspan>More goals</tspan>
+            // <tspan x="10" dy="14">per game</tspan></text>
+            // <line x1="0.5" x2="0.5" y1="-10" y2="15" stroke="#bebebe" marker-start="url(#markerArrowTop)"></line>
+            // <circle r="5" cy="40" stroke="#bebebe" fill="transparent"></circle>
+            // <text class="strikerate-label" dx="10" dy="44">
+            // <tspan>Amount of goals</tspan></text>
+            // </g>
+
+
+                //.call(yAxis)
               // .append("text")
               //   .attr("class", "label")
               //   .attr("y", -18)
@@ -131,7 +188,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
 
         var max_r = d3.max(data.map(function (d) { return d.value; }));
-        var r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([3, widthUnit * 0.6]);
+        var r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([3, 30]);
  
           svg.selectAll(".loading").remove()
 
@@ -142,7 +199,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
             .attr("class", function(d) { return d.sell ? "dot sell" : "dot buy"})
             //.attr("class", function(d) { return "dot"})
             .attr("id",function (d,i) { return "dot_"+i; })
-            .attr("cx", function (d) { var tempCircPos = getCircPos(d); return x(tempCircPos); })
+            .attr("cx", function (d) { return x(d.date); })
             
             .attr("r", function (d) { return r(d.value); })
             .on("click", function(d,i){ dotClick(d,i) })
@@ -264,7 +321,7 @@ function addNavList(data,sort){
         var htmlStr = " ";
 
         _.each(selectArr, function(item){
-              htmlStr += "<li class='dig-filters__filter'> <a class='dig-filters__filter__link js-filter' href='#' data-section='"+stripSpace(item[sort])+"'>";
+              htmlStr += "<li class='dig-filters__filter'> <a class='dig-filters__filter__link js-filter' href='#' data_section='"+stripSpace(item[sort])+"'>";
               htmlStr += "<span class='dig-filters__filter__link__circle showing-mobile-only' style='color: rgb(149, 28, 85);'>"
               htmlStr += "<svg class='hp-summary__toggle__icon' xmlns='http://www.w3.org/2000/svg' width='30' height='30'>" 
               htmlStr += "<path fill='currentColor' d='m 21,15 -5.25,4.5 0,-11.5 -1.5,0 0,11.5 L 9,15 l -0.5,1 5.75,6 1.5,0 5.75,-6 -0.5,-1 0,0 z'></path>" 
@@ -280,7 +337,23 @@ function addNavList(data,sort){
         //var sel = d3.select(".gv-select");
 
         //addDropListener(sel)
+        addNavListeners()
 }
+
+function addNavListeners(){
+  // listEntry_Norwich_City
+
+  var navLinks = document.getElementsByClassName("dig-filters__filter__link");
+
+  for (var i = 0; i < navLinks.length; i++) {
+            navLinks[i].addEventListener('click',  function() {
+            updateDots(this.attributes.data_section.value);
+  });
+  }
+  
+}
+
+
 
 function addDropListener(sel){
         sel.on("change", function() { updateDots(this.value) });

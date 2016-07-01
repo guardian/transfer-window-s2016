@@ -304,7 +304,7 @@ $day-spacing: 20px;
 }
 
 .dig-days__day {
-    @include fs-bodyCopy(1, $size-only: true);
+    @include fs-bodyCopy(3, $size-only: true);
     position: relative;
     color: #767676;
     float: left;
@@ -317,6 +317,7 @@ $day-spacing: 20px;
 
     width: 100%;
     min-height: 120px;
+    height: gs-height(1);
 
     @include mq(mobileLandscape) {
         width: calc(50% - #{$day-spacing});
@@ -333,7 +334,7 @@ $day-spacing: 20px;
 
     @include mq(desktop) {
         width: calc(25% - #{$day-spacing});
-        height: gs-height(6);
+        // height: gs-height(6);
 
         &.dig-days__day--B,
         &.dig-days__day--M {
@@ -341,11 +342,11 @@ $day-spacing: 20px;
         }
 
         &.dig-days__day--H {
-            height: 420px;
+            // height: 420px;
         }
 
          &.dig-days__day--HV{
-            height:360px;
+            // height:360px;
             margin-bottom:20px;
         }
     }
