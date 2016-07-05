@@ -5,7 +5,7 @@
 
 
 
-var data, sort, selectArr, axisLabels, customScrollTo;  
+var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo;  
 
 var isoArr = [ 
     { premClub:'Arsenal', iso:'ARS'},
@@ -42,7 +42,7 @@ function adjustLayout(n){
 }
 
 
-export default function scattergridFee(a, s, t, rowWidth, scrollFn){
+export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
   var width = rowWidth > 620 ? 620 : rowWidth; //set a maxW
   var height = rowWidth > 620 ? 120 : 60;
 
@@ -50,19 +50,21 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
   
   var margin = { top: 30, right: 60, bottom: 72, left: 60}, width = width - margin.left - margin.right, height = height + margin.top + margin.bottom;
 
-          sort = s;
+          sortOn = s;
+          subSortOn = ss;
+
           data = a;
           var targetDiv = t;
           selectArr = [];
 
             _.each (data, function(item){
-                selectArr.push(item[sort]);
+                selectArr.push(item[sortOn]);
              })
 
           selectArr = _.uniqBy(selectArr).sort().reverse();
 
           var widthUnit = width/selectArr.length;
-          console.log(selectArr.length, targetDiv)
+          console.log(selectArr.length, subSortOn)
           height = 240;
           axisLabels = selectArr; //bale out the axis labels heregetAxisLabels()
 
@@ -72,14 +74,14 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
             _.each(selectArr, function(item,i){
                 var tempObj = {};
-                tempObj[sort] = item;
+                tempObj[sortOn] = item;
                 tempObj.cy = cyPositioner*(selectArr.length-i);
                 tempArr.push(tempObj)
             });
 
           selectArr = tempArr;  
           
-         // addNavList (data,sort); 
+         // addNavList (data,sortOn); 
 
           var x = d3.time.scale().domain([ new Date('2016-06-01'), new Date('2016-08-31') ]).rangeRound([0, width]);
 
@@ -194,7 +196,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
             .data(data)
             .enter()
             .append("circle")
-            .attr("class", function(d) { return d.sell ? "dot sell" : "dot buy"})
+            .attr("class", function(d) { return getDotClass(d)})
             //.attr("class", function(d) { return "dot"})
             .attr("id",function (d,i) { return "dot_"+i; })
             .attr("cx", function (d) { return x(d.date); })
@@ -208,7 +210,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
         function getCircPos(d){
             var t = 1;
               _.each(selectArr, function(item,i){                
-                  if (d[sort] == item[sort]){ t = i };
+                  if (d[sortOn] == item[sortOn]){ t = i };
               })
             return t;  
         }            
@@ -219,13 +221,13 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
             d3.selectAll(".highlight").classed("highlight", false);
 
             _.each(data, function(item,i){
-              if(item[sort] == d[sort]){
+              if(item[sortOn] == d[sortOn]){
                 
-                updateDots(item[sort]);
+                updateDots(item[sortOn]);
 
-                setSelectedIndex(ddEl, item[sort]);
+                setSelectedIndex(ddEl, item[sortOn]);
 
-                ddEl.selected = item[sort];
+                ddEl.selected = item[sortOn];
               }
                 
             })
@@ -233,6 +235,16 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
         //adjustLayout(height)
 } 
+
+function getDotClass(d){
+  var newClass;
+    return d.sell  ? newClass = "dot sell" : newClass = "dot buy";
+    if (d[sortOn] == subSortOn) { console.log("matched ",subSortOn); newClass = newClass+" highlight"; }
+
+  return newClass;
+
+    
+}
 
 function getAxisLabels(a){
   
@@ -263,7 +275,7 @@ function get3Letter(v){
 function updateDots(s){
   d3.selectAll(".highlight").classed("highlight", false);
      _.each(data, function(item,i){
-              if(item[sort] == s){
+              if(item[sortOn] == s){
                 
                 d3.select("#dot_"+i).classed("highlight",true)
               }
@@ -316,9 +328,9 @@ function addDropListener(sel){
 }
 
 function compareObj(a,b) {
-    if (a[sort] < b[sort])
+    if (a[sortOn] < b[sortOn])
       return -1;
-    if (a[sort] > b[sort])
+    if (a[sortOn] > b[sortOn])
       return 1;
     return 0;
 }

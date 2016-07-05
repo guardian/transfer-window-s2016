@@ -87,10 +87,8 @@ function buildDataView(arr, rowWidth){
 
 function addScatterGrids(o, allTransfers, globalSortOn){
     var rowWidth = 920;
-    _.forOwn(o, function(value, key) { 
-        var tgtEl = document.getElementById('scatterGrid_'+stripSpace(key));
-        tgtEl.innerHTML = key+" graph here" ;
-        var scatterGrid = new scattergridFee( allTransfers, globalSortOn, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo);
+    _.forOwn(o, function(value, key) {        
+        var scatterGrid = new scattergridFee( allTransfers, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo);
                     // (a, s, t, rowWidth, scrollFn)
 
     })    
