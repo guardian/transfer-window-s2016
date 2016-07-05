@@ -54,7 +54,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
           data = a;
           var targetDiv = t;
           selectArr = [];
-          
+
             _.each (data, function(item){
                 selectArr.push(item[sort]);
              })
@@ -62,7 +62,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
           selectArr = _.uniqBy(selectArr).sort().reverse();
 
           var widthUnit = width/selectArr.length;
-          console.log(selectArr.length)
+          console.log(selectArr.length, targetDiv)
           height = 240;
           axisLabels = selectArr; //bale out the axis labels heregetAxisLabels()
 
@@ -79,7 +79,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
 
           selectArr = tempArr;  
           
-          addNavList (data,sort); 
+         // addNavList (data,sort); 
 
           var x = d3.time.scale().domain([ new Date('2016-06-01'), new Date('2016-08-31') ]).rangeRound([0, width]);
 
@@ -308,45 +308,6 @@ function addDropDown(data, sortOn){
         addDropListener(sel)
 }
 
-function addNavList(data,sortOn){
-
-        data.sort(compareObj)
-
-        console.log(data)
-    
-        var htmlStr = " ";
-
-        _.each(selectArr, function(item){
-              htmlStr += "<li class='dig-filters__filter'> <a class='dig-filters__filter__link js-filter' href='#' data_section='"+stripSpace(item[sortOn])+"'>";
-              htmlStr += "<span class='dig-filters__filter__link__circle showing-mobile-only' style='color: rgb(149, 28, 85);'>"
-              htmlStr += "<svg class='hp-summary__toggle__icon' xmlns='http://www.w3.org/2000/svg' width='30' height='30'>" 
-              htmlStr += "<path fill='currentColor' d='m 21,15 -5.25,4.5 0,-11.5 -1.5,0 0,11.5 L 9,15 l -0.5,1 5.75,6 1.5,0 5.75,-6 -0.5,-1 0,0 z'></path>" 
-              htmlStr += "</svg></span>"
-              htmlStr += "<span class='dig-filters__filter__link__text'>"+item[sortOn]+"</span>" 
-              htmlStr += "</a></li>"
-        })
-        
-
-        var el = document.getElementById("guNavList").innerHTML = htmlStr;
-         //el.innerHTML()
-
-        //var sel = d3.select(".gv-select");
-
-        //addDropListener(sel)
-        addNavListeners()
-}
-
-function addNavListeners(){
-
-  var navLinks = document.getElementsByClassName("dig-filters__filter__link");
-
-  for (var i = 0; i < navLinks.length; i++) {
-            navLinks[i].addEventListener('click',  function() {
-            updateDots(this.attributes.data_section.value);
-  });
-  }
-  
-}
 
 
 

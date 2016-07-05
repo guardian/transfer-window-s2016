@@ -1,23 +1,25 @@
-export default function clublistPrint(obj) {
+import scattergridFee from './scattergridDate'
+var customScrollTo;
+
+export default function clublistPrint(obj, allTransfers, globalSortOn, scrollFn) {
+
+    customScrollTo = scrollFn;
 
     var el = document.getElementById('gv__clubList');
 
-    
-
-   
 
     var htmlStr = "<div>";
     htmlStr += constructInnerHtml(obj)
     htmlStr += "</div>"
     
 
-    el.innerHTML = htmlStr
+    el.innerHTML = htmlStr;
+
+    addScatterGrids(obj, allTransfers, globalSortOn);
 }
 
 function constructInnerHtml(o){
     var s= "";
-
-    
 
 
     // use _.forOwn to iterate through object
@@ -44,9 +46,9 @@ function constructInnerHtml(o){
 }
 
 function getPlayerList(a, k){
-
-    var buyS = "<div class='dig-slice__inner'><h2 class='player-list__heading'>IN</h2><ul class='player-list'>";
-    var sellS = "<div class='dig-slice__inner'><h2 class='player-list__heading'>OUT</h2><ul class='player-list'>";
+    var graphStr = "<div id='scatterGrid_"+stripSpace(k)+"'></div>"
+    var buyS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'>IN</span></li>";
+    var sellS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'>OUT</span></li>";
 
     _.each(a, function(o){
         
@@ -67,12 +69,30 @@ function getPlayerList(a, k){
         }    
     });
 
-    buyS += "</ul></div>"; sellS += "</ul></div>"; 
+    buyS += "</ul>"; sellS += ""; 
 
-    return buyS + sellS;
+    return "<div class='dig-slice__inner'>"+graphStr+buyS+sellS+"</div>";
 }
 
 function stripSpace(s){
     s = s.split(" ").join("_");
     return s;
+}
+
+function buildDataView(arr, rowWidth){
+     
+
+
+}
+
+function addScatterGrids(o, allTransfers, globalSortOn){
+    var rowWidth = 920;
+    _.forOwn(o, function(value, key) { 
+        var tgtEl = document.getElementById('scatterGrid_'+stripSpace(key));
+        tgtEl.innerHTML = key+" graph here" ;
+        var scatterGrid = new scattergridFee( allTransfers, globalSortOn, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo);
+                    // (a, s, t, rowWidth, scrollFn)
+
+    })    
+
 }

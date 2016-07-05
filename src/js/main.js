@@ -9,7 +9,8 @@ import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost } from '.
 import mainHTML from './text/main.html!text'
 import share from './lib/share'
 // import scatterplot from './lib/scatterplot'
-import scattergridFee from './lib/scattergridDate'
+import navlist from './lib/navList'
+
 import clublistPrint from './lib/clublistPrint'
 
 
@@ -22,12 +23,13 @@ var dataURL = 'https://interactive.guim.co.uk/docsdata/1VW0QYe6WqmvxIQ2MoDUaFIbz
 var allTransfers;
 var starTransfers;
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data, rowWidth;
+var globalSortOn;
 
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
 export function init(el, context, config, mediator) {
 
-    console.log(customScrollTo)
+    globalSortOn = 'premClub'; //initView
 
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
 
@@ -66,9 +68,11 @@ function initData(r){
 
     var clubArr = _.groupBy(allTransfers,'premClub') 
 
-    buildDataView(allTransfers, 940);
+    //buildDataView(allTransfers, 940);
 
-    buildClubView(clubArr) 
+    var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
+
+    buildListView(clubArr,allTransfers, customScrollTo) 
   
 }
 
@@ -82,16 +86,12 @@ function getMonday( date ) {
 }
 
       
-function buildDataView(arr, rowWidth){
-     var scatterGrid = new scattergridFee(arr, 'premClub', 'graphHolder', rowWidth, customScrollTo);
 
 
-}
-
-function buildClubView(obj){
+function buildListView(obj,allTransfers){
  
     console.log(obj)
-    var clublist = new clublistPrint(obj);
+    var listview = new clublistPrint(obj, allTransfers, globalSortOn);
 
 }
 
