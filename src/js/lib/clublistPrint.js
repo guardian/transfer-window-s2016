@@ -45,14 +45,14 @@ function constructInnerHtml(o){
 
 function getPlayerList(a, k){
 
-    var buyS = "<div class='dig-slice__inner'><h2 class='dig-section-title-sub'>Bought</h2><ul class='dig-days'>";
-    var sellS = "<div class='dig-slice__inner'><h2 class='dig-section-title-sub'>Sold</h2><ul class='dig-days'>";
+    var buyS = "<div class='dig-slice__inner'><h2 class='player-list__heading'>IN</h2><ul class='player-list'>";
+    var sellS = "<div class='dig-slice__inner'><h2 class='player-list__heading'>OUT</h2><ul class='player-list'>";
 
     _.each(a, function(o){
         
         if(o.buy && !o.sell){
             // buyS += "<span>";
-            buyS += "<li class='dig-days__day'>"; //style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
+            buyS += "<li class='player-list__item'>"; //style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
             buyS += o.playername +", ";
             buyS += o.price;
             buyS += "</li>" 
@@ -60,7 +60,7 @@ function getPlayerList(a, k){
 
         if(o.sell && !o.buy){
             // sellS += "<span>";
-            sellS += "<li class='dig-days__day'>"; // style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
+            sellS += "<li class='player-list__item'>"; // style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
             sellS += o.playername +", ";
             sellS += o.price;
             sellS += "</li>" 

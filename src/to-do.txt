@@ -7,3 +7,5 @@
 
 • Background image for head area
 
+• Use 620 width throughout - bought and sold lists too wide
+

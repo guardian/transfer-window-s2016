@@ -54,7 +54,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
           data = a;
           var targetDiv = t;
           selectArr = [];
-
+          
             _.each (data, function(item){
                 selectArr.push(item[sort]);
              })
@@ -144,8 +144,6 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
               .attr('stroke','#bebebe')
               .attr('marker-start','url(#markerArrowTop)')
 
-
-
             strikerateLabel.append('circle')
               .attr('r',5)
               .attr('cy',40)
@@ -233,7 +231,7 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
             })
         } 
 
-        adjustLayout(height)
+        //adjustLayout(height)
 } 
 
 function getAxisLabels(a){
@@ -292,12 +290,12 @@ function setSelectedIndex(s, v) {
     }
 }
 
-function addDropDown(data,sort){
+function addDropDown(data, sortOn){
         data.sort(compareObj)
         var htmlStr = "<div class='chart__dropdown-container'><div class='styled-select'><select class='gv-select'>";
 
         _.each(selectArr, function(item){
-              htmlStr += "<option value='"+item[sort]+"'>"+item[sort]+"</option>"
+              htmlStr += "<option value='"+item[sortOn]+"'>"+item[sortOn]+"</option>"
         })
         htmlStr+='</select></div></div>'
 
@@ -310,9 +308,7 @@ function addDropDown(data,sort){
         addDropListener(sel)
 }
 
-function addNavList(data,sort){
-
-
+function addNavList(data,sortOn){
 
         data.sort(compareObj)
 
@@ -321,12 +317,12 @@ function addNavList(data,sort){
         var htmlStr = " ";
 
         _.each(selectArr, function(item){
-              htmlStr += "<li class='dig-filters__filter'> <a class='dig-filters__filter__link js-filter' href='#' data_section='"+stripSpace(item[sort])+"'>";
+              htmlStr += "<li class='dig-filters__filter'> <a class='dig-filters__filter__link js-filter' href='#' data_section='"+stripSpace(item[sortOn])+"'>";
               htmlStr += "<span class='dig-filters__filter__link__circle showing-mobile-only' style='color: rgb(149, 28, 85);'>"
               htmlStr += "<svg class='hp-summary__toggle__icon' xmlns='http://www.w3.org/2000/svg' width='30' height='30'>" 
               htmlStr += "<path fill='currentColor' d='m 21,15 -5.25,4.5 0,-11.5 -1.5,0 0,11.5 L 9,15 l -0.5,1 5.75,6 1.5,0 5.75,-6 -0.5,-1 0,0 z'></path>" 
               htmlStr += "</svg></span>"
-              htmlStr += "<span class='dig-filters__filter__link__text'>"+item[sort]+"</span>" 
+              htmlStr += "<span class='dig-filters__filter__link__text'>"+item[sortOn]+"</span>" 
               htmlStr += "</a></li>"
         })
         
@@ -341,7 +337,6 @@ function addNavList(data,sort){
 }
 
 function addNavListeners(){
-  // listEntry_Norwich_City
 
   var navLinks = document.getElementsByClassName("dig-filters__filter__link");
 

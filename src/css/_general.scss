@@ -237,6 +237,27 @@ a {
 
 $day-spacing: 20px;
 
+.player-list__heading{
+    @include fs-textSans(3);
+    color:$neutral-1;
+    margin:0;
+    padding:0;
+}
+
+.player-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+
+.player-list__item{
+    @include fs-textSans(3);
+    color:$neutral-2;
+    width: auto;
+    display:inline;
+    padding-right: $day-spacing/2;
+}
+
 .dig-filters,
 .dig-days {
     list-style: none;
@@ -246,7 +267,7 @@ $day-spacing: 20px;
 
 .dig-days {
     margin-right: -$day-spacing;
-    max-width: 960px;
+    max-width: 620px;
 }
 
 .dig-filters__filter {
