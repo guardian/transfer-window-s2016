@@ -235,7 +235,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
           var strikerateLabel = svg.append('g')
               .attr('class','strikerate-label')
-              .attr("transform", "translate( -35 , 0 )");
+              .attr("transform", "translate( "+((0-margin.left)+6)+" , 0 )");
 
             var strikeText = strikerateLabel.append('text')
               .attr('class','strikerate-label')

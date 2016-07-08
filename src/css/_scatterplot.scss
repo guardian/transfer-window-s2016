@@ -147,6 +147,15 @@ rect.parent,
 }
 
 .scatter-grid-holder{
-  margin-top:$gs-gutter;
+        margin-top:$gs-gutter;
+        margin-bottom: gs-height(1);
+  @include mq(mobileLandscape) {
+        
+        
+    }      
+  @include mq(leftCol) {
+        margin-bottom: gs-height(2);
+        
+    }
 }
 

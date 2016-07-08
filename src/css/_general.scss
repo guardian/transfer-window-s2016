@@ -72,7 +72,7 @@ a {
     @include mq(leftCol) {
         box-sizing: border-box;
         padding-right: $gs-gutter;
-        width: 140px;
+        width: 160px;
         float: left;
     }
 
@@ -226,7 +226,7 @@ a {
     counter-reset: day;
 
     .dig-slice__inner {
-        // border-bottom: 1px solid #333;
+        border-bottom: 1px solid #EFEFEF;
         padding-bottom: 0;
     }
 
@@ -256,6 +256,9 @@ $day-spacing: 20px;
     width: auto;
     display:inline;
     padding-right: $day-spacing/2;
+     -webkit-column-break-inside: avoid;
+        page-break-inside: avoid;
+        break-inside: avoid;
 }
 
 .dig-filters,

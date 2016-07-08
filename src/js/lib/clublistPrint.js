@@ -107,7 +107,7 @@ function getPlayerList(a, k){
 
     buyS += "</ul>"; sellS += ""; 
 
-    return "<div class='dig-slice__inner'>"+graphStr+buyS+sellS+"</div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div>";
+    return "<div style='margin-top:20px'>"+graphStr+buyS+sellS+"</div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div>";
 }
 
 function stripSpace(s){
