@@ -100,21 +100,42 @@ rect.parent,
 
 .dot {
   cursor: pointer;
-  fill: rgba($neutral-4,.6);
+  shape-rendering: auto;
 }
 
 .sell{
-     fill: rgba($sell-color, .75);
-  }  
+  
+     // fill: rgba($neutral-5, .15);
+}  
 
 .buy{
-     fill: rgba($buy-color, .4);
-  }
+      //fill:$neutral-8;
+     // fill: rgba($neutral-5, .15);
+}
 
-.highlight{
-    fill: rgba($light-blue, .5);
-    transition: fill .3s ease-out;
- } 
+// .highlight{
+//     fill: $features-main-2;
+//     stroke: $features-main-2;
+//     // transition: fill .3s ease-out;
+//  } 
+.buy{
+  fill: rgba(#DDD,0.3);
+}  
+
+.sell{
+  fill: rgba(#AAA,0.3); 
+}
+
+.buy-hl{
+    fill: rgba(#FFBB00,0.8);
+}
+
+.sell-hl{
+  fill:rgba(#333333,0.8); 
+} 
+
+
+
 
 .chart__dropdown-container{
   width:100%;
@@ -123,5 +144,9 @@ rect.parent,
 .chart__dropdown{
   width:400px;
   height:36px;
+}
+
+.scatter-grid-holder{
+  margin-top:$gs-gutter;
 }
 

@@ -1,0 +1,214 @@
+to,playerName,from,fee,inout
+
+ARSENAL,Granit Xhaka,Borussia Monchengladbach,£35m,IN
+ARSENAL,Mikel Arteta,,released,OUT
+ARSENAL,Tomas Rosicky,,released,OUT
+ARSENAL,Mathieu Flamini,,released,OUT
+
+ 
+
+
+BOURNEMOUTH,Lys Mousset,Le Havre,£5.4m,IN
+BOURNEMOUTH,Emerson Hyndman,Fulham,compensation,IN
+BOURNEMOUTH,Nathan Ake,Chelsea,loan,IN 
+
+BOURNEMOUTH,Matt Ritchie,Newcastle United,£12m,OUT
+BOURNEMOUTH,Tommy Elphick,Aston Villa,£3.6m,OUT  
+BOURNEMOUTH,Lee Tomlin,Bristol City,£2.75m,OUT 
+BOURNEMOUTH,Sylvain Distin,,released,OUT
+BOURNEMOUTH,Stephane Zubar,,released,OUT
+BOURNEMOUTH,Josh Carmichael,,released,OUT
+BOURNEMOUTH,Josh Wakefield,,released,OUT 
+BOURNEMOUTH,Glenn Murray,Brighton & Hove Albion,loan,OUT  
+
+
+
+BURNLEY,Joey Barton,Rangers, free,OUT 
+BURNLEY,Matt Gilks,Rangers, free,OUT
+BURNLEY,Matt Taylor,,released,OUT
+BURNLEY,Lloyd Dyer,,released,OUT
+BURNLEY,Michael Duff,,retired,OUT
+
+ 
+ 
+
+CHELSEA,Michy Batshuayi,Marseille,£33m,IN 
+CHELSEA,Nathan Ake,Bournemouth,loan,OUT
+
+ 
+ 
+ 
+CRYSTAL PALACE,Andros Townsend,Newcastle United,£13m,IN
+CRYSTAL PALACE,James Tomkins,West Ham United,£10m,IN 
+CRYSTAL PALACE,Steve Mandanda,Marseille £1.5m,IN 
+
+CRYSTAL PALACE,Dwight Gayle,Newcastle United,£10m,OUT
+CRYSTAL PALACE,Emmanuel Adebayor,,released,OUT
+CRYSTAL PALACE,Marouane Chamakh,,released,OUT
+CRYSTAL PALACE,Brede Hangeland,,released,OUT
+CRYSTAL PALACE,Adrian Mariappa,,released,OUT
+CRYSTAL PALACE,Paddy McCarthy,,released,OUT
+
+ 
+ 
+
+EVERTON,Maarten Stekelenburg,Fulham,undisclosed,IN 
+
+EVERTON,Tony Hibbert,,released,OUT
+EVERTON,Leon Osman,,released,OUT
+EVERTON,Steven Pienaar,,released,OUT
+ 
+
+ 
+ 
+
+HULL CITY,Will Mannion,AFC Wimbledon,compensation,IN  
+
+HULL CITY,Sone Aluko,,released,OUT
+HULL CITY,Ryan Taylor,,released,OUT
+
+
+ 
+
+LEICESTER CITY,Nampalys Mendy,Nice,£13m,IN 
+LEICESTER CITY,Ron-Robert Zieler,Hannover 69,undisclosed,IN 
+LEICESTER CITY,Luis Hernandez,Sporting Gijon,undisclosed,IN 
+LEICESTER CITY,Raul Uche Rubio,Rayo Vallecano,undisclosed,IN 
+
+LEICESTER CITY,Andrej Kramaric,Hoffenheim,undisclosed,OUT
+LEICESTER CITY,Ryan Watson,Barnet, free,OUT
+LEICESTER CITY,Dean Hammond,,released,OUT
+LEICESTER CITY,Paul Koncheskey,,released,OUT
+LEICESTER CITY,Harry Panayiotou,,released,OUT
+LEICESTER CITY,Mark Schwarzer,,released,OUT
+
+ 
+ 
+ 
+LIVERPOOL,Sadio Mane,Southampton,£30m,IN  
+LIVERPOOL,Loris Karius,Mainz,£4.7m,IN  
+LIVERPOOL,Joel Matip,Schalke, free,IN 
+ 
+LIVERPOOL,Jerome Sinclair,Watford,£4m,OUT
+LIVERPOOL,Lawrence Vigouroux,Swindon Town,£400,000),OUT  
+LIVERPOOL,Jordan Rossiter,Rangers,£250,000),OUT
+LIVERPOOL,Jose Enrique,,released,OUT
+LIVERPOOL,Kolo Toure,,released,OUT
+LIVERPOOL,Samed Yesil,,released,OUT
+ 
+ 
+ 
+
+MANCHESTER CITY,Ilkay Gundogan,Borussia Dortmund,£21m,IN 
+MANCHESTER CITY,Nolito,Celta Vigo £14m,IN  
+MANCHESTER CITY,Oleksandr Zinchenko,Ufa,undisclosed,IN 
+MANCHESTER CITY,Aaron Mooy,Melbourne City, swap deal),IN  
+
+MANCHESTER CITY,Aaron Mooy,Huddersfield,loan,OUT 
+MANCHESTER CITY,Martin Demichelis,,released,OUT
+MANCHESTER CITY,Richard Wright,,retired,OUT 
+
+ 
+ 
+
+MANCHESTER UNITED,Eric Bailly,Villarreal,£30m,IN 
+MANCHESTER UNITED,Henrikh Mkhitaryan,Borussia Dortmund,£26m,IN 
+MANCHESTER UNITED,Zlatan Ibrahimovic,Paris Saint-Germain, free,IN 
+
+MANCHESTER UNITED,Nick Powell,,released,OUT
+MANCHESTER UNITED,Victor Valdes,,released,OUT 
+ 
+
+
+MIDDLESBROUGH,Marten De Roon,Atalanta,£12m,IN 
+MIDDLESBROUGH,Viktor Fischer,Ajax,£3.8m,IN 
+MIDDLESBROUGH,Bernardo Espinosa,Sporting Gijon, free,IN  
+MIDDLESBROUGH,Jordan McGhee,Hearts,loan,IN 
+
+MIDDLESBROUGH,Rhys Williams,Perth Glory, free,OUT
+MIDDLESBROUGH,Jordan Jones,Kilmarnock, free,OUT 
+MIDDLESBROUGH,Jonathan Woodgate,,released,OUT
+MIDDLESBROUGH,Damia Abella,,released,OUT 
+
+ 
+
+
+SOUTHAMPTON,Nathan Redmond,Norwich City,£11m,IN  
+
+SOUTHAMPTON,Sadio Mane,Liverpool,£30m)
+SOUTHAMPTON,Victor Wanyama,Tottenham Hotspur,£11m) 
+SOUTHAMPTON,Gaston Ramirez,released)
+SOUTHAMPTON,Kelvin Davis,retired)
+SOUTHAMPTON,Jason McCarthy,Walsall, loan)
+ 
+
+
+STOKE CITY,Steve Sidwell,Brighton, free,OUT 
+STOKE CITY,Peter Odemwingie,,released,OUT 
+
+ 
+ 
+
+ 
+SUNDERLAND,Danny Graham,Blackburn Rovers, free,OUT 
+SUNDERLAND,Steven Fletcher,Sheffield Wednesday, free,OUT 
+SUNDERLAND,Wes Brown,,released,OUT
+SUNDERLAND,Steve Harper,,released,OUT
+SUNDERLAND,Mikael Mandron,,released,OUT
+SUNDERLAND,Liam Agnew,,released,OUT 
+
+ 
+ 
+
+SWANSEA CITY,Leroy Fer,QPR,£3.5m,IN 
+SWANSEA CITY,Mike van der Hoorn,Ajax,£2m,IN 
+
+SWANSEA CITY,Alberto Paloschi,Atalanta,£6m,OUT 
+SWANSEA CITY,Eder,Lille,£4m,OUT
+SWANSEA CITY,Daniel Alfei,,released,OUT
+SWANSEA CITY,Lee Lucas,,released,OUT 
+SWANSEA CITY,Kyle Bartley,Leeds United,loan,OUT 
+SWANSEA CITY,Liam Shephard,Yeovil Town,loan,OUT 
+
+ 
+  
+
+TOTTENHAM HOTSPUR,Victor Wanyama,Southampton,£11m,IN    
+
+ 
+
+
+WATFORD,Isaac Success,Granada,£12m,IN  
+WATFORD,Christian Kabasele,Racing Genk,£5.8m,IN 
+WATFORD,Jerome Sinclair,Liverpool,£4m,IN  
+
+WATFORD,Gabriele Angella,Udinese,undisclosed,OUT 
+WATFORD,Jurado,Espanyol,undisclosed,OUT 
+WATFORD,Joel Ekstrand,,released,OUT 
+WATFORD,George Byers,,released,OUT
+WATFORD,Josh Doherty,,released,OUT
+
+
+ 
+ 
+
+WEST BROMWICH ALBION,Matty Phillips,QPR,£5.5m,IN 
+
+WEST BROMWICH ALBION,Anders Lindegaard,Preston North End, free,OUT 
+WEST BROMWICH ALBION,Victor Anichebe,,released,OUT
+WEST BROMWICH ALBION,Stephane Sessegnon,,released,OUT 
+
+ 
+ 
+
+WEST HAM UNITED,Toni Martinez,Valencia,£2.4m,IN 
+WEST HAM UNITED,Sofiane Feghouli,Valencia, free,IN  
+WEST HAM UNITED,Havard Nordtveit,Borussia Monchengladbach, free,IN  
+
+WEST HAM UNITED,James Tomkins,Crystal Palace,£10m,OUT 
+WEST HAM UNITED,Elliot Lee,Barnsley, free,OUT
+WEST HAM UNITED,Joey O'Brien,,released,OUT 
+WEST HAM UNITED,Jordan Brown,,released,OUT
+WEST HAM UNITED,Leo Chambers,,released,OUT
+WEST HAM UNITED,Stephen Hendrie,Blackburn Rovers,loan,OUT 
+WEST HAM UNITED,Kyle Knoyle,Wigan Athletic,loan,OUT 

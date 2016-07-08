@@ -1,6 +1,29 @@
 import scattergridFee from './scattergridDate'
 var customScrollTo;
 
+var isoArr = [ 
+    { premClub:'Arsenal', iso:'ARS', badgeRef:'1006'}, 
+    { premClub:'Bournemouth', iso:'BOU', badgeRef:'23'},
+    { premClub:'Burnley', iso:'BUR', badgeRef:'70'}, 
+    { premClub:'Chelsea', iso:'CHE', badgeRef:'4'}, 
+    { premClub:'Crystal Palace', iso:'CRY', badgeRef:'5'}, 
+    { premClub:'Everton', iso:'EVE', badgeRef:'8'}, 
+    { premClub:'Hull City', iso:'HUL', badgeRef:'26'}, 
+    { premClub:'Leicester City', iso:'LEI', badgeRef:'29'}, 
+    { premClub:'Liverpool', iso:'LIV', badgeRef:'9'}, 
+    { premClub:'Manchester City', iso:'MCY', badgeRef:'11'}, 
+    { premClub:'Manchester United', iso:'MUN', badgeRef:'12'}, 
+    { premClub:'Middlesbrough', iso:'MID', badgeRef:'30'}, 
+    { premClub:'Southampton', iso:'SOU', badgeRef:'18'}, 
+    { premClub:'Stoke City', iso:'STK', badgeRef:'38'}, 
+    { premClub:'Sunderland', iso:'SUN', badgeRef:'39'}, 
+    { premClub:'Swansea City', iso:'SWA', badgeRef:'65'}, 
+    { premClub:'Tottenham Hotspur', iso:'TOT', badgeRef:'19'},
+    { premClub:'Watford', iso:'WAT', badgeRef:'41'},  
+    { premClub:'West Bromwich Albion', iso:'WBA', badgeRef:'42'}, 
+    { premClub:'West Ham United', iso:'WHU', badgeRef:'43'}
+];
+
 export default function clublistPrint(obj, allTransfers, globalSortOn, scrollFn) {
 
     customScrollTo = scrollFn;
@@ -29,8 +52,9 @@ function constructInnerHtml(o){
         s+="<div class='dig-slice__inner'>"
         s+="<div class='dig-slice__inner__left'>"
         s+="<h2 class='dig-section-title-sub'>"+key+"</h2>"
-        s+="<a class='dig-back-to-top js-back-to-top' href='#'><span><svg height='14' width='15' xmlns='http://www.w3.org/2000/svg'>"
-        s+="<path d='M0.5,7 L5.75,2.5 L5.75,14 L7.25,14 L7.25,2.5 L12.5,7 L13,6 L7.25,0 L5.75,6e-17 L0,6 L0.5,7 L0.5,7 Z' fill='#333'></path></svg></span> <span>Back to top</span></a>"
+        s+="<img src='https://sport.guim.co.uk/football/crests/120/"+getBadgeRef(key)+".png' width='auto' height='60px'>"
+        s+="<br/><a class='dig-back-to-top js-back-to-top' href='#'><span><svg height='14' width='15' xmlns='http://www.w3.org/2000/svg'>"
+        s+="<path d='M0.5,7 L5.75,2.5 L5.75,14 L7.25,14 L7.25,2.5 L12.5,7 L13,6 L7.25,0 L5.75,6e-17 L0,6 L0.5,7 L0.5,7 Z' fill='#333'></path></svg></span><span>Back to top</span></a>"
         s+="</div>"
         s+="<div class='dig-slice__inner__main'>"
             s += getPlayerList(value, key);        
@@ -41,14 +65,26 @@ function constructInnerHtml(o){
      } );
 
      return s;
+
+     function getBadgeRef(k){
+        var s = "";
+
+        _.each(isoArr, function(o){
+            if(o.premClub==k){ s=o.badgeRef }
+        })
+
+        return s;
+     }
  
 
 }
 
+
+
 function getPlayerList(a, k){
-    var graphStr = "<div id='scatterGrid_"+stripSpace(k)+"'></div>"
-    var buyS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'>IN</span></li>";
-    var sellS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'>OUT</span></li>";
+    var graphStr = " "
+    var buyS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading' style='font-weight:600'>IN:</span></li>";
+    var sellS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>OUT:</span></li>";
 
     _.each(a, function(o){
         
@@ -57,7 +93,7 @@ function getPlayerList(a, k){
             buyS += "<li class='player-list__item'>"; //style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
             buyS += o.playername +", ";
             buyS += o.price;
-            buyS += "</li>" 
+            buyS += ";</li>" 
         }
 
         if(o.sell && !o.buy){
@@ -65,13 +101,13 @@ function getPlayerList(a, k){
             sellS += "<li class='player-list__item'>"; // style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
             sellS += o.playername +", ";
             sellS += o.price;
-            sellS += "</li>" 
+            sellS += ";</li>" 
         }    
     });
 
     buyS += "</ul>"; sellS += ""; 
 
-    return "<div class='dig-slice__inner'>"+graphStr+buyS+sellS+"</div>";
+    return "<div class='dig-slice__inner'>"+graphStr+buyS+sellS+"</div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div>";
 }
 
 function stripSpace(s){

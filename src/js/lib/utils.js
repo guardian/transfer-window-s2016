@@ -3,6 +3,7 @@ import lodash from 'lodash'
 var _ = lodash;
 
 	export function checkForNumber(numIn){
+		if(_.startsWith(numIn, '£')) { numIn.replace (/£|m/gi,''); console.log(numIn); numIn = numIn*1000000;  }
 	    isNaN(numIn) ? numIn = 0 : numIn = numIn;
 	    numIn = Number(numIn);
 	    return numIn;
@@ -10,6 +11,9 @@ var _ = lodash;
 
 
 	export function getDisplayCost(n){
+		
+
+
 	    isNaN(n) ? n = 0 : n = n;
 	    n = Number(n);
 	    n = n/1000000;

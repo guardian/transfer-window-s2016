@@ -19,9 +19,9 @@ var _ = lodash;
 var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
 
 //define globals
-var dataURL = 'https://interactive.guim.co.uk/docsdata/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json'
+var dataURL = 'https://interactive.guim.co.uk/docsdata/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json' 
 var allTransfers;
-var starTransfers;
+
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data, rowWidth;
 var globalSortOn;
 
@@ -49,22 +49,34 @@ function randomDate(start, end) {
 
 function initData(r){
     
-    allTransfers = r.sheets.Data;
-    starTransfers = r.sheets.Star_Men;
-    starTransfers = _.filter(starTransfers, function(o) { return o.topbuy=="y"; });
+    allTransfers = r.sheets.rawData;
+    console.log(r.sheets)
 
     
-        _.each(allTransfers, function(item){                
-                item.ageGroup = getAgeGroup(item);                
+        _.each(allTransfers, function(item, i){  
+                
+
+
+                item.d3Date = getD3Date(item.date);
+                console.log(item.d3Date);
+                item.cost = checkForNumber(item.price);              
+                item.ageGroup = getAgeGroup(item);   
+
                 if(item.newleague == "Premier League (England)"){ item.buy=true; item.premClub = item.to; }
                 if(item.previousleague == "Premier League (England)"){ item.sell=true; item.premClub = item.from;}
-
-                item.cost = checkForNumber(item.price);
+                item.ind = i;
+                
                 item.displayCost = getDisplayCost(item.price);
-                item.date = randomDate(new Date(2016, 5, 1), new Date(2016, 8, 1));
+                item.rDate = randomDate(new Date(2016, 5, 1), new Date(2016, 8, 1));
                 item.value = checkForNumber(item.price)+1000000;
 
         }) 
+
+    allTransfers.sort(function(a, b){
+        if(a[globalSortOn] < b[globalSortOn]) return -1;
+        if(a[globalSortOn] > b[globalSortOn]) return 1;
+        return 0;
+    })    
 
     var clubArr = _.groupBy(allTransfers,'premClub') 
 
@@ -76,6 +88,14 @@ function initData(r){
   
 }
 
+function getD3Date(d){
+    var a = d.split("/");
+
+
+    return(new Date(a[2],a[1],a[0]))
+
+
+}
 
 
 function getMonday( date ) {
