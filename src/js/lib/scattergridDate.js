@@ -4,7 +4,6 @@
  */
 
 
-
 var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo;  
 
 
@@ -20,8 +19,9 @@ function adjustLayout(n){
 
 
 export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
+  
   var width = rowWidth > 620 ? 620 : 300; //set a maxW
-  var height = rowWidth > 620 ? 120 : 120;
+  var height = rowWidth > 620 ? 320 : 320;
 
   customScrollTo = scrollFn;
   
@@ -57,25 +57,13 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
           selectArr = tempArr;  
           
-         // addNavList (data,sortOn); 
+          var minDisplayCost = d3.min(data, function (d) { return d.displayCost; });
 
-
-          // var minDate = d3.min(data, function (d) { return d.d3Date; });
-          // var maxDate = d3.max(data, function (d) { return d.d3Date; });
-
-          // console.log(minXDate, maxDate)
+          var maxDisplayCost = d3.max(data, function (d) { return d.displayCost; });
 
           var x = d3.time.scale().domain([ new Date('2016-06-15'), new Date('2016-08-31') ]).rangeRound([0, width]);
 
-          
-
-    //       var x = d3.scale.log()
-    // .domain([.0124123, 1230.4])
-    // .range([0, width]);
-
-          var y = d3.scale.linear().domain([d3.min(data, function (d) { return d.displayCost; }), d3.max(data, function (d) { return d.displayCost; })]).range([height, 0]);
-
-          var color = d3.scale.category10();
+          var y = d3.scale.linear().domain([minDisplayCost,maxDisplayCost]).range([height, 0]);
 
           var xAxis = d3.svg.axis().scale(x).ticks(d3.time.months).tickSize(30, 0, 0).orient("bottom");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])
 
@@ -84,45 +72,20 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
           var svg = d3.select('#'+targetDiv).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom)
               .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
 
-            svg.append("g")
-                // .attr("class", "x axis")
-                // .attr("transform", "translate(-1," + height + ")")
-                // .call(xAxis)
-             // .selectAll("text")
-             //    .attr("x", 0 )
-             //    .attr("y", 0 )
-                // .attr("transform", "rotate(90)")
-                //.style("text-anchor", "start")
-              //   .attr("class", "label")
-              //   .attr("x", width)
-              //   .attr("y", -6)
-              //   
-              //   .text("Date");
 
-            // svg.append("g")
-            //     .attr("class", "y axis")
+        svg.append("g")
+          .attr("class", "non-highlight-circles"); 
 
-               
+        svg.append("g")
+          .attr("class", "highlight-circles"); 
 
+          var colorScaleSell = d3.scale.linear().domain([1,maxDisplayCost])
+              .interpolate(d3.interpolateHcl).range([d3.rgb("#000232"), d3.rgb('#005689')]);
 
-            // <g class="strikerate-label" transform="translate(62,72)">
-            // <text class="strikerate-label" dx="10" dy="-5">
-            // <tspan>More goals</tspan>
-            // <tspan x="10" dy="14">per game</tspan></text>
-            // <line x1="0.5" x2="0.5" y1="-10" y2="15" stroke="#bebebe" marker-start="url(#markerArrowTop)"></line>
-            // <circle r="5" cy="40" stroke="#bebebe" fill="transparent"></circle>
-            // <text class="strikerate-label" dx="10" dy="44">
-            // <tspan>Amount of goals</tspan></text>
-            // </g>
+          var colorScaleBuy = d3.scale.linear().domain([1,maxDisplayCost])
+              .interpolate(d3.interpolateHcl).range([d3.rgb('#4bc6df'), d3.rgb("#a5e2ef")]); 
 
-
-                //.call(yAxis)
-              // .append("text")
-              //   .attr("class", "label")
-              //   .attr("y", -18)
-              //   .attr("x", width + 18)
-              //   .attr("dy", ".71em")
-              //   .style("text-anchor", "start");
+          var sellNeutral = '#666'; var buyNeutral = '#AAA'      
 
             svg.append("text")
               .attr("class", "loading")
@@ -130,50 +93,52 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
               .attr("x", function () { return width/2; })
               .attr("y", function () { return height/2-5; }); 
 
-              
 
-        
         // add circles
 
         var max_r = d3.max(data.map(function (d) { return d.value; }));
-        var r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([6, 30]);
+        var r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([5, 24]);
 
         svg.selectAll(".loading").remove();
 
-        svg.append("g")
-          .attr("class", "non-highlight-circles"); 
-
-        svg.append("g")
-          .attr("class", "highlight-circles");  
-        
 
         d3.select('#'+targetDiv+' .non-highlight-circles')
           .selectAll('circle')
           .data(data.filter(function(d, i){ return d[sortOn]!= subSortOn; })) // condition here
           .enter().append("circle")
-          .attr("class", function(d) { return getDotClass(d) })
+          .style("fill", function(d){ return getFill(d) })
+          // .attr("class", function(d) { return getDotClass(d) })
           
           .attr("id",function (d) { return "dot_"+d.ind; })
           .attr("cx", function (d) { return x(d.d3Date); })
           .attr("cy", function(d) { return y(d.displayCost); })
           
-          .attr("r", function (d) { return r(d.value); })
-          .on("click", function(d,i){ dotClick(d,d.ind) });
-          // .attr("cy", height)
-          // .transition().duration(1000).attr("cy", function(d) { return y(d.displayCost); }) 
+          .attr("r", function (d) { return r(d.value); });
+          
+
+
+          // add glass to obscure non-higlighted circles
+        var screenRect = d3.select('#'+targetDiv+' .non-highlight-circles').append("rect")
+            .attr("x", (0-margin.left))
+            .attr("y", (0-margin.top))
+            .attr("width", width+margin.left+margin.right)
+            .attr("height", height+margin.top+margin.bottom)
+            .style("fill","#FFF")
+            .style("fill-opacity","0.9");
 
 
         d3.select('#'+targetDiv+' .highlight-circles')
           .selectAll('circle')
           .data(data.filter(function(d, i){ return d[sortOn]== subSortOn; })) // condition here
           .enter().append("circle")
-          .attr("class", function(d) { return getDotClass(d) })
+          .style("fill", function(d){ return getFill(d) })
+          .style("cursor","pointer")
           
           .attr("id",function (d) { return "dot_"+d.ind; })
           .attr("cx", function (d) { return x(d.d3Date); })
           .attr("cy", function(d) { return y(d.displayCost);} )
           .attr("r", function (d) { return r(d.value); })
-          .on("click", function(d,i){ dotClick(d,d.ind) });
+          .on("click", function(d,e){  dotClick(d,event) });
           // .attr("cy", height)
           // .transition().duration(1000).attr("cy", function(d) { return y(d.displayCost); })   
 
@@ -270,7 +235,26 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
               .attr('dy',44)
 
             circleText.append('tspan')
-              .text('Cost of player')  
+              .text('Cost of player');  
+
+            var tooltipContainer= svg.append('g')
+              .attr("id", function(){ var a = targetDiv.split; return "tt_"+a[1] })
+              .attr('class','strikerate-label')
+
+            var tipBG = tooltipContainer.append('rect')
+                .attr('x',0)
+                .attr('y',0)
+                .attr('width',90)
+                .attr('height',60)
+                .attr('fill','#EFEFEF')
+
+
+            var titleText = tooltipContainer.append('text')
+              .attr('class','strikerate-label')
+              .attr('dx',10)
+              .attr('dy',20)
+              .text('Title here')
+              
 
         function getCircPos(d){
             var t = 1;
@@ -280,28 +264,46 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
             return t;  
         }            
 
-        function dotClick(d,i){
+        function dotClick(d,e){
+            titleText.text(d.playername)
+            
+            tooltipContainer.attr("transform", "translate( "+ ((e.target.cx.animVal.value )+(e.target["r"].animVal.value * 2)) +" , "+ e.target.cy.animVal.value +" )");
+            // var ddEl = document.getElementsByClassName('gv-select');
+            // d3.selectAll(".highlight").classed("highlight", false);
 
-            var ddEl = document.getElementsByClassName('gv-select');
-            d3.selectAll(".highlight").classed("highlight", false);
-
-            _.each(data, function(item,i){
-              if(item[sortOn] == d[sortOn]){
-                updateDots(item[sortOn]);
-                setSelectedIndex(ddEl, item[sortOn]);
-                ddEl.selected = item[sortOn];
-              }
+            // _.each(data, function(item,i){
+            //   if(item[sortOn] == d[sortOn]){
+            //     ;
+            //     setSelectedIndex(ddEl, item[sortOn]);
+            //     ddEl.selected = item[sortOn];
+            //   }
                 
-            })
+            // })
         } 
+
+        function getFill(d){
+          var c;
+          if (d.sell && d.displayCost<1){  c = sellNeutral  } 
+          if (d.buy && d.displayCost<1){  c = buyNeutral  }
+          if (d.sell && d.displayCost>0){  c = colorScaleSell(d.displayCost)  } 
+          if (d.buy && d.displayCost>0){  c = colorScaleBuy(d.displayCost)  }
+
+
+          return c;  
+        }
 
         //adjustLayout(height)
 } 
 
 function getDotClass(d){
+
   var newClass;
-    if (d.sell){  newClass = "dot sell"  } 
-    if (d.buy){  newClass = "dot buy";  }
+
+    if (d.sell && d.displayCost<1){  newClass = "dot sell-noFee"  } 
+    if (d.buy && d.displayCost<1){  newClass = "dot buy-noFee";  }
+    if (d.sell && d.displayCost>0){  newClass = "dot sell"  } 
+    if (d.buy && d.displayCost>0){  newClass = "dot buy";  }
+
     if (d[sortOn] == subSortOn) {  newClass = newClass+"-hl"; }
 
   return newClass;  
@@ -334,6 +336,8 @@ function get3Letter(v){
 }
 
 function updateDots(s){
+
+
   d3.selectAll(".highlight").classed("highlight", false);
      _.each(data, function(item,i){
               if(item[sortOn] == s){

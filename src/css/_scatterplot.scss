@@ -40,37 +40,8 @@ text {
   font-weight: lighter;
 }
 
-rect {
-  fill: none;
-  stroke: #fff;
-}
 
-rect.parent,
-.grandparent rect {
-  stroke-width: 2px;
-}
 
-.grandparent rect {
-  fill: white;
-}
-
-.grandparent:hover rect {
-  fill: white;
-}
-
-.children rect.parent,
-.grandparent rect {
-  cursor: pointer;
-}
-
-.children rect.parent {
-  fill: #bbb;
-  fill-opacity: .5;
-}
-
-.children:hover rect.child {
-  fill: #bbb;
-}
 
 .textdiv { /* text in the boxes */
   @include fs-data(3);
@@ -118,21 +89,71 @@ rect.parent,
 //     stroke: $features-main-2;
 //     // transition: fill .3s ease-out;
 //  } 
+
+$buy-color:#c05303;
+$sell-color:#005689;
+
+$buy-color-2: #ff9b0b;
+$sell-color-2: #005689;
+
+$buy-color-noFee:#63717a;
+$sell-color-noFee:#484f53;
+
+
+
 .buy{
-  fill: rgba(#DDD,0.3);
+    // stroke: #94a3b8;
+    // stroke-opacity: 0.2;
+    // stroke-width: 1.5;
+    fill: #c5d4ea;
+    fill-opacity: 0.9;
 }  
 
 .sell{
-  fill: rgba(#AAA,0.3); 
+    // stroke: #c78b00;
+    // stroke-opacity: 0.2;
+    // stroke-width: 2;
+    fill: #ffbb00;
+    fill-opacity: 0.9; 
 }
 
 .buy-hl{
-    fill: rgba(#FFBB00,0.8);
+    stroke: #005689;//#c5d4ea
+    stroke-opacity: 1;
+    stroke-width: 1;
+    fill: #94a3b8;
+    fill-opacity: 0.9;
 }
 
 .sell-hl{
-  fill:rgba(#333333,0.8); 
+    stroke: #c78b00;
+    stroke-opacity: 1;
+    stroke-width: 1;
+    fill: #ffbb00;
+    fill-opacity: 0.9;
 } 
+
+
+.buy-noFee{
+  fill: rgba(#999,0.9);
+}
+
+.sell-noFee{
+    // stroke: #ddd;
+    // stroke-opacity: 1;
+    // stroke-width: 1;
+    fill: #eee;
+    fill-opacity: 0.9; 
+}
+
+.buy-noFee-hl{
+  fill: rgba(#999,0.9);
+}
+
+.sell-noFee-hl{
+  fill: rgba(#DDD,0.9); 
+}
+
 
 
 
@@ -157,5 +178,23 @@ rect.parent,
         margin-bottom: gs-height(2);
         
     }
+}
+
+.strikeRate-box{
+  position: absolute;
+    right: 0;
+    top: 12px;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    font-family: "Guardian Text Sans Web", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-size: 14px;
+    color: #767676;
+    font-weight: bold;
+    line-height: 1.2em;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    transition: transform 0.2s;
 }
 

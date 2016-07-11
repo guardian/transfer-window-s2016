@@ -79,7 +79,13 @@ function constructInnerHtml(o){
 
 }
 
+function formatPrice(s){
+    var v = s;
 
+    if(!isNaN(v)){ v = s/1000000; v = "£"+v+"m"}
+
+    return v;
+}
 
 function getPlayerList(a, k){
     var graphStr = " "
@@ -92,7 +98,7 @@ function getPlayerList(a, k){
             // buyS += "<span>";
             buyS += "<li class='player-list__item'>"; //style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
             buyS += o.playername +", ";
-            buyS += o.price;
+            buyS += formatPrice(o.price);
             buyS += ";</li>" 
         }
 
@@ -100,12 +106,13 @@ function getPlayerList(a, k){
             // sellS += "<span>";
             sellS += "<li class='player-list__item'>"; // style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
             sellS += o.playername +", ";
-            sellS += o.price;
+            sellS += formatPrice(o.price);
             sellS += ";</li>" 
         }    
     });
 
-    buyS += "</ul>"; sellS += ""; 
+
+    buyS += "</ul>"; sellS += "</ul>"; 
 
     return "<div style='margin-top:20px'>"+graphStr+buyS+sellS+"</div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div>";
 }

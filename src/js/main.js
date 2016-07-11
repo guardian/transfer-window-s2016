@@ -50,15 +50,9 @@ function randomDate(start, end) {
 function initData(r){
     
     allTransfers = r.sheets.rawData;
-    console.log(r.sheets)
 
-    
         _.each(allTransfers, function(item, i){  
-                
-
-
                 item.d3Date = getD3Date(item.date);
-                console.log(item.d3Date);
                 item.cost = checkForNumber(item.price);              
                 item.ageGroup = getAgeGroup(item);   
 
@@ -110,7 +104,6 @@ function getMonday( date ) {
 
 function buildListView(obj,allTransfers){
  
-    console.log(obj)
     var listview = new clublistPrint(obj, allTransfers, globalSortOn);
 
 }
