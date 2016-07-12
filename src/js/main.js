@@ -5,7 +5,7 @@ import d3 from 'd3'
 import iframeMessenger from './lib/iframeMessenger'
 import customScrollTo from './lib/customScrollTo'
 
-import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost } from './lib/utils'
+import { getUniqueObjects, getAgeGroup, checkForNumber, getDisplayCost , getFormattedFee } from './lib/utils'
 import mainHTML from './text/main.html!text'
 import share from './lib/share'
 // import scatterplot from './lib/scatterplot'
@@ -51,34 +51,101 @@ function initData(r){
     
     allTransfers = r.sheets.rawData;
 
+    var tempArr = []
+
         _.each(allTransfers, function(item, i){  
                 item.d3Date = getD3Date(item.date);
-                item.cost = checkForNumber(item.price);              
-                item.ageGroup = getAgeGroup(item);   
+                item.cost = checkForNumber(item.price);
 
-                if(item.newleague == "Premier League (England)"){ item.buy=true; item.premClub = item.to; }
-                if(item.previousleague == "Premier League (England)"){ item.sell=true; item.premClub = item.from;}
-                item.ind = i;
+                item.ageGroup = getAgeGroup(item);   
                 
-                item.displayCost = getDisplayCost(item.price);
-                item.rDate = randomDate(new Date(2016, 5, 1), new Date(2016, 8, 1));
+                item.formattedFee = getFormattedFee(item.price);
+                // item.rDate = randomDate(new Date(2016, 5, 1), new Date(2016, 8, 1));
                 item.value = checkForNumber(item.price)+1000000;
+
+                if(item.newleague == "Premier League (England)" && item.previousleague != "Premier League (England)"){ 
+                    item.buy=true; 
+                    item.premClub = item.to;
+                    tempArr.push(item); 
+                }
+
+                if(item.previousleague == "Premier League (England)" && item.newleague != "Premier League (England)"){ 
+                    item.sell=true; 
+                    item.premClub = item.from;
+                    tempArr.push(item);
+                }
+
+                if(item.newleague == "Premier League (England)" && item.previousleague == "Premier League (England)"){ 
+
+                    var itemOne = {}; 
+                    var itemTwo = {};
+
+                    var sellClub = item.from; var buyClub = item.to;
+
+                    
+                    
+                    itemOne.buy=false;
+                    itemOne.sell=true;                    
+                    itemOne.inout = "OUT";
+                    
+                    itemTwo.buy=true;
+                    itemTwo.sell=false;                    
+                    itemTwo.inout = "IN";
+
+                    itemOne.age = itemTwo.age = item.age;
+                    itemOne.ageGroup = itemTwo.ageGroup = item.ageGroup;
+                    itemOne.cost = itemTwo.cost = item.cost;
+                    itemOne.d3Date = itemTwo.d3Date = item.d3Date;
+                    itemOne.date = itemTwo.date = item.date;
+                    itemOne.formattedFee = itemTwo.formattedFee = item.formattedFee;
+                    itemOne.imageGridURL = itemTwo.imageGridURL = item.imageGridURL;
+                   
+                    itemOne.nationality = itemTwo.nationality = item.nationality;
+                    itemOne.newleague = itemTwo.newleague = item.newleague;
+                    itemOne.playername = itemTwo.playername = item.playername;
+                    itemOne.position = itemTwo.position = item.position;
+                    itemOne.previousleague = itemTwo.previousleague = item.previousleague;
+                    itemOne.price = itemTwo.price = item.price;
+                    itemOne.value = itemTwo.value = item.value;
+                    itemOne.premClub = sellClub; 
+                    itemTwo.premClub = buyClub; 
+                    
+                    tempArr.push(itemOne);
+                    tempArr.push(itemTwo);
+
+                    // console.log(sellClub,'---------->',buyClub)
+                    // console.log(itemOne.playername, itemOne.premClub,"---------->",itemTwo.playername, itemTwo.premClub); 
+                    console.log(itemOne);
+                    console.log(itemTwo);
+
+                }
+    
 
         }) 
 
-    allTransfers.sort(function(a, b){
+    
+
+    tempArr.sort(function(a, b){
         if(a[globalSortOn] < b[globalSortOn]) return -1;
         if(a[globalSortOn] > b[globalSortOn]) return 1;
         return 0;
-    })    
+    })   
 
-    var clubArr = _.groupBy(allTransfers,'premClub') 
+    tempArr = _.uniqWith(tempArr, _.isEqual); // remove duplicate objects
+
+
+    _.each(tempArr, function(item,i){
+        item.ind = i;
+        item.displayCost = getDisplayCost(item.price);
+    }) 
+
+    var clubArr = _.groupBy(tempArr,'premClub') 
 
     //buildDataView(allTransfers, 940);
 
     var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
-    buildListView(clubArr,allTransfers, customScrollTo) 
+    buildListView(clubArr,tempArr, customScrollTo) 
   
 }
 

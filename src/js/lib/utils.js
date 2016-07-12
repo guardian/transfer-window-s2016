@@ -11,16 +11,25 @@ var _ = lodash;
 
 
 	export function getDisplayCost(n){
-		
-
-
+	
 	    isNaN(n) ? n = 0 : n = n;
 	    n = Number(n);
 	    n = n/1000000;
-	    n == 0 ? n = n - Math.ceil((Math.random() * 10)) :  n = n;
+	    n == 0 ? n = n - Math.ceil((Math.random() * 20)) :  n = n;
 
-	    n == 1 ? n = 2 : n = n; 
+	    //n == 1 ? n = 2 : n = n; 
 	    return n;
+	}
+
+	export function getFormattedFee(n){
+		
+		var s=n;
+
+	    if(!isNaN(n)){
+	    	s = "£"+Number(n)/1000000+"m";
+	    } 
+	    
+	    return s;
 	}
 
 	export function getAgeGroup(objIn){

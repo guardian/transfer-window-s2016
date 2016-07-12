@@ -6,7 +6,8 @@
 
 var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo;  
 
-
+var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
+var sellSolid = "#484f53";  var buySolid = "#4bc6df";   
 
 
 function adjustLayout(n){
@@ -21,7 +22,7 @@ function adjustLayout(n){
 export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
   
   var width = rowWidth > 620 ? 620 : 300; //set a maxW
-  var height = rowWidth > 620 ? 320 : 320;
+  var height = rowWidth > 620 ? 240 : 240;
 
   customScrollTo = scrollFn;
   
@@ -51,7 +52,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
             _.each(selectArr, function(item,i){
                 var tempObj = {};
                 tempObj[sortOn] = item;
-                tempObj.cy = cyPositioner*(selectArr.length-i);
+                tempObj.cy = cyPositioner*((selectArr.length-i)-1);
                 tempArr.push(tempObj)
             });
 
@@ -63,41 +64,65 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
           var x = d3.time.scale().domain([ new Date('2016-06-15'), new Date('2016-08-31') ]).rangeRound([0, width]);
 
-          var y = d3.scale.linear().domain([minDisplayCost,maxDisplayCost]).range([height, 0]);
+          var y = d3.scale.sqrt().domain([minDisplayCost-5,maxDisplayCost]).range([height, 0]);
+
+          //(d3.scale.pow().exponent(yScale)
 
           var xAxis = d3.svg.axis().scale(x).ticks(d3.time.months).tickSize(30, 0, 0).orient("bottom");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])
 
-          var yAxis = d3.svg.axis().scale(y).ticks(5).tickSize(width+12, 0, 0).orient("right");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
+          var yAxis = d3.svg.axis().scale(y).ticks(6).tickSize(width+margin.left+margin.right, 0, 0).orient("right");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
 
           var svg = d3.select('#'+targetDiv).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom)
               .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
 
+         var colorScaleSell = d3.scale.linear().domain([0,maxDisplayCost])
+              .range(["hsl(-35,18%,47%)","hsl(35,15%,49%)"]).interpolate(d3.interpolateHsl); 
 
-        svg.append("g")
-          .attr("class", "non-highlight-circles"); 
+          var colorScaleBuy = d3.scale.linear().domain([0,maxDisplayCost])
+              .range(["hsl(189,86%,77%)", "hsl(189,66%,87%)"]).interpolate(d3.interpolateHsl); 
 
-        svg.append("g")
-          .attr("class", "highlight-circles"); 
-
-          var colorScaleSell = d3.scale.linear().domain([1,maxDisplayCost])
-              .interpolate(d3.interpolateHcl).range([d3.rgb("#000232"), d3.rgb('#005689')]);
-
-          var colorScaleBuy = d3.scale.linear().domain([1,maxDisplayCost])
-              .interpolate(d3.interpolateHcl).range([d3.rgb('#4bc6df'), d3.rgb("#a5e2ef")]); 
-
-          var sellNeutral = '#666'; var buyNeutral = '#AAA'      
-
-            svg.append("text")
+          svg.append("text")
               .attr("class", "loading")
               .text("Loading ...")
               .attr("x", function () { return width/2; })
               .attr("y", function () { return height/2-5; }); 
 
+          svg.append("g")
+            .attr("class", "non-highlight-circles"); 
+
+           var axes = svg.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate("+(0-margin.left-margin.right)+",0)")
+                .call(yAxis)
+              .append("text")
+                .attr("class", "label")
+                .attr("y", height-margin.top)
+                .attr("x", 0)
+                .attr("dy", ".71em")
+                .style("text-anchor", "start");
+
+            svg.selectAll(".tick")
+                .each(function (d) {
+                    if ( d < 0 ) {
+                        this.remove();
+                    }
+                    if ( d === 0){
+
+                      var zeroArea = d3.select(this);
+                   
+                      // this.attr("class", "tick solid_stroke")
+                    }
+                });      
+             
+
+          svg.append("g")
+                .attr("class", "highlight-circles"); 
+
 
         // add circles
 
         var max_r = d3.max(data.map(function (d) { return d.value; }));
-        var r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([5, 24]);
+        var r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([5, 20]);
 
         svg.selectAll(".loading").remove();
 
@@ -107,14 +132,13 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
           .data(data.filter(function(d, i){ return d[sortOn]!= subSortOn; })) // condition here
           .enter().append("circle")
           .style("fill", function(d){ return getFill(d) })
-          // .attr("class", function(d) { return getDotClass(d) })
+          .style("stroke", function(d){ return getFill(d) })
           
           .attr("id",function (d) { return "dot_"+d.ind; })
           .attr("cx", function (d) { return x(d.d3Date); })
           .attr("cy", function(d) { return y(d.displayCost); })
           
           .attr("r", function (d) { return r(d.value); });
-          
 
 
           // add glass to obscure non-higlighted circles
@@ -128,17 +152,17 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
 
         d3.select('#'+targetDiv+' .highlight-circles')
-          .selectAll('circle')
-          .data(data.filter(function(d, i){ return d[sortOn]== subSortOn; })) // condition here
-          .enter().append("circle")
-          .style("fill", function(d){ return getFill(d) })
-          .style("cursor","pointer")
-          
-          .attr("id",function (d) { return "dot_"+d.ind; })
-          .attr("cx", function (d) { return x(d.d3Date); })
-          .attr("cy", function(d) { return y(d.displayCost);} )
-          .attr("r", function (d) { return r(d.value); })
-          .on("click", function(d,e){  dotClick(d,event) });
+            .selectAll('circle')
+            .data(data.filter(function(d, i){ return d[sortOn]== subSortOn; })) // condition here
+            .enter().append("circle")
+            .style("fill", function(d){ return getFill(d) })
+            .style("cursor","pointer")
+            
+            .attr("id",function (d) { return "dot_"+d.ind; })
+            .attr("cx", function (d) { return x(d.d3Date); })
+            .attr("cy", function(d) { return y(d.displayCost);} )
+            .attr("r", function (d) { return r(d.value); })
+            .on("click", function(d,e){  dotClick(d,event) });
           // .attr("cy", height)
           // .transition().duration(1000).attr("cy", function(d) { return y(d.displayCost); })   
 
@@ -158,13 +182,13 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
         //add axis
 
         var dateLabel = svg.append('g')
-              .attr('class','strikerate-label')
-              .attr("transform", "translate( "+(width)+" , "+(height+margin.bottom)+" )");
+            .attr('class','strikerate-label')
+            .attr("transform", "translate( "+(width)+" , "+(height+margin.bottom)+" )");
 
-            var dateText = dateLabel.append('text')
-              .attr('class','strikerate-label')
-              .attr('dx',-70)
-              .attr('dy',-5)
+        var dateText = dateLabel.append('text')
+            .attr('class','strikerate-label')
+            .attr('dx',-70)
+            .attr('dy',-5)
 
             dateText.append('tspan')
               .text('Date of signing')
@@ -208,38 +232,64 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
               .attr('dy',-5)
 
             strikeText.append('tspan')
-              .text('£')
+              .text('£m')
 
-            strikeText.append('tspan')
-              .text(' ')
-              .attr('x',10)
-              .attr('dy',14)
+            // strikeText.append('tspan')
+            //   .text(' ')
+            //   .attr('x',10)
+            //   .attr('dy',14)
 
             strikerateLabel.append('line')
               .attr('x1',0.5)
               .attr('x2',0.5)
               .attr('y1',-10)
-              .attr('y2',15)
+              .attr('y2',9)
               .attr('stroke','#bebebe')
               .attr('marker-start','url(#markerArrowTop)')
 
+            // strikerateLabel.append('circle')
+            //   .attr('r',5)
+            //   .attr('cy',40)
+            //   .attr('stroke','#bebebe')
+            //   .attr('fill','transparent')
+
             strikerateLabel.append('circle')
               .attr('r',5)
-              .attr('cy',40)
-              .attr('stroke','#bebebe')
-              .attr('fill','transparent')
+              .attr('cy',58)
+              .attr('fill', buySolid)
 
-            var circleText = strikerateLabel.append('text')
+            strikerateLabel.append('circle')
+              .attr('r',5)
+              .attr('cy',76)
+              .attr('fill', sellSolid)  //colorScaleSell(Number(colorScaleSell.length/2))
+
+            // var circleTextOne = strikerateLabel.append('text')
+            //   .attr('class','strikerate-label')
+            //   .attr('dx',10)
+            //   .attr('dy',44)
+
+            // circleTextOne.append('tspan')
+            //   .text('Cost of player'); 
+
+            var circleTextTwo = strikerateLabel.append('text')
               .attr('class','strikerate-label')
               .attr('dx',10)
-              .attr('dy',44)
+              .attr('dy',62)
 
-            circleText.append('tspan')
-              .text('Cost of player');  
+            circleTextTwo.append('tspan')
+              .text('Player in');    
+
+            var circleTextThree = strikerateLabel.append('text')
+              .attr('class','strikerate-label')
+              .attr('dx',10)
+              .attr('dy',80)
+
+            circleTextThree.append('tspan')
+              .text('Player out');
 
             var tooltipContainer= svg.append('g')
-              .attr("id", function(){ var a = targetDiv.split; return "tt_"+a[1] })
               .attr('class','strikerate-label')
+              .style("display", "none");
 
             var tipBG = tooltipContainer.append('rect')
                 .attr('x',0)
@@ -254,6 +304,12 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
               .attr('dx',10)
               .attr('dy',20)
               .text('Title here')
+
+            var feeText = tooltipContainer.append('text')
+              .attr('class','strikerate-label')
+              .attr('dx',10)
+              .attr('dy',40)
+              .text('Title here')  
               
 
         function getCircPos(d){
@@ -265,9 +321,10 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
         }            
 
         function dotClick(d,e){
-            titleText.text(d.playername)
-            
-            tooltipContainer.attr("transform", "translate( "+ ((e.target.cx.animVal.value )+(e.target["r"].animVal.value * 2)) +" , "+ e.target.cy.animVal.value +" )");
+            var xPos = e.target["r"].animVal.value < (width+margin.left+margin.right)/2  ? 0 - margin.left : width - 120;
+            titleText.text(d.playername); feeText.text(d.formattedFee)
+            console.log(d);
+            tooltipContainer.attr("transform", "translate( "+ xPos +" , "+ (e.target.cy.animVal.value-margin.top) +" )").style("display","block");
             // var ddEl = document.getElementsByClassName('gv-select');
             // d3.selectAll(".highlight").classed("highlight", false);
 
@@ -283,11 +340,14 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
         function getFill(d){
           var c;
-          if (d.sell && d.displayCost<1){  c = sellNeutral  } 
-          if (d.buy && d.displayCost<1){  c = buyNeutral  }
-          if (d.sell && d.displayCost>0){  c = colorScaleSell(d.displayCost)  } 
-          if (d.buy && d.displayCost>0){  c = colorScaleBuy(d.displayCost)  }
 
+          if (d.sell){ c = sellSolid }
+          if (d.buy) { c = buySolid }
+
+          // if (d.sell && d.displayCost<1){  c = colorScaleSell(1)   } 
+          // if (d.buy && d.displayCost<1){  c = colorScaleBuy(1)  }
+          // if (d.sell && d.displayCost>0){  c = colorScaleSell(d.displayCost)  } 
+          // if (d.buy && d.displayCost>0){  c = colorScaleBuy(d.displayCost)  }
 
           return c;  
         }

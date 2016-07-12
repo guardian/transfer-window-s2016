@@ -88,7 +88,8 @@ function formatPrice(s){
 }
 
 function getPlayerList(a, k){
-    var graphStr = " "
+    var totalMoneyS="<div class='scatter-grid-holder'><span class='player-list__heading'>Money in: <span  style='font-weight:600'>£100m</span>  </span><span class='player-list__heading'>Money out: <span  style='font-weight:600'>£100m</span></span></div>";
+    var graphStr = " ";
     var buyS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading' style='font-weight:600'>IN:</span></li>";
     var sellS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>OUT:</span></li>";
 
@@ -114,7 +115,7 @@ function getPlayerList(a, k){
 
     buyS += "</ul>"; sellS += "</ul>"; 
 
-    return "<div style='margin-top:20px'>"+graphStr+buyS+sellS+"</div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div>";
+    return totalMoneyS+"<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div><div style='margin-bottom:20px'>"+graphStr+buyS+sellS+"</div>";
 }
 
 function stripSpace(s){
