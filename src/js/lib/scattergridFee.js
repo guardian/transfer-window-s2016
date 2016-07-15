@@ -7,31 +7,6 @@
 
 var data, sort, selectArr, axisLabels, customScrollTo;  
 
-var isoArr = [ 
-    { premClub:'Arsenal', iso:'ARS'},
-    { premClub:'Aston Villa', iso:'AV'},  
-    { premClub:'Burnley', iso:'BUR'}, 
-    { premClub:'Bournemouth', iso:'BOU'}, 
-    { premClub:'Chelsea', iso:'CHE'}, 
-    { premClub:'Crystal Palace', iso:'PAL'}, 
-    { premClub:'Everton', iso:'EVE'}, 
-    { premClub:'Hull City', iso:'HUL'}, 
-    { premClub:'Leicester City', iso:'LEI'}, 
-    { premClub:'Liverpool', iso:'LIV'}, 
-    { premClub:'Manchester City', iso:'MCY'}, 
-    { premClub:'Manchester United', iso:'MUN'}, 
-    { premClub:'Middlesbrough', iso:'MID'}, 
-    { premClub:'Newcastle United', iso:'NEW'}, 
-    { premClub:'Norwich City', iso:'NOR'}, 
-    { premClub:'Stoke City', iso:'STO'},  
-    { premClub:'Southampton', iso:'SOT'}, 
-    { premClub:'Sunderland', iso:'SUN'}, 
-    { premClub:'Swansea City', iso:'SWA'}, 
-    { premClub:'Tottenham Hotspur', iso:'TOT'}, 
-    { premClub:'West Bromwich Albion', iso:'WBA'}, 
-    { premClub:'Watford', iso:'WAT'},  
-    { premClub:'West Ham United', iso:'WHU'}
- ];
 
 function adjustLayout(n){
     var clubEl = d3.select("#gv__clubList");
@@ -60,6 +35,15 @@ export default function scattergridFee(a, s, t, rowWidth, scrollFn){
              })
 
           selectArr = _.uniqBy(selectArr).sort().reverse();
+
+          var clubsShortArray = data.map(function(obj){ 
+            rObj = obj.premClubShort;
+             return rObj;
+          });
+
+          console.log(clubsShortArray)
+
+
 
           var widthUnit = width/selectArr.length;
           console.log(selectArr.length)

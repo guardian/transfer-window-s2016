@@ -13,6 +13,31 @@ import navlist from './lib/navList'
 
 import clublistPrint from './lib/clublistPrint'
 
+var isoArr = [ 
+    { premClub:'Arsenal', iso:'ARS'},
+    { premClub:'Aston Villa', iso:'AV'},  
+    { premClub:'Burnley', iso:'BUR'}, 
+    { premClub:'Bournemouth', iso:'BOU'}, 
+    { premClub:'Chelsea', iso:'CHE'}, 
+    { premClub:'Crystal Palace', iso:'PAL'}, 
+    { premClub:'Everton', iso:'EVE'}, 
+    { premClub:'Hull City', iso:'HUL'}, 
+    { premClub:'Leicester City', iso:'LEI'}, 
+    { premClub:'Liverpool', iso:'LIV'}, 
+    { premClub:'Manchester City', iso:'MCY'}, 
+    { premClub:'Manchester United', iso:'MUN'}, 
+    { premClub:'Middlesbrough', iso:'MID'}, 
+    { premClub:'Newcastle United', iso:'NEW'}, 
+    { premClub:'Norwich City', iso:'NOR'}, 
+    { premClub:'Stoke City', iso:'STO'},  
+    { premClub:'Southampton', iso:'SOT'}, 
+    { premClub:'Sunderland', iso:'SUN'}, 
+    { premClub:'Swansea City', iso:'SWA'}, 
+    { premClub:'Tottenham Hotspur', iso:'TOT'}, 
+    { premClub:'West Bromwich Albion', iso:'WBA'}, 
+    { premClub:'Watford', iso:'WAT'},  
+    { premClub:'West Ham United', iso:'WHU'}
+ ];
 
 var Ractive = ractive;
 var _ = lodash;
@@ -137,6 +162,10 @@ function initData(r){
     _.each(tempArr, function(item,i){
         item.ind = i;
         item.displayCost = getDisplayCost(item.price);
+        _.each(isoArr, function (o){
+            if (o.premClub == item.premClub){ item.premClubShort = o.iso }
+        })
+
     }) 
 
     var clubArr = _.groupBy(tempArr,'premClub') 

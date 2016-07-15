@@ -31,6 +31,15 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
           subSortOn = ss;
 
           data = a;
+
+
+          var clubsShortArray = data.map(function(obj){ 
+             var rObj = obj.premClubShort;
+             return rObj;
+          });
+
+          clubsShortArray =  _.uniqBy(clubsShortArray).sort().reverse();
+
           var targetDiv = t;
           selectArr = [];
 
@@ -64,7 +73,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
           var x = d3.time.scale().domain([ new Date('2016-06-15'), new Date('2016-08-31') ]).rangeRound([0, width]);
 
-          var y = d3.scale.sqrt().domain([minDisplayCost-5,maxDisplayCost]).range([height, 0]);
+          var y = d3.scale.ordinal().domain(clubsShortArray).rangePoints([height, 0]);
 
           //(d3.scale.pow().exponent(yScale)
 
@@ -112,8 +121,9 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
                    
                       // this.attr("class", "tick solid_stroke")
                     }
-                });      
-             
+                }); 
+
+          
 
           svg.append("g")
                 .attr("class", "highlight-circles"); 
@@ -136,7 +146,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
           
           .attr("id",function (d) { return "dot_"+d.ind; })
           .attr("cx", function (d) { return x(d.d3Date); })
-          .attr("cy", function(d) { return y(d.displayCost); })
+          .attr("cy", function(d) { return y(d.premClubShort); })
           
           .attr("r", function (d) { return r(d.value); });
 
@@ -148,7 +158,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
             .attr("width", width+margin.left+margin.right)
             .attr("height", height+margin.top+margin.bottom)
             .style("fill","#FFF")
-            .style("fill-opacity","0.9");
+            .style("fill-opacity","0.85");
 
 
         d3.select('#'+targetDiv+' .highlight-circles')
@@ -160,7 +170,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
             
             .attr("id",function (d) { return "dot_"+d.ind; })
             .attr("cx", function (d) { return x(d.d3Date); })
-            .attr("cy", function(d) { return y(d.displayCost);} )
+            .attr("cy", function(d) { return y(d.premClubShort); })
             .attr("r", function (d) { return r(d.value); })
             .on("click", function(d,e){  dotClick(d,event) });
           // .attr("cy", height)
@@ -224,28 +234,33 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
           var strikerateLabel = svg.append('g')
               .attr('class','strikerate-label')
-              .attr("transform", "translate( "+((0-margin.left)+6)+" , 0 )");
+              .attr("transform", "translate( "+((0-margin.left)+6)+" , "+((height+margin.top)-margin.bottom)+" )");
 
-            var strikeText = strikerateLabel.append('text')
-              .attr('class','strikerate-label')
-              .attr('dx',10)
-              .attr('dy',-5)
+          //   var strikeText = strikerateLabel.append('text')
+          //     .attr('class','strikerate-label')
+          //     .attr('dx',10)
+          //     .attr('dy',-5)
 
-            strikeText.append('tspan')
-              .text('£m')
+          //   strikeText.append('tspan')
+          //     .text('£m')
+
+          //   strikerateLabel.append('line')
+          //     .attr('x1',0.5)
+          //     .attr('x2',0.5)
+          //     .attr('y1',-10)
+          //     .attr('y2',9)
+          //     .attr('stroke','#bebebe')
+          //     .attr('marker-start','url(#markerArrowTop)')
+
+
+
 
             // strikeText.append('tspan')
             //   .text(' ')
             //   .attr('x',10)
             //   .attr('dy',14)
 
-            strikerateLabel.append('line')
-              .attr('x1',0.5)
-              .attr('x2',0.5)
-              .attr('y1',-10)
-              .attr('y2',9)
-              .attr('stroke','#bebebe')
-              .attr('marker-start','url(#markerArrowTop)')
+            
 
             // strikerateLabel.append('circle')
             //   .attr('r',5)
