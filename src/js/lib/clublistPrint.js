@@ -50,9 +50,9 @@ function constructInnerHtml(o){
 
         s+="<div class='dig-slice' id='listEntry_"+stripSpace(key)+"'>"
         s+="<div class='dig-slice__inner'>"
-        s+="<div class='dig-slice__inner__left'>"
-        s+="<h2 class='dig-section-title-sub'>"+key+"</h2>"
-        s+="<img src='https://sport.guim.co.uk/football/crests/120/"+getBadgeRef(key)+".png' width='auto' height='60px'>"
+        s+="<div class='dig-slice__inner__left'><img src='https://sport.guim.co.uk/football/crests/120/"+getBadgeRef(key)+".png' width='auto' height='30px' style='display:inline-block; margin-right:12px;'>"
+        s+="<span class='dig-section-title-sub' style='display:inline-block;'>"+key+"</span>"
+        s+=""
         s+="<br/><a class='dig-back-to-top js-back-to-top' href='#'><span><svg height='14' width='15' xmlns='http://www.w3.org/2000/svg'>"
         s+="<path d='M0.5,7 L5.75,2.5 L5.75,14 L7.25,14 L7.25,2.5 L12.5,7 L13,6 L7.25,0 L5.75,6e-17 L0,6 L0.5,7 L0.5,7 Z' fill='#333'></path></svg></span><span>Back to top</span></a>"
         s+="</div>"
@@ -149,7 +149,9 @@ function getPlayerList(a, k){
 
     buyS += "</ul>"; sellS += "</ul>"; 
 
-    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div><div style='margin-bottom:20px'>"+graphStr+buyS+sellS+"</div>";
+    // return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div><div style='margin-bottom:20px'>"+graphStr+buyS+sellS+"</div>";
+
+    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div>"; // no player list
 }
 
 function stripSpace(s){

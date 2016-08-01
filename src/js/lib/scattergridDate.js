@@ -4,7 +4,7 @@
  */
 
 
-var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo;  
+var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, height;  
 
 var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
 var sellSolid = "#484f53";  var buySolid = "#4bc6df";   
@@ -22,8 +22,8 @@ function adjustLayout(n){
 export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
 
 
-  var width = rowWidth > 620 ? 620 : 300; //set a maxW
-  var height = rowWidth > 620 ? 60 : 60;
+  width = rowWidth > 620 ? 620 : 300; //set a maxW
+  height = rowWidth > 620 ? 66 : 66;
 
   customScrollTo = scrollFn;
   
@@ -140,6 +140,10 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
 
         var max_r = d3.max(data.map(function (d) { return d.value; }));
         var r = d3.scale.linear().domain([0, maxFee]).range([3, 30]);
+
+        var newCirc = bestCircleGenerator(r, 0);
+
+        console.log(newCirc)
 
         svg.selectAll(".loading").remove();
 
@@ -331,16 +335,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
               .attr('class','strikerate-label')
               .attr('dx',10)
               .attr('dy',40)
-              .text('Title here')  
-              
-
-        function getCircPos(d){
-            var t = 1;
-              _.each(selectArr, function(item,i){                
-                  if (d[sortOn] == item[sortOn]){ t = i };
-              })
-            return t;  
-        }            
+              .text('Title here')         
 
         function dotClick(d,e){
             var xPos = e.target["r"].animVal.value < (width+margin.left+margin.right)/2  ? 0 - margin.left : width - 120;
@@ -487,6 +482,50 @@ function stripSpace(s){
     s = s.split(" ").join("_");
     return s;
 }
+
+
+function bestCircleGenerator(maxRadius, padding) {
+  var quadtree = d3.geom.quadtree().extent([[0, 0], [width, height]])([]),
+      searchRadius = maxRadius * 2,
+      maxRadius2 = maxRadius * maxRadius;
+
+  return function(k) {
+    var bestX, bestY, bestDistance = 0;
+
+    for (var i = 0; i < k || bestDistance < padding; ++i) {
+      var x = Math.random() * width,
+          y = Math.random() * height,
+          rx1 = x - searchRadius,
+          rx2 = x + searchRadius,
+          ry1 = y - searchRadius,
+          ry2 = y + searchRadius,
+          minDistance = maxRadius; // minimum distance for this candidate
+
+      quadtree.visit(function(quad, x1, y1, x2, y2) {
+        if (p = quad.point) {
+          var p,
+              dx = x - p[0],
+              dy = y - p[1],
+              d2 = dx * dx + dy * dy,
+              r2 = p[2] * p[2];
+          if (d2 < r2) return minDistance = 0, true; // within a circle
+          var d = Math.sqrt(d2) - p[2];
+          if (d < minDistance) minDistance = d;
+        }
+        return !minDistance || x1 > rx2 || x2 < rx1 || y1 > ry2 || y2 < ry1; // or outside search radius
+      });
+
+      if (minDistance > bestDistance) bestX = x, bestY = y, bestDistance = minDistance;
+    }
+
+    var best = [bestX, bestY, bestDistance - padding];
+
+    console.log(best)
+    quadtree.add(best);
+    return best;
+  };
+
+}  
 
 
 

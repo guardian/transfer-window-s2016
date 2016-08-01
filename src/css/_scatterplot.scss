@@ -169,8 +169,8 @@ $sell-color-noFee:#484f53;
 }
 
 .scatter-grid-holder{
-        margin-top:$gs-gutter;
-        margin-bottom: gs-span(1);
+        // margin-top:$gs-gutter;
+        // margin-bottom: gs-span(1);
 
   @include mq(mobileLandscape) {
         
