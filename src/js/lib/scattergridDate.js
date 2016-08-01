@@ -19,14 +19,15 @@ function adjustLayout(n){
 }
 
 
-export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
-  
+export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
+
+
   var width = rowWidth > 620 ? 620 : 300; //set a maxW
-  var height = rowWidth > 620 ? 240 : 240;
+  var height = rowWidth > 620 ? 60 : 60;
 
   customScrollTo = scrollFn;
   
-  var margin = { top: 30, right: 60, bottom: 72, left: 60}, width = width - margin.left - margin.right, height = height + margin.top + margin.bottom;
+  var margin = { top: 30, right: 10, bottom: 72, left: 0}, sideMargins = (margin.left+margin.right), width = width - margin.left - margin.right;
           sortOn = s;
           subSortOn = ss;
 
@@ -71,7 +72,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
           var maxDisplayCost = d3.max(data, function (d) { return d.displayCost; });
 
-          var x = d3.time.scale().domain([ new Date('2016-06-15'), new Date('2016-08-31') ]).rangeRound([0, width]);
+          var x = d3.time.scale().domain([ new Date('2016-06-15'), new Date('2016-08-31') ]).rangeRound([sideMargins, width]);
 
           var y = d3.scale.ordinal().domain(clubsShortArray).rangePoints([height, 0]);
 
@@ -79,10 +80,10 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
           var xAxis = d3.svg.axis().scale(x).ticks(d3.time.months).tickSize(30, 0, 0).orient("bottom");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])
 
-          var yAxis = d3.svg.axis().scale(y).ticks(6).tickSize(width+margin.left+margin.right, 0, 0).orient("right");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
+          var yAxis = d3.svg.axis().scale(y).ticks(clubsShortArray.length).tickSize(width, 0).orient("left");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
 
-          var svg = d3.select('#'+targetDiv).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom)
-              .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
+          var svg = d3.select('#'+targetDiv).append("svg").attr("width", width + margin.left + margin.right).attr("height", height);
+              // .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
 
          var colorScaleSell = d3.scale.linear().domain([0,maxDisplayCost])
               .range(["hsl(-35,18%,47%)","hsl(35,15%,49%)"]).interpolate(d3.interpolateHsl); 
@@ -97,20 +98,26 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
               .attr("y", function () { return height/2-5; }); 
 
           svg.append("g")
-            .attr("class", "non-highlight-circles"); 
+             .attr("class", "non-highlight-circles"); 
 
-           var axes = svg.append("g")
+          svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+          svg.append("g")
                 .attr("class", "y axis")
-                .attr("transform", "translate("+(0-margin.left-margin.right)+",0)")
-                .call(yAxis)
-              .append("text")
-                .attr("class", "label")
-                .attr("y", height-margin.top)
-                .attr("x", 0)
-                .attr("dy", ".71em")
-                .style("text-anchor", "start");
+                .attr("transform", "translate("+(width-margin.left)+",0)")
+                .call(yAxis);
+          
+                //.attr("class", "label")
+                // .attr("y", height-margin.top)
+                
+                //.attr("dy", ".71em")
+                //.style("text-anchor", "start");
 
             svg.selectAll(".tick")
+
                 .each(function (d) {
                     if ( d < 0 ) {
                         this.remove();
@@ -125,14 +132,14 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
 
           
 
-          svg.append("g")
-                .attr("class", "highlight-circles"); 
+        svg.append("g")
+              .attr("class", "highlight-circles"); 
 
 
         // add circles
 
         var max_r = d3.max(data.map(function (d) { return d.value; }));
-        var r = d3.scale.linear().domain([0, d3.max(data, function (d) { return d.value; })]).range([5, 20]);
+        var r = d3.scale.linear().domain([0, maxFee]).range([3, 30]);
 
         svg.selectAll(".loading").remove();
 
@@ -145,7 +152,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
           .style("stroke", function(d){ return getFill(d) })
           
           .attr("id",function (d) { return "dot_"+d.ind; })
-          .attr("cx", function (d) { return x(d.d3Date); })
+          .attr("cx", function (d) { return (x(d.d3Date) +sideMargins); })
           .attr("cy", function(d) { return y(d.premClubShort); })
           
           .attr("r", function (d) { return r(d.value); });
@@ -156,7 +163,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
             .attr("x", (0-margin.left))
             .attr("y", (0-margin.top))
             .attr("width", width+margin.left+margin.right)
-            .attr("height", height+margin.top+margin.bottom)
+            .attr("height", height)
             .style("fill","#FFF")
             .style("fill-opacity","0.85");
 
@@ -169,7 +176,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn){
             .style("cursor","pointer")
             
             .attr("id",function (d) { return "dot_"+d.ind; })
-            .attr("cx", function (d) { return x(d.d3Date); })
+            .attr("cx", function (d) { return (x(d.d3Date) +sideMargins); })
             .attr("cy", function(d) { return y(d.premClubShort); })
             .attr("r", function (d) { return r(d.value); })
             .on("click", function(d,e){  dotClick(d,event) });

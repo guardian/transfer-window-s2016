@@ -40,9 +40,6 @@ text {
   font-weight: lighter;
 }
 
-
-
-
 .textdiv { /* text in the boxes */
   @include fs-data(3);
   font-weight: lighter;
@@ -66,7 +63,7 @@ text {
 }
 
 .axis text, .strikerate-label text {
-   @include fs-data(2);
+  @include fs-data(2);
   fill: $neutral-2;
 }
 
@@ -75,7 +72,9 @@ text {
   shape-rendering: auto;
 }
 
-
+.y.axis text {
+    text-anchor: start !important;
+}
 
 
 .sell{
@@ -160,10 +159,6 @@ $sell-color-noFee:#484f53;
   fill: rgba(#DDD,0.9); 
 }
 
-
-
-
-
 .chart__dropdown-container{
   width:100%;
 }
@@ -188,7 +183,7 @@ $sell-color-noFee:#484f53;
 }
 
 .strikeRate-box{
-  position: absolute;
+    position: absolute;
     right: 0;
     top: 12px;
     width: auto;

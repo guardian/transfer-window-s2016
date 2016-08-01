@@ -87,11 +87,45 @@ function formatPrice(s){
     return v;
 }
 
+function getFigures(a){
+    
+    var sell = 0;
+    var buy = 0;
+    var outputSell = false; 
+    var outputBuy = false;
+    var sellStr, buyStr;
+
+    _.each(a, function(o){
+        if(o.buy && !o.sell){
+            buy+=o.cost;
+            outputBuy = true;
+
+        }    
+        if(o.sell && !o.buy){
+            sell+=o.cost;
+            outputSell = true;
+        } 
+
+    })
+
+   buyStr =  buy > 0 ? "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>IN ("+buy/1000000+"m):</span></li>" : "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>IN :</span></li>";
+   sellStr =  sell > 0 ? "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading' style='font-weight:600'>OUT ("+sell/1000000+"m):</span></li>" : "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>OUT :</span></li>";
+
+   if(!outputBuy){buyStr = " "}
+   if(!outputSell){sellStr = " "}
+
+
+    return [buyStr, sellStr];
+}
+
+
 function getPlayerList(a, k){
-    var totalMoneyS="<div class='scatter-grid-holder'><span class='player-list__heading'>Money in: <span  style='font-weight:600'>£100m</span>  </span><span class='player-list__heading'>Money out: <span  style='font-weight:600'>£100m</span></span></div>";
+    var moneyFigures = getFigures(a);
+
     var graphStr = " ";
-    var buyS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading' style='font-weight:600'>IN:</span></li>";
-    var sellS = "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>OUT:</span></li>";
+    console.log(moneyFigures);
+    var buyS = moneyFigures[0];
+    var sellS = moneyFigures[1];
 
     _.each(a, function(o){
         
@@ -115,7 +149,7 @@ function getPlayerList(a, k){
 
     buyS += "</ul>"; sellS += "</ul>"; 
 
-    return totalMoneyS+"<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div><div style='margin-bottom:20px'>"+graphStr+buyS+sellS+"</div>";
+    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div><div style='margin-bottom:20px'>"+graphStr+buyS+sellS+"</div>";
 }
 
 function stripSpace(s){
@@ -123,17 +157,21 @@ function stripSpace(s){
     return s;
 }
 
-function buildDataView(arr, rowWidth){
-     
 
-
-}
 
 function addScatterGrids(o, allTransfers, globalSortOn){
-    var rowWidth = 920;
-    _.forOwn(o, function(value, key) {        
-        var scatterGrid = new scattergridFee( allTransfers, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo);
-                    // (a, s, t, rowWidth, scrollFn)
+    var rowWidth = 920; 
+    var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
+
+    console.log(maxBuy.cost);
+
+    _.forOwn(o, function(value, key) { 
+
+        
+
+        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost);
+        
+        // (a, s, t, rowWidth, scrollFn)
 
     })    
 

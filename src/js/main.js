@@ -106,8 +106,6 @@ function initData(r){
                     var itemTwo = {};
 
                     var sellClub = item.from; var buyClub = item.to;
-
-                    
                     
                     itemOne.buy=false;
                     itemOne.sell=true;                    
@@ -140,8 +138,7 @@ function initData(r){
 
                     // console.log(sellClub,'---------->',buyClub)
                     // console.log(itemOne.playername, itemOne.premClub,"---------->",itemTwo.playername, itemTwo.premClub); 
-                    console.log(itemOne);
-                    console.log(itemTwo);
+
 
                 }
     
@@ -157,7 +154,6 @@ function initData(r){
     })   
 
     tempArr = _.uniqWith(tempArr, _.isEqual); // remove duplicate objects
-
 
     _.each(tempArr, function(item,i){
         item.ind = i;
@@ -193,20 +189,12 @@ function getMonday( date ) {
     if( day !== 1 ) 
         date.setHours(-24 * (day - 1)); 
     return date;
-}
-
-      
+}    
 
 
-function buildListView(obj,allTransfers){
- 
+function buildListView(obj,allTransfers){ 
     var listview = new clublistPrint(obj, allTransfers, globalSortOn);
-
 }
-
-
-      
-
 
 function getZeroValueObjects(arrIn, sortStr){
 // check for zero values in previous leagues and nationalitites - theses will be bundled to OTHERS
@@ -228,7 +216,7 @@ function getZeroValueObjects(arrIn, sortStr){
                   tempArr.push (newObj);
               });
                
-         return tempArr;
+    return tempArr;
 }
 
 
