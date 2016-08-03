@@ -67,6 +67,12 @@ text {
   fill: $neutral-2;
 }
 
+.strikerate-label line{
+    fill: none;
+    stroke: #dfdfdf;
+    shape-rendering: crispEdges;
+}
+
 .dot {
   cursor: pointer;
   shape-rendering: auto;
@@ -74,8 +80,8 @@ text {
 
 .y.axis text {
     text-anchor: start !important;
+    display: none;
 }
-
 
 .sell{
   

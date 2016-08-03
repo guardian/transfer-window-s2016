@@ -178,7 +178,7 @@ function getD3Date(d){
     var a = d.split("/");
 
 
-    return(new Date(a[2],a[1],a[0]))
+    return(new Date(a[2],(a[1]-1),a[0])) // DD/MM/YY Month - 1
 
 
 }

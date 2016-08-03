@@ -4,11 +4,12 @@
  */
 
 
-var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, height;  
+var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, height, maxRadius, rScale , xScale, yScale, baseLineHeight, quadtree, quadroot;  
 
 var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
-var sellSolid = "#484f53";  var buySolid = "#4bc6df";   
+var sellSolid = "rgba(72,79,83, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";  // #484f53
 
+var biggestFirst = true; //should largest circles be added first?
 
 function adjustLayout(n){
     var clubEl = d3.select("#gv__clubList");
@@ -20,14 +21,18 @@ function adjustLayout(n){
 
 
 export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
-
-
+  
+  var margin = { top: 30, right: 10, bottom: 72, left: 0}, sideMargins = (margin.left+margin.right), width = width - margin.left - margin.right;
   width = rowWidth > 620 ? 620 : 300; //set a maxW
   height = rowWidth > 620 ? 66 : 66;
 
+  height+=(margin.top+margin.bottom);
+
+  baseLineHeight = height/2;
+
   customScrollTo = scrollFn;
   
-  var margin = { top: 30, right: 10, bottom: 72, left: 0}, sideMargins = (margin.left+margin.right), width = width - margin.left - margin.right;
+  
           sortOn = s;
           subSortOn = ss;
 
@@ -53,7 +58,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
           var widthUnit = width/selectArr.length;
           
          // height = 240;
-          axisLabels = selectArr; //bale out the axis labels heregetAxisLabels()
+          axisLabels = selectArr; //bale out the axis labels here getAxisLabels()
 
 
             var cyPositioner = height/selectArr.length;
@@ -72,20 +77,35 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
 
           var maxDisplayCost = d3.max(data, function (d) { return d.displayCost; });
 
-          var x = d3.time.scale().domain([ new Date('2016-06-15'), new Date('2016-08-31') ]).rangeRound([sideMargins, width]);
+          xScale = d3.time.scale().domain([ new Date('2016-04-30'), new Date('2016-09-05') ]).rangeRound([sideMargins, width]);
+
+          yScale = d3.scale.linear().domain([d3.min(data, function (d) { return d.displayCost; }), d3.max(data, function (d) { return d.displayCost; })]).range([height, 0]);
+          
+
+         quadtree = d3.geom.quadtree()
+              .x(function(d) { return xScale(d.x); }) 
+              .y(0) //constant, they are all on the same line
+              .extent([[xScale(-1),0],[xScale(2),0]]);
+              //extent sets the domain for the tree
+              //using the format [[minX,minY],[maxX, maxY]]
+              //optional if you're adding all the data at once
+
+         quadroot = quadtree([]);
+                    //create an empty adjacency tree; 
+                    //the function returns the root node.
 
           var y = d3.scale.ordinal().domain(clubsShortArray).rangePoints([height, 0]);
 
           //(d3.scale.pow().exponent(yScale)
 
-          var xAxis = d3.svg.axis().scale(x).ticks(d3.time.months).tickSize(30, 0, 0).orient("bottom");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])
+          var xAxis = d3.svg.axis().scale(xScale).ticks(d3.time.months).tickSize( height,0,  0).orient("top");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])
 
           var yAxis = d3.svg.axis().scale(y).ticks(clubsShortArray.length).tickSize(width, 0).orient("left");  //.domain([new Date(2010, 7, 1), new Date(2012, 7, 1)])   
 
           var svg = d3.select('#'+targetDiv).append("svg").attr("width", width + margin.left + margin.right).attr("height", height);
               // .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
 
-         var colorScaleSell = d3.scale.linear().domain([0,maxDisplayCost])
+          var colorScaleSell = d3.scale.linear().domain([0,maxDisplayCost])
               .range(["hsl(-35,18%,47%)","hsl(35,15%,49%)"]).interpolate(d3.interpolateHsl); 
 
           var colorScaleBuy = d3.scale.linear().domain([0,maxDisplayCost])
@@ -102,13 +122,15 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
 
           svg.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", function () { return ss == "Arsenal" ? "translate(0, "+(height+20)+" )" : "translate(0, "+height+" )"; })
                 .call(xAxis);
 
-          svg.append("g")
+          if(ss != "Arsenal"){      
+            svg.append("g")
                 .attr("class", "y axis")
                 .attr("transform", "translate("+(width-margin.left)+",0)")
                 .call(yAxis);
+              }  
           
                 //.attr("class", "label")
                 // .attr("y", height-margin.top)
@@ -133,151 +155,72 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
           
 
         svg.append("g")
-              .attr("class", "highlight-circles"); 
-
+              .attr("class", "highlight-circles")
+              .attr("transform", "translate(0 ,"+(height/2)+" )");
 
         // add circles
 
-        var max_r = d3.max(data.map(function (d) { return d.value; }));
-        var r = d3.scale.linear().domain([0, maxFee]).range([3, 30]);
 
-        var newCirc = bestCircleGenerator(r, 0);
+        maxRadius = 0;
+        var r = d3.scale.linear().domain([0, maxFee]).range([3, 21]);
 
-        console.log(newCirc)
+        rScale = d3.scale.sqrt()  
+              //make radius proportional to square root of data r
+              .domain([0,maxFee])
+              .range([3,30]);
 
         svg.selectAll(".loading").remove();
 
+        d3.select('#'+targetDiv+' .highlight-circles').selectAll('circle')
+          .data(data.filter(function(d, i){ return d[sortOn] == subSortOn; }).sort( biggestFirst ? function(a,b){return b.r - a.r;} : function(a,b){return a.r - b.r;} )) // condition here
 
-        d3.select('#'+targetDiv+' .non-highlight-circles')
-          .selectAll('circle')
-          .data(data.filter(function(d, i){ return d[sortOn]!= subSortOn; })) // condition here
           .enter().append("circle")
-          .style("fill", function(d){ return getFill(d) })
-          .style("stroke", function(d){ return getFill(d) })
-          
-          .attr("id",function (d) { return "dot_"+d.ind; })
-          .attr("cx", function (d) { return (x(d.d3Date) +sideMargins); })
-          .attr("cy", function(d) { return y(d.premClubShort); })
-          
-          .attr("r", function (d) { return r(d.value); });
+            .attr("r", function (d) { d.r = rScale(d.value); maxRadius = Math.max(d.r,maxRadius); return d.r; })
+          .each(function(d, i) {
+              var scaledX = xScale(d.d3Date); 
+              var scaledY = yScale(d.displayCost)
 
+              d.x = scaledX;
 
-          // add glass to obscure non-higlighted circles
-        var screenRect = d3.select('#'+targetDiv+' .non-highlight-circles').append("rect")
-            .attr("x", (0-margin.left))
-            .attr("y", (0-margin.top))
-            .attr("width", width+margin.left+margin.right)
-            .attr("height", height)
-            .style("fill","#FFF")
-            .style("fill-opacity","0.85");
+              d3.select(this)
+                .attr("cx", scaledX)
+                .attr("cy", calculateOffset(maxRadius)) //calculateOffset(maxRadius)
+                .attr("id",function (d) { return "dot_"+d.ind; })
+                .style("fill", function(d){ return getFill(d) })
+                .style("cursor","pointer");
 
+                // 
+              quadroot.add(d);
 
-        d3.select('#'+targetDiv+' .highlight-circles')
-            .selectAll('circle')
-            .data(data.filter(function(d, i){ return d[sortOn]== subSortOn; })) // condition here
-            .enter().append("circle")
-            .style("fill", function(d){ return getFill(d) })
-            .style("cursor","pointer")
-            
-            .attr("id",function (d) { return "dot_"+d.ind; })
-            .attr("cx", function (d) { return (x(d.d3Date) +sideMargins); })
-            .attr("cy", function(d) { return y(d.premClubShort); })
-            .attr("r", function (d) { return r(d.value); })
-            .on("click", function(d,e){  dotClick(d,event) });
-          // .attr("cy", height)
-          // .transition().duration(1000).attr("cy", function(d) { return y(d.displayCost); })   
+          }).on("click", function(d,e){  dotClick(d,event) })
+        
 
-          // svg.selectAll("circle")
-          //   .data(data)
-          //   .enter()
-          //   .append("circle")
-          //   .attr("class", function(d) { return getDotClass(d)})
-          //   
-          //   .attr("id",function (d,i) { return "dot_"+i; })
-          //   .attr("cx", function (d) { return x(d.date); })
-            
-          //   .attr("r", function (d) { return r(d.value); })
-          //   .on("click", function(d,i){ dotClick(d,i) })
-          //   .attr("cy", height)
-          //   .transition().duration(1000).attr("cy", function(d) { return y(d.displayCost); });     
-        //add axis
+        if(ss == "Arsenal"){
+            var dateLabel = svg.append('g')
+              .attr('class','strikerate-label')
+              .attr("transform", "translate( "+(width)+" , 0)");
 
-        var dateLabel = svg.append('g')
-            .attr('class','strikerate-label')
-            .attr("transform", "translate( "+(width)+" , "+(height+margin.bottom)+" )");
-
-        var dateText = dateLabel.append('text')
-            .attr('class','strikerate-label')
-            .attr('dx',-70)
-            .attr('dy',-5)
+            var dateText = dateLabel.append('text')
+              .attr('class','strikerate-label')
+              .attr('dx', 0-120)
+              .attr('dy',baseLineHeight-12)
 
             dateText.append('tspan')
               .text('Date of signing')
 
-            // dateText.append('tspan')
-            //   .text(' ')
-            //   .attr('x',10)
-            //   .attr('dy',14)
-
             dateLabel.append('line')
-              .attr('x1','-30')
-              .attr('x2','-30')
+              .attr('x1',baseLineHeight)
+              .attr('x2',baseLineHeight)
               .attr('y1','0')
-              .attr('y2','35')
-              .attr('stroke','#bebebe')
+              .attr('y2',width)
               .attr('marker-start','url(#markerArrowTop)')
-              .attr('transform','rotate(90)')
-
-            // strikerateLabel.append('circle')
-            //   .attr('r',5)
-            //   .attr('cy',40)
-            //   .attr('stroke','#bebebe')
-            //   .attr('fill','transparent')
-
-            // var circleText = strikerateLabel.append('text')
-            //   .attr('class','strikerate-label')
-            //   .attr('dx',10)
-            //   .attr('dy',44)
-
-            // circleText.append('tspan')
-            //   .text('Cost of player')   
-
+              .attr('transform','rotate(90)')  
+          }  
+        
 
           var strikerateLabel = svg.append('g')
               .attr('class','strikerate-label')
               .attr("transform", "translate( "+((0-margin.left)+6)+" , "+((height+margin.top)-margin.bottom)+" )");
-
-          //   var strikeText = strikerateLabel.append('text')
-          //     .attr('class','strikerate-label')
-          //     .attr('dx',10)
-          //     .attr('dy',-5)
-
-          //   strikeText.append('tspan')
-          //     .text('£m')
-
-          //   strikerateLabel.append('line')
-          //     .attr('x1',0.5)
-          //     .attr('x2',0.5)
-          //     .attr('y1',-10)
-          //     .attr('y2',9)
-          //     .attr('stroke','#bebebe')
-          //     .attr('marker-start','url(#markerArrowTop)')
-
-
-
-
-            // strikeText.append('tspan')
-            //   .text(' ')
-            //   .attr('x',10)
-            //   .attr('dy',14)
-
-            
-
-            // strikerateLabel.append('circle')
-            //   .attr('r',5)
-            //   .attr('cy',40)
-            //   .attr('stroke','#bebebe')
-            //   .attr('fill','transparent')
 
             strikerateLabel.append('circle')
               .attr('r',5)
@@ -288,14 +231,6 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
               .attr('r',5)
               .attr('cy',76)
               .attr('fill', sellSolid)  //colorScaleSell(Number(colorScaleSell.length/2))
-
-            // var circleTextOne = strikerateLabel.append('text')
-            //   .attr('class','strikerate-label')
-            //   .attr('dx',10)
-            //   .attr('dy',44)
-
-            // circleTextOne.append('tspan')
-            //   .text('Cost of player'); 
 
             var circleTextTwo = strikerateLabel.append('text')
               .attr('class','strikerate-label')
@@ -342,17 +277,7 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
             titleText.text(d.playername); feeText.text(d.formattedFee)
             console.log(d);
             tooltipContainer.attr("transform", "translate( "+ xPos +" , "+ (e.target.cy.animVal.value-margin.top) +" )").style("display","block");
-            // var ddEl = document.getElementsByClassName('gv-select');
-            // d3.selectAll(".highlight").classed("highlight", false);
-
-            // _.each(data, function(item,i){
-            //   if(item[sortOn] == d[sortOn]){
-            //     ;
-            //     setSelectedIndex(ddEl, item[sortOn]);
-            //     ddEl.selected = item[sortOn];
-            //   }
-                
-            // })
+            
         } 
 
         function getFill(d){
@@ -369,8 +294,130 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
           return c;  
         }
 
+
+        function findNeighbours(root, scaledX, scaledR, maxR) {
+
+          var padding = 4;
+
+          //console.log("scaledR and scaledX arent't here", scaledR)
+
+          var neighbours = [];
+          //console.log("Neighbours of " + scaledX + ", radius " + scaledR);
+          
+          root.visit(function(node, x1, y1, x2, y2) {
+            //console.log("visiting (" + x1 + "," +x2+")");
+          var p = node.point; 
+          if (p) {  //this node stores a data point value
+              var overlap, x2=xScale(p.x), r2=rScale(p.r);        
+              if (x2 < scaledX) {
+                  //the point is to the left of x
+                  overlap = (x2+r2 + padding >= scaledX-scaledR);
+                  /*console.log("left:" + x2 + ", radius " + r2 
+                              + (overlap?" overlap": " clear"));//*/
+              }      
+              else {
+                  //the point is to the right
+                  overlap = (scaledX + scaledR + padding >= x2-r2);
+                  /*console.log("right:" + x2 + ", radius " + r2 
+                              + (overlap?" overlap": " clear"));//*/
+              }
+              if (overlap) neighbours.push(p);
+          }
+         
+          return (x1-maxR > scaledX + scaledR + padding) 
+                  && (x2+maxR < scaledX - scaledR - padding) ;
+            //Returns true if none of the points in this 
+            //section of the tree can overlap the point being
+            //compared; a true return value tells the `visit()` method
+            //not to bother searching the child sections of this tree
+        });
+          
+          return neighbours;
+      }
+
+      function calculateOffset(maxR){
+
+          var padding = 4;
+
+          return function(d) {
+              var neighbours = findNeighbours(quadroot, xScale(d.x), rScale(d.r), maxR);
+
+
+              var n=neighbours.length;
+              
+
+              _.each(neighbours, function (neighbour){
+                console.log(neighbour);
+              })
+              var upperEnd = 0, lowerEnd = 0;      
+              
+              if (n){
+                  //for every circle in the neighbour array
+                  // calculate how much farther above
+                  //or below this one has to be to not overlap;
+                  //keep track of the max values
+                  var j=n, occupied=new Array(n);
+                  while (j--) { 
+                      var p = neighbours[j];
+                      var hypoteneuse = rScale(d.r)+rScale(p.r)+padding; 
+                      //length of line between center points, if only 
+                      // "padding" space in between circles
+                      
+                      var base = xScale(d.x) - xScale(p.x); 
+                      // horizontal offset between centres
+                      
+                      var vertical = Math.sqrt(Math.pow(hypoteneuse,2) -
+                          Math.pow(base, 2));
+                      //Pythagorean theorem
+                      
+                      occupied[j]=[p.offset+vertical, p.offset-vertical];
+                      //max and min of the zone occupied
+                      //by this circle at x=xScale(d.x)
+                  }
+                  occupied = occupied.sort(
+                      function(a,b){
+                          return a[0] - b[0];
+                      });
+                  //sort by the max value of the occupied block
+                  //console.log(occupied);
+                  lowerEnd = upperEnd = 1/0;//infinity
+                      
+                  j=n;
+                  while (j--){
+                      //working from the end of the "occupied" array,
+                      //i.e. the circle with highest positive blocking
+                      //value:
+                      
+                      if (lowerEnd > occupied[j][0]) {  
+                          //then there is space beyond this neighbour  
+                          //inside of all previous compared neighbours
+                          upperEnd = Math.min(lowerEnd,
+                                              occupied[j][0]);
+                          lowerEnd = occupied[j][1];
+                      }
+                      else {
+                          lowerEnd = Math.min(lowerEnd,
+                                              occupied[j][1]);
+                      }
+                  //console.log("at " + formatPercent(d.x) + ": "
+                    //          + upperEnd + "," + lowerEnd);
+                  }
+              }
+                  
+                  //assign this circle the offset that is smaller
+                  //in magnitude:
+
+    
+              return d.offset = 
+                      (Math.abs(upperEnd)<Math.abs(lowerEnd)) ? upperEnd : lowerEnd;
+          };
+      }
+
         //adjustLayout(height)
 } 
+
+
+
 
 function getDotClass(d){
 
@@ -409,12 +456,9 @@ function get3Letter(v){
     if(tempArr.length  > 2){ tempStr = tempArr[0].slice(0,1) + tempArr[1].slice(0,1) + tempArr[2].slice(0,1) }      
 
     return tempStr.toUpperCase();
-
 }
 
 function updateDots(s){
-
-
   d3.selectAll(".highlight").classed("highlight", false);
      _.each(data, function(item,i){
               if(item[sortOn] == s){
@@ -427,112 +471,3 @@ function updateDots(s){
      customScrollTo(document.getElementById("listEntry_"+stripSpace(s)));
 
 }
-
-function getRadius(n){
-        n < 1 ? n = 0 : n = n;
-        n = n+5;
-        return n;
-}
-
-
-function setSelectedIndex(s, v) {
-    for ( var i = 0; i < s[0].length; i++ ) {
-          if ( s[0][i].text == v ) {
-              s[0][i].selected = true;
-              return;
-        }
-    }
-}
-
-function addDropDown(data, sortOn){
-        data.sort(compareObj)
-        var htmlStr = "<div class='chart__dropdown-container'><div class='styled-select'><select class='gv-select'>";
-
-        _.each(selectArr, function(item){
-              htmlStr += "<option value='"+item[sortOn]+"'>"+item[sortOn]+"</option>"
-        })
-        htmlStr+='</select></div></div>'
-
-
-        var el = document.getElementById("dropDownSelect").innerHTML = htmlStr;
-         //el.innerHTML()
-
-        var sel = d3.select(".gv-select");
-
-        addDropListener(sel)
-}
-
-
-
-
-function addDropListener(sel){
-        sel.on("change", function() { updateDots(this.value) });
-}
-
-function compareObj(a,b) {
-    if (a[sortOn] < b[sortOn])
-      return -1;
-    if (a[sortOn] > b[sortOn])
-      return 1;
-    return 0;
-}
-
-
-function stripSpace(s){
-    s = s.split(" ").join("_");
-    return s;
-}
-
-
-function bestCircleGenerator(maxRadius, padding) {
-  var quadtree = d3.geom.quadtree().extent([[0, 0], [width, height]])([]),
-      searchRadius = maxRadius * 2,
-      maxRadius2 = maxRadius * maxRadius;
-
-  return function(k) {
-    var bestX, bestY, bestDistance = 0;
-
-    for (var i = 0; i < k || bestDistance < padding; ++i) {
-      var x = Math.random() * width,
-          y = Math.random() * height,
-          rx1 = x - searchRadius,
-          rx2 = x + searchRadius,
-          ry1 = y - searchRadius,
-          ry2 = y + searchRadius,
-          minDistance = maxRadius; // minimum distance for this candidate
-
-      quadtree.visit(function(quad, x1, y1, x2, y2) {
-        if (p = quad.point) {
-          var p,
-              dx = x - p[0],
-              dy = y - p[1],
-              d2 = dx * dx + dy * dy,
-              r2 = p[2] * p[2];
-          if (d2 < r2) return minDistance = 0, true; // within a circle
-          var d = Math.sqrt(d2) - p[2];
-          if (d < minDistance) minDistance = d;
-        }
-        return !minDistance || x1 > rx2 || x2 < rx1 || y1 > ry2 || y2 < ry1; // or outside search radius
-      });
-
-      if (minDistance > bestDistance) bestX = x, bestY = y, bestDistance = minDistance;
-    }
-
-    var best = [bestX, bestY, bestDistance - padding];
-
-    console.log(best)
-    quadtree.add(best);
-    return best;
-  };
-
-}  
-
-
-
-
-
-
-
-       
-
-
