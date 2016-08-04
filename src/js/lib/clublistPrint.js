@@ -1,4 +1,4 @@
-import scattergridFee from './scattergridDate'
+import scattergridFee from './scatterChart'
 var customScrollTo;
 
 var isoArr = [ 

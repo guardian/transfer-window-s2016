@@ -65,11 +65,6 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
 }
 
 
-
-
-
-var quadroot;
-
 var xScale = d3.time.scale().domain([ new Date('2016-04-30'), new Date('2016-09-05') ]).rangeRound([0, width]);
 
 function packCircles(t, a, s, ss, maxFee){
@@ -221,19 +216,21 @@ function packCircles(t, a, s, ss, maxFee){
               //using the format [[minX,minY],[maxX, maxY]]
               //optional if you're adding all the data at once
 
-          quadroot = quadtree([]);
+         var quadroot = quadtree([])
+                    // need to create a new quadroot for every iteration
                     //create an empty adjacency tree; 
                     //the function returns the root node.
 
           var maxR = 0;
 
           var bubblez = bubbleLine.selectAll("circle")
+          
+              .data(data2.sort( 
 
-              .data(data2.sort(
-                  biggestFirst?
-                      function(a,b){return b.r - a.r;} :
-                      function(a,b){return a.r - b.r;}
-                  ))          
+              
+
+              biggestFirst? function(a,b){return b.r - a.r;} :   function(a,b){return a.r - b.r;} ))   
+
               .enter()
               .append("circle")
                 .attr("r", function(d){
@@ -263,9 +260,12 @@ function packCircles(t, a, s, ss, maxFee){
                  
                     d3.select(this)
                         .attr("cy", 0)
-                        .attr("cx", calculateOffset(maxR));
-                   console.log( "quadroot.add(d); console.log(quadroot)"+" PROBLEM" ) //quadroot.add(d); console.log(quadroot)
+                        .attr("cx", calculateOffset(maxR))
+                        quadroot.add(d); console.log(quadroot);
+                   //console.log( "quadroot.add(d); console.log(quadroot)"+" PROBLEM" ) 
                 });
+
+                console.log( quadroot );
 
             // bubblez.on('mouseenter',function(d,e,i){
             //   nameContainer.html(d.name + '<span>(scored ' + d.goals + ' goals in ' + d.caps + ' matches)</span>');
