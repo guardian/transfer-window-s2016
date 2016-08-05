@@ -11,6 +11,8 @@ var sellSolid = "rgba(72,79,83, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";
 
 var windowYear;
 
+var yearsArr = ["2016"]
+
  function getFill(d){
           var c;
 
@@ -28,21 +30,26 @@ var windowYear;
 
 
 
-export default function scatterChart(a, s, ss, t, rowWidth, scrollFn, maxFee, yy){
+export default function scatterChart(a, s, ss, t, rowWidth, scrollFn, maxFee){
 
+  console.log(a)
 
-   var svgTarg = d3.select('#'+t+"_"+yy).append("svg");
+  _.each(yearsArr, function(yy){
 
-   windowYear = yy;
+      var svgTarg = d3.select('#'+t+"_"+yy+" svg");
 
-   packCircles(a, s, ss, svgTarg, yy);
+      windowYear = yy;
 
+      packCircles(a, s, ss, svgTarg, yy);
+  })
 
 }
 
 
 
 function packCircles(a, s, ss, t, yy) {
+
+
     //D3 program to fit circles of different sizes along a 
     //horizontal dimension, shifting them up and down
     //vertically only as much as is necessary to make
@@ -74,11 +81,11 @@ function packCircles(a, s, ss, t, yy) {
         .range([margin,width-margin]);
 
     var dateScale = d3.time.scale()
-          .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-05'") ])
+          .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-01'") ])
           .rangeRound([margin,width-margin]);
 
     var normDateScale = d3.time.scale()
-          .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-05'") ])
+          .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-01'") ])
           .range([0,1]);            
 
     var data = [];
@@ -329,8 +336,8 @@ function packCircles(a, s, ss, t, yy) {
 
                               d3.select(this)
                                   .attr("cx", scaledX)
-                                  .attr("cy", -baselineHeight)
-                                  .transition().delay(300*i).duration(250)
+                                  // .attr("cy", -baselineHeight)
+                                  // .transition().delay(300*i).duration(250)
                                   .attr("cy", calculateOffset(maxR))
                                   .style("fill", function(d){ return getFill(d) });
                               quadroot.add(d);

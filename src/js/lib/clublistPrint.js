@@ -31,22 +31,21 @@ export default function clublistPrint(obj, allTransfers, globalSortOn, scrollFn,
     var el = document.getElementById('gv__clubList');
 
     var htmlStr = "<div>";
-    htmlStr += constructInnerHtml(obj,yy)
+    htmlStr += constructInnerHtml()
     htmlStr += "</div>"
     
 
     el.innerHTML = htmlStr;
 
-    addScatterGrids(obj, allTransfers, globalSortOn,yy);
 }
 
-function constructInnerHtml(o,yy){
+function constructInnerHtml(){
     var s= "";
 
 
     // use _.forOwn to iterate through object
-     _.forOwn(o, function(value, key) { 
-
+     _.each(isoArr, function(item) { 
+        var key = item.premClub;
         s+="<div class='dig-slice' id='listEntry_"+stripSpace(key)+"'>"
         s+="<div class='dig-slice__inner'>"
         s+="<div class='dig-slice__inner__left'><img src='https://sport.guim.co.uk/football/crests/120/"+getBadgeRef(key)+".png' width='auto' height='36px' style='display:inline-block; margin-right:12px;'>"
@@ -55,7 +54,7 @@ function constructInnerHtml(o,yy){
         s+="</div>"
         s+="</div>"
         s+="<div class='dig-slice__inner__main'>"
-        s+= getPlayerList(value, key, yy);        
+        s+= addChartHTML( key );    //addPlayerList removed    
         s+="</div>"
         s+="</div>"
         s+="</div>"
@@ -118,6 +117,10 @@ function getFigures(a){
 }
 
 
+function addChartHTML(k){
+    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2016'><svg> </svg></div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2015'><svg> </svg></div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2014'><svg> </svg></div>"; // no player list
+}
+
 function getPlayerList(a, k, yy){
     var moneyFigures = getFigures(a);
 
@@ -149,7 +152,7 @@ function getPlayerList(a, k, yy){
 
     // return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div><div style='margin-bottom:20px'>"+graphStr+buyS+sellS+"</div>";
 
-    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_"+yy+"'></div>"; // no player list
+    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2016'><svg id ='svg_"+stripSpace(k)+"_2016'> </svg></div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2015'><svg> </svg></div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2014'><svg> </svg></div>"; // no player list
 }
 
 function stripSpace(s){
@@ -159,7 +162,7 @@ function stripSpace(s){
 
 
 
-function addScatterGrids(o, allTransfers, globalSortOn,yy){
+function addScatterGrids(o, allTransfers, globalSortOn ,yy){
     var rowWidth = 920; 
     var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
 
@@ -167,7 +170,7 @@ function addScatterGrids(o, allTransfers, globalSortOn,yy){
 
         
 
-        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost,yy);
+        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost, yy);
         
         // (a, s, t, rowWidth, scrollFn)
 

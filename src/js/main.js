@@ -13,9 +13,10 @@ import navlist from './lib/navList'
 
 import clublistPrint from './lib/clublistPrint'
 
+import scattergridFee from './lib/scatterChart'
+
 var isoArr = [ 
     { premClub:'Arsenal', iso:'ARS'},
-    { premClub:'Aston Villa', iso:'AV'},  
     { premClub:'Burnley', iso:'BUR'}, 
     { premClub:'Bournemouth', iso:'BOU'}, 
     { premClub:'Chelsea', iso:'CHE'}, 
@@ -27,8 +28,6 @@ var isoArr = [
     { premClub:'Manchester City', iso:'MCY'}, 
     { premClub:'Manchester United', iso:'MUN'}, 
     { premClub:'Middlesbrough', iso:'MID'}, 
-    { premClub:'Newcastle United', iso:'NEW'}, 
-    { premClub:'Norwich City', iso:'NOR'}, 
     { premClub:'Stoke City', iso:'STO'},  
     { premClub:'Southampton', iso:'SOT'}, 
     { premClub:'Sunderland', iso:'SUN'}, 
@@ -52,6 +51,8 @@ var allTransfers;
 
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data, rowWidth;
 var globalSortOn;
+
+var arrTransfersByClubYear = [];     
 
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
@@ -102,32 +103,51 @@ function logData(r, yy){
 
 function initData(r, yy){
 
-    var tempArr = buildArray(r)
+    var tempArr = buildArray(r,yy)
 
     var clubArr = _.groupBy(tempArr,'premClub') 
-
-    _.each(clubArr, function(item){
-        console.log(item)
-    })
 
     //buildDataView(allTransfers, 940);
 
     var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
-    buildListView(clubArr,tempArr, customScrollTo, yy) 
-  
+    buildListView(clubArr ,tempArr, customScrollTo, yy) 
+
+    arrTransfersByClubYear.push(clubArr);
+
+    addScatterGrids(clubArr, allTransfers, globalSortOn);
+    
+
 }
 
 
-function buildArray(r){
+
+function addScatterGrids(o, allTransfers, globalSortOn){
+    var rowWidth = 920; 
+    var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
+
+    _.forOwn(o, function(value, key) { 
+
+        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost);
+        
+        // (a, s, t, rowWidth, scrollFn)
+
+    })    
+
+}
+
+
+function buildArray(r,yy){
 
     var tempArr = []
 
     allTransfers = r.sheets.rawData;
 
         _.each(allTransfers, function(item, i){  
+                var jsDate = new Date(item.date)
                 item.d3Date = getD3Date(item.date);
                 item.cost = checkForNumber(item.price);
+                item.year = yy;
 
                 item.ageGroup = getAgeGroup(item);   
                 
@@ -167,6 +187,7 @@ function buildArray(r){
                     itemOne.cost = itemTwo.cost = item.cost;
                     itemOne.d3Date = itemTwo.d3Date = item.d3Date;
                     itemOne.date = itemTwo.date = item.date;
+
                     itemOne.formattedFee = itemTwo.formattedFee = item.formattedFee;
                     itemOne.imageGridURL = itemTwo.imageGridURL = item.imageGridURL;
                    
@@ -186,13 +207,10 @@ function buildArray(r){
                     // console.log(sellClub,'---------->',buyClub)
                     // console.log(itemOne.playername, itemOne.premClub,"---------->",itemTwo.playername, itemTwo.premClub); 
 
-
                 }
-    
 
         }) 
 
-    
 
     tempArr.sort(function(a, b){
         if(a[globalSortOn] < b[globalSortOn]) return -1;
@@ -211,19 +229,26 @@ function buildArray(r){
 
     }) 
 
-    return tempArr;
+    var checkedArr = [];
+
+    _.each(tempArr, function(item,i){
+       
+        _.each(isoArr, function (o){
+            if (o.premClub == item.premClub){ checkedArr.push(item) }
+        })
+
+    }) 
+
+    return checkedArr;
 }
+
 
 function getD3Date(d){
     var a = d.split("/");
 
-
-    return(new Date(a[2],(a[1]-1),a[0])) // DD/MM/YY Month - 1
-
+    return(new Date(a[2],(a[1]-1),a[0])) // DD/MM/YYYY Month - 1 to map against array 0-11
 
 }
-
-
 
 
 function getMonday( date ) {
@@ -235,8 +260,7 @@ function getMonday( date ) {
 
 
 function buildListView(obj,allTransfers,customScrollTo,yy){ 
-    //get 2015 transfers into all transfersArr
-    console.log(yy)
+    //get 2015 transfers into all transfersArr    
     var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy);
 }
 
@@ -264,7 +288,7 @@ function getZeroValueObjects(arrIn, sortStr){
 }
 
 
-function roundDisplayNum(num,decimals) {
+function roundDisplayNum(num,decimals) {clublistPrint
     var sign="£";
     num = (num/1000000)
     var newNum = num.toFixed(1);
@@ -293,5 +317,10 @@ window.addEventListener('scroll', function(){
 
 
 
+}
+
+function stripSpace(s){
+    s = s.split(" ").join("_");
+    return s;
 }
 

@@ -175,8 +175,9 @@ $sell-color-noFee:#484f53;
 }
 
 .scatter-grid-holder{
-        // margin-top:$gs-gutter;
-        // margin-bottom: gs-span(1);
+    width:320px;
+    margin:0;
+    display:inline-block;
 
   @include mq(mobileLandscape) {
         
@@ -184,7 +185,6 @@ $sell-color-noFee:#484f53;
     }      
   @include mq(leftCol) {
         margin-bottom: gs-height(1);
-        
     }
 }
 
