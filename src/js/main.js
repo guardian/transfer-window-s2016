@@ -44,7 +44,10 @@ var _ = lodash;
 var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
 
 //define globals
-var dataURL = 'https://interactive.guim.co.uk/docsdata/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json' 
+var dataURL2016 = 'https://interactive.guim.co.uk/docsdata/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json' 
+var dataURL2015 = 'https://interactive.guim.co.uk/docsdata/1OilCanhD6Xb3uN7fl-UvuRaCFpTuTgEk6CcBbr4OFYg.json'
+var dataURL2014 = 'https://interactive.guim.co.uk/docsdata/1YwSeSd_eNMFnzgPmXmwa-UfKCk6lMFG0Qd-1KSKtW48.json'
+
 var allTransfers;
 
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data, rowWidth;
@@ -59,10 +62,25 @@ export function init(el, context, config, mediator) {
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
 
     reqwest({
-            url: dataURL,
+            url: dataURL2014,
             type: 'json',
             crossOrigin: true,
-            success: (resp) => initData(resp)
+            success: (resp) => initData(resp,'2014')
+            //initData(resp)
+        }); 
+
+    reqwest({
+            url: dataURL2015,
+            type: 'json',
+            crossOrigin: true,
+            success: (resp) => initData(resp,'2015')
+        }); 
+
+    reqwest({
+            url: dataURL2016,
+            type: 'json',
+            crossOrigin: true,
+            success: (resp) => initData(resp,'2016')
         }); 
 
 
@@ -72,11 +90,40 @@ function randomDate(start, end) {
 }
 
 
-function initData(r){
-    
-    allTransfers = r.sheets.rawData;
+function logData(r, yy){
+
+    var tempArr = buildArray(r)
+
+    _.each(tempArr, function(item){
+        //console.log(item)
+    })
+
+}
+
+function initData(r, yy){
+
+    var tempArr = buildArray(r)
+
+    var clubArr = _.groupBy(tempArr,'premClub') 
+
+    _.each(clubArr, function(item){
+        console.log(item)
+    })
+
+    //buildDataView(allTransfers, 940);
+
+    var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
+
+    buildListView(clubArr,tempArr, customScrollTo, yy) 
+  
+}
+
+
+function buildArray(r){
 
     var tempArr = []
+
+    allTransfers = r.sheets.rawData;
 
         _.each(allTransfers, function(item, i){  
                 item.d3Date = getD3Date(item.date);
@@ -164,14 +211,7 @@ function initData(r){
 
     }) 
 
-    var clubArr = _.groupBy(tempArr,'premClub') 
-
-    //buildDataView(allTransfers, 940);
-
-    var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
-
-    buildListView(clubArr,tempArr, customScrollTo) 
-  
+    return tempArr;
 }
 
 function getD3Date(d){
@@ -184,6 +224,8 @@ function getD3Date(d){
 }
 
 
+
+
 function getMonday( date ) {
     var day = date.getDay() || 7;  
     if( day !== 1 ) 
@@ -192,8 +234,10 @@ function getMonday( date ) {
 }    
 
 
-function buildListView(obj,allTransfers){ 
-    var listview = new clublistPrint(obj, allTransfers, globalSortOn);
+function buildListView(obj,allTransfers,customScrollTo,yy){ 
+    //get 2015 transfers into all transfersArr
+    console.log(yy)
+    var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy);
 }
 
 function getZeroValueObjects(arrIn, sortStr){

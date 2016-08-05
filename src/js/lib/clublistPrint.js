@@ -24,24 +24,23 @@ var isoArr = [
     { premClub:'West Ham United', iso:'WHU', badgeRef:'43'}
 ];
 
-export default function clublistPrint(obj, allTransfers, globalSortOn, scrollFn) {
+export default function clublistPrint(obj, allTransfers, globalSortOn, scrollFn, yy) {
 
     customScrollTo = scrollFn;
 
     var el = document.getElementById('gv__clubList');
 
-
     var htmlStr = "<div>";
-    htmlStr += constructInnerHtml(obj)
+    htmlStr += constructInnerHtml(obj,yy)
     htmlStr += "</div>"
     
 
     el.innerHTML = htmlStr;
 
-    addScatterGrids(obj, allTransfers, globalSortOn);
+    addScatterGrids(obj, allTransfers, globalSortOn,yy);
 }
 
-function constructInnerHtml(o){
+function constructInnerHtml(o,yy){
     var s= "";
 
 
@@ -56,7 +55,7 @@ function constructInnerHtml(o){
         s+="</div>"
         s+="</div>"
         s+="<div class='dig-slice__inner__main'>"
-        s+= getPlayerList(value, key);        
+        s+= getPlayerList(value, key, yy);        
         s+="</div>"
         s+="</div>"
         s+="</div>"
@@ -65,7 +64,10 @@ function constructInnerHtml(o){
 
      return s;
 
-     function getBadgeRef(k){
+}
+
+
+function getBadgeRef(k){
         var s = "";
 
         _.each(isoArr, function(o){
@@ -73,10 +75,8 @@ function constructInnerHtml(o){
         })
 
         return s;
-     }
- 
+    }
 
-}
 
 function formatPrice(s){
     var v = s;
@@ -118,7 +118,7 @@ function getFigures(a){
 }
 
 
-function getPlayerList(a, k){
+function getPlayerList(a, k, yy){
     var moneyFigures = getFigures(a);
 
     var graphStr = " ";
@@ -149,7 +149,7 @@ function getPlayerList(a, k){
 
     // return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div><div style='margin-bottom:20px'>"+graphStr+buyS+sellS+"</div>";
 
-    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div>"; // no player list
+    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_"+yy+"'></div>"; // no player list
 }
 
 function stripSpace(s){
@@ -159,7 +159,7 @@ function stripSpace(s){
 
 
 
-function addScatterGrids(o, allTransfers, globalSortOn){
+function addScatterGrids(o, allTransfers, globalSortOn,yy){
     var rowWidth = 920; 
     var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
 
@@ -167,7 +167,7 @@ function addScatterGrids(o, allTransfers, globalSortOn){
 
         
 
-        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost);
+        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost,yy);
         
         // (a, s, t, rowWidth, scrollFn)
 

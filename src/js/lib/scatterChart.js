@@ -9,7 +9,7 @@ var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, heigh
 var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
 var sellSolid = "rgba(72,79,83, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";  // #484f53
 
-
+var windowYear;
 
  function getFill(d){
           var c;
@@ -25,59 +25,24 @@ var sellSolid = "rgba(72,79,83, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";
           return c;  
 }
 
-// var data2 = a.filter(function(d, i){ return d[s] == ss; }).map(function(pl){
-//     console.log(pl)
-//     pl.x = xScale(pl.d3Date);
-//     pl.r = (pl.value)/1000000;
-//     pl.simpleName = pl.playername.trim().replace(/[^a-zA-Z 0-9.]+/g,'').replace(/ /g, '_').replace(/-/g, '');
-    
-//     var pattern = svg.select('defs').append('pattern')
-//       .attr('id','image-' + pl.simpleName)
-//       .attr('x',"0%")
-//       .attr('y',"0%")
-//       .attr('width','100%')
-//       .attr('height','100%')
-//       .attr('viewBox','0 0 260 260')
-//       // viewBox="0 0 512 512"
-
-//     // <image x="0%" y="0%" width="512" height="512" xlink:href="https://cdn3.iconfinder.com/data/icons/people-professions/512/Baby-512.png"></image>
-//     pattern.append('svg:image')
-//       .attr('x','0%')
-//       .attr('y','0%')
-//       .attr('width','260')
-//       .attr('height','260')
-//       .attr('xlink:href','https://interactive.guim.co.uk/2016/06/euros-player-pictures/' + pl.country + '/' + pl.simpleName + '.jpg')
-
-//     return pl
-//   });
 
 
 
-// customScrollTo = scrollFn;
+export default function scatterChart(a, s, ss, t, rowWidth, scrollFn, maxFee, yy){
 
 
+   var svgTarg = d3.select('#'+t+"_"+yy).append("svg");
+
+   windowYear = yy;
+
+   packCircles(a, s, ss, svgTarg, yy);
 
 
-//   svg.attr('width','100%')
-
-// var width = window.getComputedStyle(svg[0][0])["width"];
-//       width = digits.exec(width)[0];
-// var height = 120;
-
-
-// var data = a.filter(function(d, i){ return d[s] == ss; }).map(function(pl){
-
-
-export default function scatterChart(a, s, ss, t, rowWidth, scrollFn, maxFee){
-
-   var svgTarg = d3.select('#'+t).append("svg");
-
-   packCircles(a, s, ss, svgTarg);
 }
 
 
 
-function packCircles(a, s, ss, t) {
+function packCircles(a, s, ss, t, yy) {
     //D3 program to fit circles of different sizes along a 
     //horizontal dimension, shifting them up and down
     //vertically only as much as is necessary to make
@@ -96,22 +61,25 @@ function packCircles(a, s, ss, t) {
     var width = window.getComputedStyle(svg[0][0])["width"];
         width = digits.exec(width)[0];
 
-    var height = window.getComputedStyle(svg[0][0])["height"];
-        height = Math.min(digits.exec(height)[0], width);
+    var height = 60;    
+
+    height+=margin;
+    // var height = window.getComputedStyle(svg[0][0])["height"];
+    //     height = Math.min(digits.exec(height)[0], width);
         
     var baselineHeight = (margin + height)/2;
 
     var xScale = d3.scale.linear()
-            .domain([0,1])
-            .range([margin,width-margin]);
+        .domain([0,1])
+        .range([margin,width-margin]);
 
     var dateScale = d3.time.scale()
-                .domain([ new Date('2016-04-30'), new Date('2016-09-05') ])
-                .rangeRound([margin,width-margin]);
+          .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-05'") ])
+          .rangeRound([margin,width-margin]);
 
-     var normDateScale = d3.time.scale()
-                .domain([ new Date('2016-04-30'), new Date('2016-09-05') ])
-                .range([0,1]);            
+    var normDateScale = d3.time.scale()
+          .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-05'") ])
+          .range([0,1]);            
 
     var data = [];
     var data2 = a.filter(function(d, i){ return d[s] == ss; }).map(function(pl){
@@ -126,14 +94,12 @@ function packCircles(a, s, ss, t) {
 
                   while(i--){
                       var tempData = data2[i];
-
-                     
-                      
                       var tempObj = {}
+
                       tempObj.x = normDateScale(tempData.d3Date),
                       tempObj.r = tempData.radius;
-                      
-                      console.log(tempObj.x)
+                      tempObj.buy = tempData.buy;
+                      tempObj.sell = tempData.sell;                
 
                       data.push(tempObj)
                     };
@@ -150,7 +116,7 @@ function packCircles(a, s, ss, t) {
                   var padding = 4; //space in pixels between circles
                   var minRadius = 5, maxRadius = 25;
                   var biggestFirst = true; //should largest circles be added first?
-
+                  var baseLineHeight = height/2;
                   
 
                   var rScale = d3.scale.sqrt()  
@@ -163,13 +129,37 @@ function packCircles(a, s, ss, t) {
                   var xAxis = d3.svg.axis()
                       .scale(dateScale)
                       .orient("top")
-                      .ticks(d3.time.months);
+                      .ticks(d3.time.months, 1)
+                      .tickSize( height,0,  0).orient("top")
+                      .tickFormat(d3.time.format("%b"));
                       
                   svg.append("g")
                       .attr("class", "x axis")
-                      .attr("transform", "translate(0," + margin + ")")
+                      .attr("transform", function () { return ss == "Arsenal" ? "translate(0, "+(height+20)+" )" : "translate(0, "+height+" )"; })
                       .call(xAxis);
                       
+                  if(ss == "Arsenal"){
+                      var dateLabel = svg.append('g')
+                        .attr('class','strikerate-label')
+                        .attr("transform", "translate( 0 , 0)");
+
+                      var dateText = dateLabel.append('text')
+                        .attr('class','strikerate-label')
+                        .attr('dx', 0)
+                        .attr('dy',17)
+
+                      dateText.append('tspan')
+                        .text(windowYear)
+
+                      // dateLabel.append('line')
+                      //   .attr('x1',baseLineHeight)
+                      //   .attr('x2',baseLineHeight)
+                      //   .attr('y1','0')
+                      //   .attr('y2',width)
+                      //   .attr('marker-start','url(#markerArrowTop)')
+                      //   .attr('transform','rotate(90)')  
+                    }      
+
                   var threads = svg.append("g")
                       .attr("class", "threads");
 
@@ -327,6 +317,7 @@ function packCircles(a, s, ss, t) {
                               var r=rScale(d.r);
                               maxR = Math.max(r,maxR);
                               return r;})
+
                           .each(function(d, i) {
                               //for each circle, calculate it's position
                               //then add it to the quadtree
@@ -338,21 +329,23 @@ function packCircles(a, s, ss, t) {
 
                               d3.select(this)
                                   .attr("cx", scaledX)
-                                  .attr("cy", -baselineHeight + margin)
+                                  .attr("cy", -baselineHeight)
                                   .transition().delay(300*i).duration(250)
-                                  .attr("cy", calculateOffset(maxR));
+                                  .attr("cy", calculateOffset(maxR))
+                                  .style("fill", function(d){ return getFill(d) });
                               quadroot.add(d);
                               
-                              bubbleLine.append("text")
-                                  .attr("x", scaledX)
-                                  .attr("y", d.offset)
-                                  .text(i);
+                              // bubbleLine.append("text")
+                              //     .attr("x", scaledX)
+                              //     .attr("y", d.offset)
+                              //     .text(i);
                               
                               //add a drop line from the centre of this
                               //circle to the axis
                               threads.append("line").datum(d)
                                   .attr({x1:scaledX, x2:scaledX, y2:margin})
                                   .attr("y1", margin)
+                                  // .style("stroke-width",1)
                                   .transition().delay(300*i).duration(250)
                                   .attr("y1", (baselineHeight+d.offset));
                           });
