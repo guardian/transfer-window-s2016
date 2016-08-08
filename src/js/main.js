@@ -134,8 +134,7 @@ function initData(r, yy){
             };
             _.each(clubArr, function(a){
                 if(a[0].premClub == team.premClub){
-                    arrays['Array' + yy] = a;
-                    
+                    arrays['Array' + yy] = a; //update array if there are transfers - Middlesbrough, Hull, Bournemouth etc. need an empty array for seasons out side prem
                 }
                 
             })  
@@ -146,12 +145,11 @@ function initData(r, yy){
 
     buildListView(clubArr ,tempArr, customScrollTo, yy) 
 
-    arrTransfersByClubYear.push(clubArr);
-
-    addScatterGrids(clubArr, allTransfers, globalSortOn);
+    addScatterGrids(clubArr, allTransfers, globalSortOn); // push isoArr through here now it contains all transfers by season and club
 
     console.log("************isoArr has an object with each clubs transfers in buckets for each season - inter premier league transfers are NOT showing 'from and 'to'")
-    console.log(isoArr)
+
+    console.log(isoArr) 
 
 }
 
