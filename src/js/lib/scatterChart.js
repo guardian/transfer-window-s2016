@@ -32,7 +32,7 @@ var yearsArr = ["2016"]
 
 export default function scatterChart(a, s, ss, t, rowWidth, scrollFn, maxFee){
 
-  console.log(a)
+  //console.log(a)
 
   _.each(yearsArr, function(yy){
 

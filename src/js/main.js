@@ -101,13 +101,46 @@ function logData(r, yy){
 
 }
 
+
+
 function initData(r, yy){
+
+
+
 
     var tempArr = buildArray(r,yy)
 
+    //var yearsArray = _.uniq(tempArr,'d3Year')
+    //console.log(yearsArray)
+    // var yearLabels = _.uniqBy(clubArr, 'd3Year');
+    //console.log(yearLabels)
+
+
     var clubArr = _.groupBy(tempArr,'premClub') 
+    var yearArr = _.groupBy(clubArr,'d3Year') 
+    
+    console.log(yy)
+    _.each (yearArr, function(item){
+        console.log(item)
+    })
 
     //buildDataView(allTransfers, 940);
+
+        _.each(isoArr , function(team,i){
+            var arrays = {
+                Array2014: [],
+                Array2015: [],
+                Array2016: []
+            };
+            _.each(clubArr, function(a){
+                if(a[0].premClub == team.premClub){
+                    arrays['Array' + yy] = a;
+                    
+                }
+                
+            })  
+            team['transfers_'+ yy ] = arrays['Array' + yy];
+        })
 
     var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
@@ -116,7 +149,9 @@ function initData(r, yy){
     arrTransfersByClubYear.push(clubArr);
 
     addScatterGrids(clubArr, allTransfers, globalSortOn);
-    
+
+    console.log("************isoArr has an object with each clubs transfers in buckets for each season - inter premier league transfers are NOT showing 'from and 'to'")
+    console.log(isoArr)
 
 }
 
@@ -232,7 +267,7 @@ function buildArray(r,yy){
     var checkedArr = [];
 
     _.each(tempArr, function(item,i){
-       
+        item.d3Year = yy;
         _.each(isoArr, function (o){
             if (o.premClub == item.premClub){ checkedArr.push(item) }
         })
