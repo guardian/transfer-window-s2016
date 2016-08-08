@@ -62,20 +62,20 @@ export function init(el, context, config, mediator) {
 
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
 
-    reqwest({
-            url: dataURL2014,
-            type: 'json',
-            crossOrigin: true,
-            success: (resp) => initData(resp,'2014')
-            //initData(resp)
-        }); 
+    // reqwest({
+    //         url: dataURL2014,
+    //         type: 'json',
+    //         crossOrigin: true,
+    //         success: (resp) => initData(resp,'2014')
+    //         //initData(resp)
+    //     }); 
 
-    reqwest({
-            url: dataURL2015,
-            type: 'json',
-            crossOrigin: true,
-            success: (resp) => initData(resp,'2015')
-        }); 
+    // reqwest({
+    //         url: dataURL2015,
+    //         type: 'json',
+    //         crossOrigin: true,
+    //         success: (resp) => initData(resp,'2015')
+    //     }); 
 
     reqwest({
             url: dataURL2016,
@@ -96,7 +96,7 @@ function logData(r, yy){
     var tempArr = buildArray(r)
 
     _.each(tempArr, function(item){
-        //console.log(item)
+        console.log(item)
     })
 
 }
@@ -107,28 +107,50 @@ function initData(r, yy){
 
     var clubArr = _.groupBy(tempArr,'premClub') 
 
+    var yearArr = _.groupBy(tempArr,'d3Year')
+
+
+
     //buildDataView(allTransfers, 940);
 
     var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
-    buildListView(clubArr ,tempArr, customScrollTo, yy) 
+    var maxBuy = _.maxBy(tempArr, function(item) { return item.cost; });
+
+    buildListView(clubArr ,maxBuy, customScrollTo, yy); 
 
     arrTransfersByClubYear.push(clubArr);
 
-    addScatterGrids(clubArr, allTransfers, globalSortOn);
+    _.each(yearArr, function(item){
+
+        var seasonClubArr = _.groupBy(item,'premClub')
+        var seasonMaxBuy = _.maxBy(item, function(o) { return o.cost; });
+
+
+        // console.log(seasonMaxBuy)
+
+        addScatterGrids(seasonClubArr, seasonMaxBuy, globalSortOn, yy);
+        // _.forOwn(o, function(value, key) { 
+        //     console.log(value)
+
+        // })
+        
+        
+    })
+
+    //addScatterGrids(clubArr, allTransfers, globalSortOn);
     
 
 }
 
 
 
-function addScatterGrids(o, allTransfers, globalSortOn){
+function addScatterGrids(o, seasonMaxBuy, globalSortOn, yy){
     var rowWidth = 920; 
-    var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
 
     _.forOwn(o, function(value, key) { 
 
-        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost);
+            var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key)+'_'+yy, rowWidth, customScrollTo, seasonMaxBuy.cost);
         
         // (a, s, t, rowWidth, scrollFn)
 
@@ -140,14 +162,15 @@ function addScatterGrids(o, allTransfers, globalSortOn){
 function buildArray(r,yy){
 
     var tempArr = []
+    var yearNameFormat = d3.time.format("%Y");
+
 
     allTransfers = r.sheets.rawData;
 
         _.each(allTransfers, function(item, i){  
                 var jsDate = new Date(item.date)
                 item.d3Date = getD3Date(item.date);
-                item.cost = checkForNumber(item.price);
-                item.year = yy;
+                item.cost = checkForNumber(item.price);                
 
                 item.ageGroup = getAgeGroup(item);   
                 
@@ -233,11 +256,17 @@ function buildArray(r,yy){
 
     _.each(tempArr, function(item,i){
        
+
         _.each(isoArr, function (o){
-            if (o.premClub == item.premClub){ checkedArr.push(item) }
+            if (o.premClub == item.premClub){ 
+                item.d3Year = yy;
+
+                checkedArr.push(item) 
+            }
         })
 
     }) 
+
 
     return checkedArr;
 }

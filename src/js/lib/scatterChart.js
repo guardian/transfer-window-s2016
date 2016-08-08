@@ -9,11 +9,35 @@ var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, heigh
 var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
 var sellSolid = "rgba(72,79,83, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";  // #484f53
 
-var windowYear;
+var windowYear, doneLooping  = true;
 
-var yearsArr = ["2016"]
+var yearsArr = ["2016","2015","2014"]
 
- function getFill(d){
+
+
+
+
+
+
+
+export default function scatterChart(a, s, ss, t, rowWidth, scrollFn, maxFee, isoArr, yy){
+
+      windowYear = yy;
+
+      var svgTarg = d3.select("#"+t+" svg")
+
+      addSVGContainer(a, s, ss, svgTarg, yy);
+
+      //sortDataByYear(a, s ,ss, t);
+
+      //selectCharts()
+
+
+
+}
+
+
+function getFill(d){
           var c;
 
           if (d.sell){ c = sellSolid }
@@ -28,26 +52,44 @@ var yearsArr = ["2016"]
 }
 
 
+function selectCharts(){
+  var chartsArr = d3.selectAll('.gv-chart-svg');
 
 
-export default function scatterChart(a, s, ss, t, rowWidth, scrollFn, maxFee){
 
-  console.log(a)
-
-  _.each(yearsArr, function(yy){
-
-      var svgTarg = d3.select('#'+t+"_"+yy+" svg");
-
-      windowYear = yy;
-
-      packCircles(a, s, ss, svgTarg, yy);
-  })
+  console.log(chartsArr);
 
 }
 
 
 
-function packCircles(a, s, ss, t, yy) {
+// function sortDataByYear(a, s, ss, t){
+
+//    var data2 = a.filter(function(d){ return d[s] == ss; }).map(function(pl,i){
+//                   pl.radius = Number(pl.value/1000000)
+
+//                   return pl;
+
+
+//              });
+
+
+  
+// }
+
+function addSVGContainer(a, s, ss, svg, yy) {
+
+     
+
+      svg.style("fill", "#CCCC99").attr("height","120px").attr("width","300px")
+
+      svg.append("g")
+          .attr("class", "x axis")
+
+ } 
+
+function packCircles(a, s, ss, svgTarg, yy) {
+
 
 
     //D3 program to fit circles of different sizes along a 
@@ -60,13 +102,13 @@ function packCircles(a, s, ss, t, yy) {
     //http://www.nytimes.com/interactive/2013/05/25/sunday-review/corporate-taxes.html
     //Freely released for any purpose under Creative Commons Attribution licence: http://creativecommons.org/licenses/by/3.0/
     //Author name and link to this page is sufficient attribution.
-    var svg = t;
+
+    var svg = d3.select(svgTarg).append('svg');
 
     var digits = /(\d*)/;
     var margin = 50; //space in pixels from edges of SVG
 
-    var width = window.getComputedStyle(svg[0][0])["width"];
-        width = digits.exec(width)[0];
+    var width = 320;
 
     var height = 60;    
 
