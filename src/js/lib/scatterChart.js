@@ -30,18 +30,22 @@ var yearsArr = ["2016"]
 
 
 
-export default function scatterChart(a, s, ss, t, rowWidth, scrollFn, maxFee){
+export default function scatterChart(a){
 
   //console.log(a)
+console.log(a);
+  _.each(a, function(item){
 
-  _.each(yearsArr, function(yy){
-
-      var svgTarg = d3.select('#'+t+"_"+yy+" svg");
-
-      windowYear = yy;
-
-      packCircles(a, s, ss, svgTarg, yy);
   })
+
+  // _.each(yearsArr, function(yy){
+
+  //     var svgTarg = d3.select('#'+t+"_"+yy+" svg");
+
+  //     windowYear = yy;
+
+  //     packCircles(a, s, ss, svgTarg, yy);
+  // })
 
 }
 

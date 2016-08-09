@@ -1,45 +1,27 @@
-import scattergridFee from './scatterChart'
+import scattergridFee from './scatterChart' 
+
 var customScrollTo;
 
-var isoArr = [ 
-    { premClub:'Arsenal', iso:'ARS', badgeRef:'1006'}, 
-    { premClub:'Bournemouth', iso:'BOU', badgeRef:'23'},
-    { premClub:'Burnley', iso:'BUR', badgeRef:'70'}, 
-    { premClub:'Chelsea', iso:'CHE', badgeRef:'4'}, 
-    { premClub:'Crystal Palace', iso:'CRY', badgeRef:'5'}, 
-    { premClub:'Everton', iso:'EVE', badgeRef:'8'}, 
-    { premClub:'Hull City', iso:'HUL', badgeRef:'26'}, 
-    { premClub:'Leicester City', iso:'LEI', badgeRef:'29'}, 
-    { premClub:'Liverpool', iso:'LIV', badgeRef:'9'}, 
-    { premClub:'Manchester City', iso:'MCY', badgeRef:'11'}, 
-    { premClub:'Manchester United', iso:'MUN', badgeRef:'12'}, 
-    { premClub:'Middlesbrough', iso:'MID', badgeRef:'30'}, 
-    { premClub:'Southampton', iso:'SOU', badgeRef:'18'}, 
-    { premClub:'Stoke City', iso:'STK', badgeRef:'38'}, 
-    { premClub:'Sunderland', iso:'SUN', badgeRef:'39'}, 
-    { premClub:'Swansea City', iso:'SWA', badgeRef:'65'}, 
-    { premClub:'Tottenham Hotspur', iso:'TOT', badgeRef:'19'},
-    { premClub:'Watford', iso:'WAT', badgeRef:'41'},  
-    { premClub:'West Bromwich Albion', iso:'WBA', badgeRef:'42'}, 
-    { premClub:'West Ham United', iso:'WHU', badgeRef:'43'}
-];
 
-export default function clublistPrint(obj, allTransfers, globalSortOn, scrollFn, yy) {
+export default function clublistPrint(obj, allTransfers, globalSortOn, scrollFn, yy, isoArr) {
 
     customScrollTo = scrollFn;
 
     var el = document.getElementById('gv__clubList');
 
     var htmlStr = "<div>";
-    htmlStr += constructInnerHtml()
+    htmlStr += constructInnerHtml(isoArr)
     htmlStr += "</div>"
     
 
     el.innerHTML = htmlStr;
 
+
+    addScatterGrids(isoArr)
+
 }
 
-function constructInnerHtml(){
+function constructInnerHtml(isoArr){
     var s= "";
 
 
@@ -48,7 +30,7 @@ function constructInnerHtml(){
         var key = item.premClub;
         s+="<div class='dig-slice' id='listEntry_"+stripSpace(key)+"'>"
         s+="<div class='dig-slice__inner'>"
-        s+="<div class='dig-slice__inner__left'><img src='https://sport.guim.co.uk/football/crests/120/"+getBadgeRef(key)+".png' width='auto' height='36px' style='display:inline-block; margin-right:12px;'>"
+        s+="<div class='dig-slice__inner__left'><img src='https://sport.guim.co.uk/football/crests/120/"+getBadgeRef(key,isoArr)+".png' width='auto' height='36px' style='display:inline-block; margin-right:12px;'>"
         s+="<div style='display:inline-block'><span class='dig-section-title-sub' style='display:inline-block;'>"+key+"</span>"
         s+="</br><a class='dig-back-to-top js-back-to-top' href='#'><span><svg height='14' width='15' xmlns='http://www.w3.org/2000/svg'><path d='M0.5,7 L5.75,2.5 L5.75,14 L7.25,14 L7.25,2.5 L12.5,7 L13,6 L7.25,0 L5.75,6e-17 L0,6 L0.5,7 L0.5,7 Z' fill='#333'></path></svg></span><span>Back to top</span></a>"
         s+="</div>"
@@ -66,7 +48,7 @@ function constructInnerHtml(){
 }
 
 
-function getBadgeRef(k){
+function getBadgeRef(k,isoArr){
         var s = "";
 
         _.each(isoArr, function(o){
@@ -162,18 +144,13 @@ function stripSpace(s){
 
 
 
-function addScatterGrids(o, allTransfers, globalSortOn ,yy){
+function addScatterGrids(a){
     var rowWidth = 920; 
-    var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
+    //var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
 
-    _.forOwn(o, function(value, key) { 
-
-        
-
-        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost, yy);
+    var scatterGrid = new scattergridFee(a);
         
         // (a, s, t, rowWidth, scrollFn)
-
-    })    
+  
 
 }

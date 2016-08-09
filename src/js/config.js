@@ -23,6 +23,7 @@ System.config({
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "core-js": "npm:core-js@1.2.6",
     "d3": "npm:d3@3.5.17",
+    "d3-quadtree": "npm:d3-quadtree@1.0.1",
     "guardian/iframe-messenger": "github:guardian/iframe-messenger@master",
     "json": "github:systemjs/plugin-json@0.1.2",
     "lodash": "npm:lodash@4.13.1",

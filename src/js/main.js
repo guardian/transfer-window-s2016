@@ -13,8 +13,6 @@ import navlist from './lib/navList'
 
 import clublistPrint from './lib/clublistPrint'
 
-import scattergridFee from './lib/scatterChart'
-
 var isoArr = [ 
     { premClub:'Arsenal', iso:'ARS'},
     { premClub:'Burnley', iso:'BUR'}, 
@@ -105,9 +103,6 @@ function logData(r, yy){
 
 function initData(r, yy){
 
-
-
-
     var tempArr = buildArray(r,yy)
 
     //var yearsArray = _.uniq(tempArr,'d3Year')
@@ -117,58 +112,31 @@ function initData(r, yy){
 
 
     var clubArr = _.groupBy(tempArr,'premClub') 
-    var yearArr = _.groupBy(clubArr,'d3Year') 
-    
-    console.log(yy)
-    _.each (yearArr, function(item){
-        console.log(item)
-    })
 
     //buildDataView(allTransfers, 940);
 
         _.each(isoArr , function(team,i){
-            var arrays = {
-                Array2014: [],
-                Array2015: [],
-                Array2016: []
-            };
-            _.each(clubArr, function(a){
-                if(a[0].premClub == team.premClub){
-                    arrays['Array' + yy] = a; //update array if there are transfers - Middlesbrough, Hull, Bournemouth etc. need an empty array for seasons out side prem
-                }
-                
-            })  
+
+                var arrays = {
+                    Array2014: [],
+                    Array2015: [],
+                    Array2016: []
+                };
+
+                _.each(clubArr, function(a){
+                    if(a[0].premClub == team.premClub){
+                        arrays['Array' + yy] = a; //update array if there are transfers - Middlesbrough, Hull, Bournemouth etc. need an empty array for seasons out side prem
+                    }
+                })  
             team['transfers_'+ yy ] = arrays['Array' + yy];
         })
 
-    var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
+    //var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
-    buildListView(clubArr ,tempArr, customScrollTo, yy) 
+    buildListView(clubArr ,tempArr, customScrollTo, yy, isoArr) 
 
-    addScatterGrids(clubArr, allTransfers, globalSortOn); // push isoArr through here now it contains all transfers by season and club
-
-    console.log("************isoArr has an object with each clubs transfers in buckets for each season - inter premier league transfers are NOT showing 'from and 'to'")
-
-    console.log(isoArr) 
 
 }
-
-
-
-function addScatterGrids(o, allTransfers, globalSortOn){
-    var rowWidth = 920; 
-    var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
-
-    _.forOwn(o, function(value, key) { 
-
-        var scatterGrid = new scattergridFee( value, globalSortOn, key, 'scatterGrid_'+stripSpace(key), rowWidth, customScrollTo, maxBuy.cost);
-        
-        // (a, s, t, rowWidth, scrollFn)
-
-    })    
-
-}
-
 
 function buildArray(r,yy){
 
@@ -259,7 +227,6 @@ function buildArray(r,yy){
         _.each(isoArr, function (o){
             if (o.premClub == item.premClub){ item.premClubShort = o.iso }
         })
-
     }) 
 
     var checkedArr = [];
@@ -269,7 +236,6 @@ function buildArray(r,yy){
         _.each(isoArr, function (o){
             if (o.premClub == item.premClub){ checkedArr.push(item) }
         })
-
     }) 
 
     return checkedArr;
@@ -292,9 +258,11 @@ function getMonday( date ) {
 }    
 
 
-function buildListView(obj,allTransfers,customScrollTo,yy){ 
+function buildListView(obj,allTransfers,customScrollTo,yy,isoArr){ 
     //get 2015 transfers into all transfersArr    
-    var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy);
+    var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy, isoArr);
+
+    
 }
 
 function getZeroValueObjects(arrIn, sortStr){
