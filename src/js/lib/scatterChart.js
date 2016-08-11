@@ -128,18 +128,21 @@ function packCircles(a, s, ss, t, yy) {
         
     var baselineHeight = (margin + height)/2;
 
-    var xScale = d3.scale.linear()
-        .domain([0,1])
-        .range([margin,width-margin]);
+    // var xScale = d3.scale.linear()
+    //     .domain([0,1])
+    //     .range([margin,width-margin]);
     var startDate = new Date("'"+yy+"-04-30'")
     var endDate = new Date("'"+yy+"-09-01'");
+
     var dateScale = d3.time.scale.utc()  
           .domain([ startDate , endDate ])
           .range([margin,width-margin]);
 
-    var normDateScale = d3.time.scale()
+    var normDateScale = d3.time.scale.utc()
           .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-01'") ])
-          .range([0,1]);            
+          .range([0,1]); 
+
+    var xScale = dateScale                 
 
     var data = [];
 
@@ -151,21 +154,15 @@ function packCircles(a, s, ss, t, yy) {
 
         _.each(data2, function(d){
             var tempObj = {}
-
-            
             tempObj.dataObj = d;
-            tempObj.x = normDateScale(d.d3Date), // < problem here???
+            tempObj.x = xScale(d.d3Date), // < problem here???
             tempObj.r = d.radius;
             
             tempObj.buy = d.buy;
             tempObj.sell = d.sell; 
-            
-            console.log(tempObj.x)
-
             data.push(tempObj)
         })
 
-  //  console.log(data)  use this to add circles   
        
 
             
@@ -191,7 +188,7 @@ function packCircles(a, s, ss, t, yy) {
                   var formatPercent = d3.format(".0%");
 
                   var xAxis = d3.svg.axis()
-                      .scale(dateScale)
+                      .scale(dateScale) // << problem here ??
                       .orient("top")
                       .ticks(d3.time.months, 1)
                       .tickSize( height,0,  0).orient("top")
@@ -278,9 +275,9 @@ function packCircles(a, s, ss, t, yy) {
                       //extent sets the domain for the tree
                       //using the format [[minX,minY],[maxX, maxY]]
                       //optional if you're adding all the data at once
-                      console.log([[xScale(-1),0],[xScale(2),0]])
+                      // console.log([[xScale(-1),0],[xScale(2),0]])
 
-                      
+
                   var quadroot = quadtree([]);
                             //create an empty adjacency tree; 
                             //the function returns the root node.
@@ -427,9 +424,9 @@ function packCircles(a, s, ss, t, yy) {
                               //console.log("Bubble " + i);
                               var scaledX = xScale(d.x);  
 
-
+                              console.log(d.dataObj.playername, d.x, scaledX)
                               d3.select(this)
-                                  .attr("cx", scaledX)
+                                  .attr("cx", d.x)
                                   // .attr("cy", -baselineHeight)
                                   // .transition().delay(300*i).duration(250)
                                   .attr("cy", calculateOffset(maxR))
@@ -472,7 +469,7 @@ function packCircles(a, s, ss, t, yy) {
                           });
 
                   
-                          console.log(quadroot)
+                          //console.log(quadroot)
                             
        
 }
