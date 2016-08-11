@@ -105,9 +105,10 @@ function packCircles(a, s, ss, t, yy) {
     //http://www.nytimes.com/interactive/2013/05/25/sunday-review/corporate-taxes.html
     //Freely released for any purpose under Creative Commons Attribution licence: http://creativecommons.org/licenses/by/3.0/
     //Author name and link to this page is sufficient attribution.
+    var margin = 40;
     var width = 300; 
-    var height = 60; 
-    var margin = 60;
+    var height = 100; 
+    
     var svg = d3.select("#"+t).append("svg").attr("width", width).attr("height", height+margin);
     
 
@@ -128,21 +129,19 @@ function packCircles(a, s, ss, t, yy) {
         
     var baselineHeight = (margin + height)/2;
 
-    // var xScale = d3.scale.linear()
-    //     .domain([0,1])
-    //     .range([margin,width-margin]);
+    var xScale = d3.scale.linear()
+        .domain([0,1])
+        .range([margin, width-margin]);
     var startDate = new Date("'"+yy+"-04-30'")
     var endDate = new Date("'"+yy+"-09-01'");
 
     var dateScale = d3.time.scale.utc()  
           .domain([ startDate , endDate ])
-          .range([margin,width-margin]);
+          .range([margin, width-margin]);
 
     var normDateScale = d3.time.scale.utc()
           .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-01'") ])
-          .range([0,1]); 
-
-    var xScale = dateScale                 
+          .range([0,1]);            
 
     var data = [];
 
@@ -154,12 +153,15 @@ function packCircles(a, s, ss, t, yy) {
 
         _.each(data2, function(d){
             var tempObj = {}
+
             tempObj.dataObj = d;
-            tempObj.x = xScale(d.d3Date), // < problem here???
+            tempObj.x = normDateScale(d.d3Date), // < problem here???
             tempObj.r = d.radius;
             
             tempObj.buy = d.buy;
-            tempObj.sell = d.sell; 
+            tempObj.sell = d.sell;
+
+
             data.push(tempObj)
         })
 
@@ -191,14 +193,13 @@ function packCircles(a, s, ss, t, yy) {
                       .scale(dateScale) // << problem here ??
                       .orient("top")
                       .ticks(d3.time.months, 1)
-                      .tickSize( height,0,  0).orient("top")
+                      .tickSize( height, 0,  0).orient("top")
                       .tickFormat(d3.time.format("%b"));
                       
                   svg.append("g")
                       .attr("class", "x axis")
                       .attr("transform", function () { return ss == "Arsenal" ? "translate(0, "+(height+20)+" )" : "translate(0, "+height+" )"; })
-                      .call(xAxis);
-                      
+                      .call(xAxis);                      
                  
                       var dateLabel = svg.append('g')
                         .attr('class','strikerate-label')
@@ -208,9 +209,34 @@ function packCircles(a, s, ss, t, yy) {
                         .attr('class','strikerate-label')
                         .attr('dx', 0)
                         .attr('dy',17)
+                        .style('font-weight','600')
 
                       dateText.append('tspan')
                         .text(yy)
+
+                      var spentText = dateLabel.append('text')
+                        .attr('class','strikerate-label spent')
+                        .attr('dx', 0)
+                        .attr('dy',34)
+                        .style('fill', '#4bc6df')
+
+                      spentText.append('tspan')
+                        .text("m")  
+
+                      var soldText = dateLabel.append('text')
+                        .attr('class','strikerate-label sold')
+                        .attr('dx', 0)
+                        .attr('dy',51)
+                        .style('fill', 'rgb(72, 79, 83)')
+
+                      soldText.append('tspan')
+                        .text("m")
+
+                      // var divider = dateLabel.append('line')
+                      //   .attr('x1',0)
+                      //   .attr('x2',0)
+                      //   .attr('y1',2)
+                      //   .attr('y2',68)  
 
                       // dateLabel.append('line')
                       //   .attr('x1',baseLineHeight)
@@ -402,6 +428,9 @@ function packCircles(a, s, ss, t, yy) {
 
                       //Create circles!//
                   var maxR = 0;
+                  var sellNum = 0;
+                  var spendNum = 0;
+
                   bubbleLine.selectAll("circle")
                       .data(data.sort(
                           biggestFirst?
@@ -416,7 +445,11 @@ function packCircles(a, s, ss, t, yy) {
                               return r;})
 
 
-                          .each(function(d, i) {
+                          .each(function(d, i) { 
+
+
+                            if(d.sell){ sellNum+=d.dataObj.cost}
+                            if(d.buy){ spendNum+=d.dataObj.cost}
                               //for each circle, calculate it's position
                               //then add it to the quadtree
                               //so the following circles will avoid it.
@@ -426,7 +459,7 @@ function packCircles(a, s, ss, t, yy) {
 
                               console.log(d.dataObj.playername, d.x, scaledX)
                               d3.select(this)
-                                  .attr("cx", d.x)
+                                  .attr("cx", scaledX)
                                   // .attr("cy", -baselineHeight)
                                   // .transition().delay(300*i).duration(250)
                                   .attr("cy", calculateOffset(maxR))
@@ -467,8 +500,8 @@ function packCircles(a, s, ss, t, yy) {
                               //     .transition().delay(300*i).duration(250)
                               //     .attr("y1", (baselineHeight+d.offset));
                           });
-
-                  
+                          spentText.text(spendNum/1000000)
+                          soldText.text(sellNum/1000000)
                           //console.log(quadroot)
                             
        

@@ -1,0 +1,27 @@
+1. Circles and x axis showing NaN for x and cx properties, run in safari to see full extent. *** H
+	- Try using 1 xScale, there are 3 versions now *** H
+
+2. calculateOffset in scatterChart.js function needs to be switched to using a yScale instead of xScale *** H
+
+3. Position bubbles according to price initially then run calculateOffset  *** L
+
+4. Build a simple bar chart for overall figure: spending by nationality, previous league, position etc. *** M
+
+5. Margins on graphs to give space for years/keys  XXX
+
+6. LH Col aloign badge with text *** L
+
+7. Add a drop down to navigate *** M
+
+
+
+MC requests
+
+•Totals per club per season XXX
+•Pics for star players
+•Key for graphs 
+•Bar charts
+
+
+
+PRIORITY *H - *M - *L
