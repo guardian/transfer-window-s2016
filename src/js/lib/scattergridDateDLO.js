@@ -48,10 +48,6 @@ export default function scattergridFee(a, s, ss, t, rowWidth, scrollFn, maxFee){
 
           var targetDiv = t;
 
-
-
-
-
           selectArr = [];
 
             _.each (data, function(item){
@@ -590,7 +586,7 @@ function packCircles(t, a){
     .text('Amount of goals')
 
 
-  var nameContainer = d3.select(el).append('div')
+  var nameContainer = svg.append('g')
     .attr('class','strikerateBox')
 
 

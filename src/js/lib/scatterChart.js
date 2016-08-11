@@ -3,15 +3,16 @@
  * This bit of code was shared originally at https://gist.github.com/benjchristensen/2657838
  */
 
-
-var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, height, xScale, yScale;  
+var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, height, xScale, yScale;
 
 var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
 var sellSolid = "rgba(72,79,83, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";  // #484f53
 
 var windowYear;
 
-var yearsArr = ["2016"]
+var yearsArr = [ "2016", "2015", "2014" ];
+
+var newArr, allSeasonsArr = [];
 
  function getFill(d){
           var c;
@@ -30,30 +31,70 @@ var yearsArr = ["2016"]
 
 
 
-export default function scatterChart(a){
+export default function scatterChart(a, s){
 
-  //console.log(a)
-console.log(a);
-  _.each(a, function(item){
+  console.log(a)
+
+    
+
+      // _.each(yearsArr, function(yy){
+
+      //   newArr = [];
+           
+      //       _.each(a, function(item){
+                
+      //           var tempObj = {}
+                  
+      //             tempObj.ss = item.premClub;
+      //             tempObj.yy = yy;
+      //             tempObj.targetClip = ("scatterGrid_"+stripSpace(tempObj.ss)+"_"+yy);
+      //               if(yy == "2014"){ tempObj.transfersArr = item.transfers_2014; }
+      //               else if(yy == "2015"){ tempObj.transfersArr = item.transfers_2015; }
+      //               else if(yy == "2016"){ tempObj.transfersArr = item.transfers_2016; }                  
+                  
+      //           if(tempObj.transfersArr){ newArr.push(tempObj) }   // console.log(yy,tempArr);
+                  
+      //         }) 
+            
+            
+      //      console.log(yy, newArr.length)
+
+      // })
+      
+  _.each(yearsArr, function(year){
+     
+     _.each(a, function(item){
+            var tempObj = {};
+            tempObj.ss = item.premClub;
+            tempObj.yy = year;
+            tempObj.targetClip = ("scatterGrid_"+stripSpace(tempObj.ss)+"_"+year);
+
+            if(year == "2014"){ tempObj.transfersArr = item.transfers_2014; }
+            else if(year == "2015"){ tempObj.transfersArr = item.transfers_2015; }
+            else if(year == "2016"){ tempObj.transfersArr = item.transfers_2016; } 
+
+            packCircles(tempObj.transfersArr, s, tempObj.ss, tempObj.targetClip, year)
+
+     })
 
   })
 
-  // _.each(yearsArr, function(yy){
 
-  //     var svgTarg = d3.select('#'+t+"_"+yy+" svg");
 
-  //     windowYear = yy;
 
-  //     packCircles(a, s, ss, svgTarg, yy);
-  // })
+      // packCircles(newArr,)
 
 }
 
-
+function stripSpace(s){
+    s = s.split(" ").join("_");
+    return s;
+}
 
 function packCircles(a, s, ss, t, yy) {
 
-
+    //console.log("adding to --- #"+t)
+    
     //D3 program to fit circles of different sizes along a 
     //horizontal dimension, shifting them up and down
     //vertically only as much as is necessary to make
@@ -64,15 +105,22 @@ function packCircles(a, s, ss, t, yy) {
     //http://www.nytimes.com/interactive/2013/05/25/sunday-review/corporate-taxes.html
     //Freely released for any purpose under Creative Commons Attribution licence: http://creativecommons.org/licenses/by/3.0/
     //Author name and link to this page is sufficient attribution.
-    var svg = t;
+    var width = 300; 
+    var height = 60; 
+    var margin = 60;
+    var svg = d3.select("#"+t).append("svg").attr("width", width).attr("height", height+margin);
+    
+
 
     var digits = /(\d*)/;
-    var margin = 50; //space in pixels from edges of SVG
+    //space in pixels from edges of SVG
 
-    var width = window.getComputedStyle(svg[0][0])["width"];
-        width = digits.exec(width)[0];
+    
 
-    var height = 60;    
+    // var width = window.getComputedStyle(svg[0][0])["width"];
+    //     width = digits.exec(width)[0];    
+
+      
 
     height+=margin;
     // var height = window.getComputedStyle(svg[0][0])["height"];
@@ -83,49 +131,54 @@ function packCircles(a, s, ss, t, yy) {
     var xScale = d3.scale.linear()
         .domain([0,1])
         .range([margin,width-margin]);
-
-    var dateScale = d3.time.scale()
-          .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-01'") ])
-          .rangeRound([margin,width-margin]);
+    var startDate = new Date("'"+yy+"-04-30'")
+    var endDate = new Date("'"+yy+"-09-01'");
+    var dateScale = d3.time.scale.utc()  
+          .domain([ startDate , endDate ])
+          .range([margin,width-margin]);
 
     var normDateScale = d3.time.scale()
           .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-01'") ])
           .range([0,1]);            
 
     var data = [];
-    var data2 = a.filter(function(d, i){ return d[s] == ss; }).map(function(pl){
-                  pl.radius = Number(pl.value/1000000)
-                  return pl;
-             });
 
-                  //create data array//
-                  
-                  var N = data2.length, i = N;
-                  var randNorm = d3.random.normal(0.5,0.2)
+    var data2 = a;
 
-                  while(i--){
-                      var tempData = data2[i];
-                      var tempObj = {}
+        _.each(data2, function (d){
+            d.radius = Number(d.value/1000000)
+        });
 
-                      tempObj.x = normDateScale(tempData.d3Date),
-                      tempObj.r = tempData.radius;
-                      tempObj.buy = tempData.buy;
-                      tempObj.sell = tempData.sell;                
+        _.each(data2, function(d){
+            var tempObj = {}
 
-                      data.push(tempObj)
-                    };
+            
+            tempObj.dataObj = d;
+            tempObj.x = normDateScale(d.d3Date), // < problem here???
+            tempObj.r = d.radius;
+            
+            tempObj.buy = d.buy;
+            tempObj.sell = d.sell; 
+            
+            console.log(tempObj.x)
+
+            data.push(tempObj)
+        })
+
+  //  console.log(data)  use this to add circles   
+       
 
             
 
-                      //x for x-position
-                      //r for radius; value will be proportional to area  
+                  //x for x-position
+                  //r for radius; value will be proportional to area  
                   //________________//
                       
                   //Set up SVG and axis//   
                   
                  
                   var padding = 4; //space in pixels between circles
-                  var minRadius = 5, maxRadius = 25;
+                  var minRadius = 5, maxRadius = 15;
                   var biggestFirst = true; //should largest circles be added first?
                   var baseLineHeight = height/2;
                   
@@ -149,7 +202,7 @@ function packCircles(a, s, ss, t, yy) {
                       .attr("transform", function () { return ss == "Arsenal" ? "translate(0, "+(height+20)+" )" : "translate(0, "+height+" )"; })
                       .call(xAxis);
                       
-                  if(ss == "Arsenal"){
+                 
                       var dateLabel = svg.append('g')
                         .attr('class','strikerate-label')
                         .attr("transform", "translate( 0 , 0)");
@@ -160,7 +213,7 @@ function packCircles(a, s, ss, t, yy) {
                         .attr('dy',17)
 
                       dateText.append('tspan')
-                        .text(windowYear)
+                        .text(yy)
 
                       // dateLabel.append('line')
                       //   .attr('x1',baseLineHeight)
@@ -169,7 +222,7 @@ function packCircles(a, s, ss, t, yy) {
                       //   .attr('y2',width)
                       //   .attr('marker-start','url(#markerArrowTop)')
                       //   .attr('transform','rotate(90)')  
-                    }      
+                        
 
                   var threads = svg.append("g")
                       .attr("class", "threads");
@@ -181,20 +234,53 @@ function packCircles(a, s, ss, t, yy) {
                                 "translate(0," + baselineHeight + ")");
                       
                       bubbleLine.append("line")
-                          .attr("x1", xScale.range()[0])
-                          .attr("x2", xScale.range()[1]);
+                          .attr("x1", xScale.range[0])
+                          .attr("x2", xScale.range[1]);
                   //________________//
                       
-                  //Create Quadtree to manage data conflicts & define functions//
-                      
+
+                  var nameContainer = svg.append('g')
+                            .attr('class','strikerateBox')
+                            .style('pointer-events','none')
+                            .style("display","none");
+                  var rectangle = nameContainer.append("rect")
+                            .attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 120)
+                            .attr("height", 45)
+                            .style("fill","#FFF")
+                            .style("stroke","#999")
+                            .style("stroke-width","1px")
+                            .style("shape-rendering","crisp-edges");
+
+                  var plName = nameContainer.append('text')
+                        .attr('class','strikerate-title')
+                        .attr('dx', 6)
+                        .attr('dy', 15)
+
+                      plName.append('tspan')
+                        .text(' ')
+
+                  var plFee = nameContainer.append('text')
+                        .attr('class','strikerate-fee')
+                        .attr('dx', 6)
+                        .attr('dy', 36)
+
+                      plFee.append('tspan')
+                        .text(' ')
+      
+
+                   //Create Quadtree to manage data conflicts & define functions//   
                   var quadtree = d3.geom.quadtree()
-                          .x(function(d) { return xScale(d.x); }) 
+                          .x(function(d) {return xScale(d.x); }) 
                           .y(0) //constant, they are all on the same line
-                          .extent([[xScale(-1),0],[xScale(2),0]]);
+                          .extent([[xScale(0),0],[xScale(1),0]]);  //<< problem could be here ???
                       //extent sets the domain for the tree
                       //using the format [[minX,minY],[maxX, maxY]]
                       //optional if you're adding all the data at once
+                      console.log([[xScale(-1),0],[xScale(2),0]])
 
+                      
                   var quadroot = quadtree([]);
                             //create an empty adjacency tree; 
                             //the function returns the root node.
@@ -211,9 +297,10 @@ function packCircles(a, s, ss, t, yy) {
                       var neighbours = [];
                       //console.log("Neighbours of " + scaledX + ", radius " + scaledR);
                       
-                    root.visit(function(node, x1, y1, x2, y2) {
+                      root.visit(function(node, x1, y1, x2, y2) {
                         //console.log("visiting (" + x1 + "," +x2+")");
                       var p = node.point; 
+
                       if (p) {  //this node stores a data point value
                           var overlap, x2=xScale(p.x), r2=rScale(p.r);        
                           if (x2 < scaledX) {
@@ -313,7 +400,9 @@ function packCircles(a, s, ss, t, yy) {
                                           upperEnd : lowerEnd;
                       };
                   }
-                      
+                  
+
+
                       //Create circles!//
                   var maxR = 0;
                   bubbleLine.selectAll("circle")
@@ -325,9 +414,10 @@ function packCircles(a, s, ss, t, yy) {
                       .enter()
                           .append("circle")
                           .attr("r", function(d){
-                              var r=rScale(d.r);
+                              var r = rScale(d.r);
                               maxR = Math.max(r,maxR);
                               return r;})
+
 
                           .each(function(d, i) {
                               //for each circle, calculate it's position
@@ -343,7 +433,26 @@ function packCircles(a, s, ss, t, yy) {
                                   // .attr("cy", -baselineHeight)
                                   // .transition().delay(300*i).duration(250)
                                   .attr("cy", calculateOffset(maxR))
-                                  .style("fill", function(d){ return getFill(d) });
+                                  .style("fill", function(d){ return getFill(d) })
+                                  .on("mouseenter", function(d,e,i){  
+                                      // nameContainer.html(d.playername + '<span>(from ' + d.to + ' goals in ' + d.from + ' matches)'+ d.formattedFee+'</span>');
+                                      var offset = this.getBoundingClientRect();
+                                      var newName = d.dataObj.playername; 
+                                      var newFee = d.dataObj.formattedFee; 
+
+                                      var newX = scaledX > width-120 ? width-120 : scaledX ;
+
+                                      nameContainer
+                                            .attr('style','transform: translateX( ' + newX +'px )');
+                                            plName.text(newName);
+                                            plFee.text(newFee);
+                                   })
+                                  .on("mouseleave", function(){
+                                     nameContainer
+                                            .attr('style','display : none ');
+                                  });
+
+
                               quadroot.add(d);
                               
                               // bubbleLine.append("text")
@@ -353,15 +462,19 @@ function packCircles(a, s, ss, t, yy) {
                               
                               //add a drop line from the centre of this
                               //circle to the axis
-                              threads.append("line").datum(d)
-                                  .attr({x1:scaledX, x2:scaledX, y2:margin})
-                                  .attr("y1", margin)
-                                  // .style("stroke-width",1)
-                                  .transition().delay(300*i).duration(250)
-                                  .attr("y1", (baselineHeight+d.offset));
+
+                              // threads.append("line").datum(d)
+                              //     .attr({x1:scaledX, x2:scaledX, y2:margin})
+                              //     .attr("y1", margin)
+                              //     .style("stroke-width",1)
+                              //     .transition().delay(300*i).duration(250)
+                              //     .attr("y1", (baselineHeight+d.offset));
                           });
-    
-    
+
+                  
+                          console.log(quadroot)
+                            
+       
 }
 
 

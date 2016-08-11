@@ -49,8 +49,10 @@ text {
 .axis path,
 .axis line {
   fill: none;
-  stroke: $neutral-5;
+  stroke: $neutral-3;
+  stroke-dasharray: 1,3;
   shape-rendering: crispEdges;
+  stroke-width:1px;
 }
 
 .x.axis path {
@@ -62,10 +64,25 @@ text {
    stroke:#EFEFEF;
 }
 
-.axis text, .strikerate-label text {
+.axis text, .strikerate-label {
   @include fs-data(2);
   fill: $neutral-2;
 }
+
+ .strikerate-title {
+  @include fs-data(4);
+  fill: $neutral-1;
+  
+}
+
+.strikerate-fee {
+  @include fs-headline(3);
+  fill: $neutral-1;
+  
+}
+.strikerate-label, .strikerate-title {
+ 
+ } 
 
 .strikerate-label line{
     fill: none;
@@ -178,14 +195,23 @@ $sell-color-noFee:#484f53;
     width:320px;
     margin:0;
     display:inline-block;
+    padding-bottom: 6px;
+    border-bottom: 1px solid $neutral-4;
 
   @include mq(mobileLandscape) {
         
         
     }      
   @include mq(leftCol) {
-        margin-bottom: gs-height(1);
+        padding-bottom: 24px;
+        margin-bottom: 12px; 
     }
+}
+
+.scatter-grid-holder svg circle{
+  stroke:$neutral-3;
+  stroke-width:1px;
+  cursor:pointer;
 }
 
 .strikeRate-box{

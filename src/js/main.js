@@ -14,36 +14,39 @@ import navlist from './lib/navList'
 import clublistPrint from './lib/clublistPrint'
 
 var isoArr = [ 
-    { premClub:'Arsenal', iso:'ARS'},
-    { premClub:'Burnley', iso:'BUR'}, 
-    { premClub:'Bournemouth', iso:'BOU'}, 
-    { premClub:'Chelsea', iso:'CHE'}, 
-    { premClub:'Crystal Palace', iso:'PAL'}, 
-    { premClub:'Everton', iso:'EVE'}, 
-    { premClub:'Hull City', iso:'HUL'}, 
-    { premClub:'Leicester City', iso:'LEI'}, 
-    { premClub:'Liverpool', iso:'LIV'}, 
-    { premClub:'Manchester City', iso:'MCY'}, 
-    { premClub:'Manchester United', iso:'MUN'}, 
-    { premClub:'Middlesbrough', iso:'MID'}, 
-    { premClub:'Stoke City', iso:'STO'},  
-    { premClub:'Southampton', iso:'SOT'}, 
-    { premClub:'Sunderland', iso:'SUN'}, 
-    { premClub:'Swansea City', iso:'SWA'}, 
-    { premClub:'Tottenham Hotspur', iso:'TOT'}, 
-    { premClub:'West Bromwich Albion', iso:'WBA'}, 
-    { premClub:'Watford', iso:'WAT'},  
-    { premClub:'West Ham United', iso:'WHU'}
- ];
+    { premClub:'Arsenal', iso:'ARS', badgeRef:'1006'}, 
+    { premClub:'Bournemouth', iso:'BOU', badgeRef:'23'},
+    { premClub:'Burnley', iso:'BUR', badgeRef:'70'}, 
+    { premClub:'Chelsea', iso:'CHE', badgeRef:'4'}, 
+    { premClub:'Crystal Palace', iso:'CRY', badgeRef:'5'}, 
+    { premClub:'Everton', iso:'EVE', badgeRef:'8'}, 
+    { premClub:'Hull City', iso:'HUL', badgeRef:'26'}, 
+    { premClub:'Leicester City', iso:'LEI', badgeRef:'29'}, 
+    { premClub:'Liverpool', iso:'LIV', badgeRef:'9'}, 
+    { premClub:'Manchester City', iso:'MCY', badgeRef:'11'}, 
+    { premClub:'Manchester United', iso:'MUN', badgeRef:'12'}, 
+    { premClub:'Middlesbrough', iso:'MID', badgeRef:'30'}, 
+    { premClub:'Southampton', iso:'SOU', badgeRef:'18'}, 
+    { premClub:'Stoke City', iso:'STK', badgeRef:'38'}, 
+    { premClub:'Sunderland', iso:'SUN', badgeRef:'39'}, 
+    { premClub:'Swansea City', iso:'SWA', badgeRef:'65'}, 
+    { premClub:'Tottenham Hotspur', iso:'TOT', badgeRef:'19'},
+    { premClub:'Watford', iso:'WAT', badgeRef:'41'},  
+    { premClub:'West Bromwich Albion', iso:'WBA', badgeRef:'42'}, 
+    { premClub:'West Ham United', iso:'WHU', badgeRef:'43'}
+];
 
 var Ractive = ractive;
 var _ = lodash;
 var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
 
 //define globals
-var dataURL2016 = 'https://interactive.guim.co.uk/docsdata/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json' 
-var dataURL2015 = 'https://interactive.guim.co.uk/docsdata/1OilCanhD6Xb3uN7fl-UvuRaCFpTuTgEk6CcBbr4OFYg.json'
-var dataURL2014 = 'https://interactive.guim.co.uk/docsdata/1YwSeSd_eNMFnzgPmXmwa-UfKCk6lMFG0Qd-1KSKtW48.json'
+var dataURL2016 = 'https://interactive.guim.co.uk/docsdata-test/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json'
+var dataURL2015 = 'https://interactive.guim.co.uk/docsdata-test/1OilCanhD6Xb3uN7fl-UvuRaCFpTuTgEk6CcBbr4OFYg.json'
+var dataURL2014 = 'https://interactive.guim.co.uk/docsdata-test/1YwSeSd_eNMFnzgPmXmwa-UfKCk6lMFG0Qd-1KSKtW48.json'
+
+
+
 
 var allTransfers;
 
@@ -133,7 +136,10 @@ function initData(r, yy){
 
     //var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
-    buildListView(clubArr ,tempArr, customScrollTo, yy, isoArr) 
+    if (yy == '2016'){
+       buildListView(clubArr ,tempArr, customScrollTo, yy, isoArr) //loop finished data ready
+    }
+     
 
 
 }
@@ -234,6 +240,7 @@ function buildArray(r,yy){
     _.each(tempArr, function(item,i){
         item.d3Year = yy;
         _.each(isoArr, function (o){
+                o.formattedName = stripSpace(item.premClub)
             if (o.premClub == item.premClub){ checkedArr.push(item) }
         })
     }) 
@@ -259,8 +266,10 @@ function getMonday( date ) {
 
 
 function buildListView(obj,allTransfers,customScrollTo,yy,isoArr){ 
-    //get 2015 transfers into all transfersArr    
-    var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy, isoArr);
+    //get 2015 transfers into all transfersArr   
+
+        var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy, isoArr);
+
 
     
 }
