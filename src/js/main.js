@@ -45,15 +45,14 @@ var dataURL2016 = 'https://interactive.guim.co.uk/docsdata-test/1VW0QYe6WqmvxIQ2
 var dataURL2015 = 'https://interactive.guim.co.uk/docsdata-test/1OilCanhD6Xb3uN7fl-UvuRaCFpTuTgEk6CcBbr4OFYg.json'
 var dataURL2014 = 'https://interactive.guim.co.uk/docsdata-test/1YwSeSd_eNMFnzgPmXmwa-UfKCk6lMFG0Qd-1KSKtW48.json'
 
-
-
-
 var allTransfers;
 
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data, rowWidth;
 var globalSortOn;
 
 var arrTransfersByClubYear = [];     
+
+var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
 
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
@@ -230,9 +229,13 @@ function buildArray(r,yy){
     _.each(tempArr, function(item,i){
         item.ind = i;
         item.displayCost = getDisplayCost(item.price);
+        item.timeDate = timeFormat.parse(item.d3Date);
+
         _.each(isoArr, function (o){
             if (o.premClub == item.premClub){ item.premClubShort = o.iso }
         })
+
+
     }) 
 
     var checkedArr = [];
@@ -252,7 +255,9 @@ function buildArray(r,yy){
 function getD3Date(d){
     var a = d.split("/");
 
-    return(new Date(a[2],(a[1]-1),a[0])) // DD/MM/YYYY Month - 1 to map against array 0-11
+    var t = a[2]+'-'+a[1]+'-'+a[0]+'T12:00:00';
+    
+    return t; // DD/MM/YYYY Month - 1 to map against array 0-11
 
 }
 

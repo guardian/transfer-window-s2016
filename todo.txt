@@ -11,7 +11,7 @@
 
 6. LH Col aloign badge with text *** L
 
-7. Add a drop down to navigate *** M
+7. Add a drop down to navigate (SEE Olympic pages) *** M 
 
 
 
@@ -21,7 +21,7 @@ MC requests
 •Pics for star players
 •Key for graphs 
 •Bar charts
-
+•Say why seasons are empty for clubs with championship time
 
 
 PRIORITY *H - *M - *L

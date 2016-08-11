@@ -33,7 +33,7 @@ var newArr, allSeasonsArr = [];
 
 export default function scatterChart(a, s){
 
-  console.log(a)
+  console.log(a.length)
 
     
 
@@ -61,7 +61,7 @@ export default function scatterChart(a, s){
 
       // })
       
-  _.each(yearsArr, function(year){
+  _.each(yearsArr, function(year){ // << problem here
      
      _.each(a, function(item){
             var tempObj = {};
@@ -108,6 +108,8 @@ function packCircles(a, s, ss, t, yy) {
     var margin = 40;
     var width = 300; 
     var height = 100; 
+
+    var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
     
     var svg = d3.select("#"+t).append("svg").attr("width", width).attr("height", height+margin);
     
@@ -129,44 +131,59 @@ function packCircles(a, s, ss, t, yy) {
         
     var baselineHeight = (margin + height)/2;
 
-    var xScale = d3.scale.linear()
+    xScale = d3.scale.linear()
         .domain([0,1])
         .range([margin, width-margin]);
-    var startDate = new Date("'"+yy+"-04-30'")
-    var endDate = new Date("'"+yy+"-09-01'");
+    var startDate = timeFormat.parse(yy+'-05-01T12:00:00');
+    var endDate = timeFormat.parse(yy+'-09-01T12:00:00');
+
+
+    //yy+'-09-01T12:00:00';
+
+    console.log(startDate, endDate)
 
     var dateScale = d3.time.scale.utc()  
           .domain([ startDate , endDate ])
           .range([margin, width-margin]);
 
-    var normDateScale = d3.time.scale.utc()
-          .domain([ new Date("'"+yy+"-04-30'"), new Date("'"+yy+"-09-01'") ])
+    var normDateScale = d3.time.scale.utc() // << PROBLEM FOUND - This is returning NaN
+          .domain([ startDate , endDate ])
           .range([0,1]);            
 
     var data = [];
 
     var data2 = a;
+    
 
+    //yScale = d3.scale.linear().domain([d3.min(data2, function (d) { return d.cost }), d3.max(data2, function (d) { return d.cost; })]).range([height, 0]);
+        
         _.each(data2, function (d){
             d.radius = Number(d.value/1000000)
+            
         });
 
         _.each(data2, function(d){
             var tempObj = {}
 
             tempObj.dataObj = d;
-            tempObj.x = normDateScale(d.d3Date), // < problem here???
+            tempObj.x = normDateScale(d.timeDate),  // < problem here???
+            //tempObj.y = yScale(d.cost), // < problem here???
             tempObj.r = d.radius;
             
             tempObj.buy = d.buy;
             tempObj.sell = d.sell;
 
+            
+
+
+
+             console.log( yy, d.timeDate )
 
             data.push(tempObj)
         })
 
        
-
+    
             
 
                   //x for x-position
@@ -210,7 +227,7 @@ function packCircles(a, s, ss, t, yy) {
                         .attr('dx', 0)
                         .attr('dy',17)
                         .style('font-weight','600')
-
+ 
                       dateText.append('tspan')
                         .text(yy)
 
@@ -455,14 +472,18 @@ function packCircles(a, s, ss, t, yy) {
                               //so the following circles will avoid it.
                               
                               //console.log("Bubble " + i);
-                              var scaledX = xScale(d.x);  
 
-                              console.log(d.dataObj.playername, d.x, scaledX)
+                              
+
+                              var scaledX = xScale(d.x);  
+                              console.log(d.x, scaledX, d.dataObj)
+
                               d3.select(this)
                                   .attr("cx", scaledX)
-                                  // .attr("cy", -baselineHeight)
+                                  
                                   // .transition().delay(300*i).duration(250)
                                   .attr("cy", calculateOffset(maxR))
+                                  //.attr("cy", d.y)
                                   .style("fill", function(d){ return getFill(d) })
                                   .on("mouseenter", function(d,e,i){  
                                       // nameContainer.html(d.playername + '<span>(from ' + d.to + ' goals in ' + d.from + ' matches)'+ d.formattedFee+'</span>');

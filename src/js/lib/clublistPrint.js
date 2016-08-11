@@ -31,7 +31,7 @@ function constructInnerHtml(isoArr){
         var key = item.premClub;
         s+="<div class='dig-slice' id='listEntry_"+stripSpace(key)+"'>"
         s+="<div class='dig-slice__inner'>"
-        s+="<div class='dig-slice__inner__left'><div><img src='https://sport.guim.co.uk/football/crests/120/"+item.badgeRef+".png' width='auto' height='36px' style='display:inline-block; margin-right:12px;'>"
+        s+="<div class='dig-slice__inner__left'><img src='https://sport.guim.co.uk/football/crests/120/"+item.badgeRef+".png' width='auto' height='36px' style='display:inline-block; margin-right:12px;'>"
         s+="<div style='display:inline-block'><span class='dig-section-title-sub' style='display:inline-block;'>"+key+"</span>"
         s+="</br><a class='dig-back-to-top js-back-to-top' href='#'><span><svg height='14' width='15' xmlns='http://www.w3.org/2000/svg'><path d='M0.5,7 L5.75,2.5 L5.75,14 L7.25,14 L7.25,2.5 L12.5,7 L13,6 L7.25,0 L5.75,6e-17 L0,6 L0.5,7 L0.5,7 Z' fill='#333'></path></svg></span><span>Back to top</span></a>"
         s+="</div>"
@@ -137,9 +137,7 @@ function stripSpace(s){
 
 function addScatterGrids(a, globalSortOn){
 
-    console.log(a.length)
 
-    var rowWidth = 920; 
     //var maxBuy = _.maxBy(allTransfers, function(item) { return item.cost; });
 
     var scatterGrid = new scattergridFee(a, globalSortOn);
