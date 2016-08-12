@@ -25,6 +25,9 @@ $guardian-brand: map-get($pasteup-palette, 'guardian-brand');
 $guardian-brand-light: map-get($pasteup-palette, 'guardian-brand-light');
 $guardian-brand-dark: map-get($pasteup-palette, 'guardian-brand-dark');
 
+$buy-colour :  rgb(75, 198, 223); // #ffce4b; 
+$sell-colour : rgb(0,86,137); // #7d7569; 
+
 
 @import "fonts";
 @import "palette";

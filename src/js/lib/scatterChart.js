@@ -6,7 +6,7 @@
 var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, height, xScale, yScale;
 
 var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
-var sellSolid = "rgba(72,79,83, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";  // #484f53
+var sellSolid = "rgba(0,86,137, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";  // #484f53
 
 var windowYear;
 
@@ -14,11 +14,12 @@ var yearsArr = [ "2016", "2015", "2014" ];
 
 var newArr, allSeasonsArr = [];
 
- function getFill(d){
+
+ function getCircleClass(d){
           var c;
 
-          if (d.sell){ c = sellSolid }
-          if (d.buy) { c = buySolid }
+          if (d.sell){ c = 'fill-sell' }
+          if (d.buy) { c = 'fill-spend' } // fill-sell //fill-spend
 
           // if (d.sell && d.displayCost<1){  c = colorScaleSell(1)   } 
           // if (d.buy && d.displayCost<1){  c = colorScaleBuy(1)  }
@@ -31,9 +32,9 @@ var newArr, allSeasonsArr = [];
 
 
 
-export default function scatterChart(a, s){
+export default function scatterChart(a, s, highestPrice){
 
-  console.log(a.length)
+  console.log(highestPrice)
 
     
 
@@ -73,7 +74,7 @@ export default function scatterChart(a, s){
             else if(year == "2015"){ tempObj.transfersArr = item.transfers_2015; }
             else if(year == "2016"){ tempObj.transfersArr = item.transfers_2016; } 
 
-            packCircles(tempObj.transfersArr, s, tempObj.ss, tempObj.targetClip, year)
+            packCircles(tempObj.transfersArr, s, tempObj.ss, tempObj.targetClip, year, highestPrice)
 
      })
 
@@ -91,7 +92,7 @@ function stripSpace(s){
     return s;
 }
 
-function packCircles(a, s, ss, t, yy) {
+function packCircles(a, s, ss, t, yy, highestPrice) {
 
     //console.log("adding to --- #"+t)
     
@@ -105,17 +106,19 @@ function packCircles(a, s, ss, t, yy) {
     //http://www.nytimes.com/interactive/2013/05/25/sunday-review/corporate-taxes.html
     //Freely released for any purpose under Creative Commons Attribution licence: http://creativecommons.org/licenses/by/3.0/
     //Author name and link to this page is sufficient attribution.
-    var margin = 40;
+    var margin = {Top:10, Right: 20, Bottom:10, Left: 40} ;
+    var marginSides = margin.Right + margin.Left;
+ 
     var width = 300; 
-    var height = 100; 
+    var height = 170; 
 
     var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
     
-    var svg = d3.select("#"+t).append("svg").attr("width", width).attr("height", height+margin);
+    var svg = d3.select("#"+t).append("svg").attr("width", width).attr("height", height + margin.Top);
     
-
-
     var digits = /(\d*)/;
+
+
     //space in pixels from edges of SVG
 
     
@@ -125,26 +128,35 @@ function packCircles(a, s, ss, t, yy) {
 
       
 
-    height+=margin;
+    
     // var height = window.getComputedStyle(svg[0][0])["height"];
     //     height = Math.min(digits.exec(height)[0], width);
         
-    var baselineHeight = (margin + height)/2;
+    var baselineHeight = (margin.Top + height)/2;
+
+    var normPriceScale = d3.scale.linear() // << PROBLEM FOUND - This is returning NaN
+          .domain([ 0 , highestPrice ])
+          .range([0,1]);
+
+    yScale = d3.scale.linear()
+        .domain([0, 1])
+        .range([margin.Top, height-margin.Top]);
+
 
     xScale = d3.scale.linear()
         .domain([0,1])
-        .range([margin, width-margin]);
+        .range([margin.Left, width-marginSides]);
+
     var startDate = timeFormat.parse(yy+'-05-01T12:00:00');
     var endDate = timeFormat.parse(yy+'-09-01T12:00:00');
 
 
     //yy+'-09-01T12:00:00';
 
-    console.log(startDate, endDate)
 
     var dateScale = d3.time.scale.utc()  
           .domain([ startDate , endDate ])
-          .range([margin, width-margin]);
+          .range([margin.Left, width-margin.Right]);
 
     var normDateScale = d3.time.scale.utc() // << PROBLEM FOUND - This is returning NaN
           .domain([ startDate , endDate ])
@@ -154,8 +166,6 @@ function packCircles(a, s, ss, t, yy) {
 
     var data2 = a;
     
-
-    //yScale = d3.scale.linear().domain([d3.min(data2, function (d) { return d.cost }), d3.max(data2, function (d) { return d.cost; })]).range([height, 0]);
         
         _.each(data2, function (d){
             d.radius = Number(d.value/1000000)
@@ -167,24 +177,15 @@ function packCircles(a, s, ss, t, yy) {
 
             tempObj.dataObj = d;
             tempObj.x = normDateScale(d.timeDate),  // < problem here???
-            //tempObj.y = yScale(d.cost), // < problem here???
+            tempObj.y = normPriceScale(d.cost), // < problem here???
             tempObj.r = d.radius;
             
             tempObj.buy = d.buy;
             tempObj.sell = d.sell;
 
-            
-
-
-
-             console.log( yy, d.timeDate )
-
             data.push(tempObj)
-        })
 
-       
-    
-            
+        })
 
                   //x for x-position
                   //r for radius; value will be proportional to area  
@@ -193,8 +194,8 @@ function packCircles(a, s, ss, t, yy) {
                   //Set up SVG and axis//   
                   
                  
-                  var padding = 4; //space in pixels between circles
-                  var minRadius = 5, maxRadius = 15;
+                  var padding = 1; //space in pixels between circles
+                  var minRadius = 4, maxRadius = 11;
                   var biggestFirst = true; //should largest circles be added first?
                   var baseLineHeight = height/2;
                   
@@ -223,7 +224,7 @@ function packCircles(a, s, ss, t, yy) {
                         .attr("transform", "translate( 0 , 0)");
 
                       var dateText = dateLabel.append('text')
-                        .attr('class','strikerate-label')
+                        .attr('class','strikerate-label neutral-txt')
                         .attr('dx', 0)
                         .attr('dy',17)
                         .style('font-weight','600')
@@ -232,19 +233,17 @@ function packCircles(a, s, ss, t, yy) {
                         .text(yy)
 
                       var spentText = dateLabel.append('text')
-                        .attr('class','strikerate-label spent')
+                        .attr('class','strikerate-label buy')
                         .attr('dx', 0)
                         .attr('dy',34)
-                        .style('fill', '#4bc6df')
 
                       spentText.append('tspan')
                         .text("m")  
 
                       var soldText = dateLabel.append('text')
-                        .attr('class','strikerate-label sold')
+                        .attr('class','strikerate-label sell')
                         .attr('dx', 0)
                         .attr('dy',51)
-                        .style('fill', 'rgb(72, 79, 83)')
 
                       soldText.append('tspan')
                         .text("m")
@@ -287,26 +286,34 @@ function packCircles(a, s, ss, t, yy) {
                             .attr("x", 0)
                             .attr("y", 0)
                             .attr("width", 120)
-                            .attr("height", 45)
+                            .attr("height", 54)
                             .style("fill","#FFF")
-                            .style("stroke","#999")
+                            .style("stroke","#EEE")
                             .style("stroke-width","1px")
                             .style("shape-rendering","crisp-edges");
 
                   var plName = nameContainer.append('text')
                         .attr('class','strikerate-title')
-                        .attr('dx', 6)
-                        .attr('dy', 15)
+                        .attr('dx', 3)
+                        .attr('dy', 14)
 
                       plName.append('tspan')
                         .text(' ')
 
                   var plFee = nameContainer.append('text')
                         .attr('class','strikerate-fee')
-                        .attr('dx', 6)
-                        .attr('dy', 36)
+                        .attr('dx', 3)
+                        .attr('dy', 28)
 
                       plFee.append('tspan')
+                        .text(' ')
+
+                  var plDetails = nameContainer.append('text')
+                        .attr('class','strikerate-fee')
+                        .attr('dx', 3)
+                        .attr('dy', 42)
+
+                      plDetails.append('tspan')
                         .text(' ')
       
 
@@ -398,8 +405,8 @@ function packCircles(a, s, ss, t, yy) {
                                       Math.pow(base, 2));
                                   //Pythagorean theorem
                                   
-                                  occupied[j]=[p.offset+vertical, 
-                                               p.offset-vertical];
+                                  occupied[j]=[p.offset + vertical, 
+                                               p.offset - vertical];
                                   //max and min of the zone occupied
                                   //by this circle at x=xScale(d.x)
                               }
@@ -473,10 +480,8 @@ function packCircles(a, s, ss, t, yy) {
                               
                               //console.log("Bubble " + i);
 
-                              
-
                               var scaledX = xScale(d.x);  
-                              console.log(d.x, scaledX, d.dataObj)
+                              
 
                               d3.select(this)
                                   .attr("cx", scaledX)
@@ -484,19 +489,25 @@ function packCircles(a, s, ss, t, yy) {
                                   // .transition().delay(300*i).duration(250)
                                   .attr("cy", calculateOffset(maxR))
                                   //.attr("cy", d.y)
-                                  .style("fill", function(d){ return getFill(d) })
+                                  .attr("class", function(d){ return getCircleClass(d) })
+                                  .style("fill-opacity","0.6")
                                   .on("mouseenter", function(d,e,i){  
                                       // nameContainer.html(d.playername + '<span>(from ' + d.to + ' goals in ' + d.from + ' matches)'+ d.formattedFee+'</span>');
                                       var offset = this.getBoundingClientRect();
                                       var newName = d.dataObj.playername; 
                                       var newFee = d.dataObj.formattedFee; 
 
-                                      var newX = scaledX > width-120 ? width-120 : scaledX ;
+                                      var newX = scaledX > width-120 ? 0 : width-120;
+
+                                      var detailTxt = d.dataObj.buy ? 'from '+ d.dataObj.from : 'to '+d.dataObj.to;
 
                                       nameContainer
+                                            // .transition().delay(100).duration(1000)
                                             .attr('style','transform: translateX( ' + newX +'px )');
                                             plName.text(newName);
                                             plFee.text(newFee);
+                                            plDetails.text(detailTxt)
+
                                    })
                                   .on("mouseleave", function(){
                                      nameContainer

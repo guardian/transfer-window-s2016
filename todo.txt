@@ -1,25 +1,31 @@
-1. Circles and x axis showing NaN for x and cx properties, run in safari to see full extent. *** H
-	- Try using 1 xScale, there are 3 versions now *** H
+1. Circles and x axis showing NaN for x and cx properties, run in safari to see full extent.
+	- Try using 1 xScale, there are 3 versions now 
+*** H XXX DONE - Parsing dates into d3 from ranges was causing NaN -- http://bl.ocks.org/jebeck/9671241 (explains the way to parse dates in d3)
 
-2. calculateOffset in scatterChart.js function needs to be switched to using a yScale instead of xScale *** H
+2. calculateOffset in scatterChart.js function needs to be switched to using a yScale instead of xScale 
+*** H  XXX DONE - tweaks made to numbers in layout, heights, margins and maxradius in scatterChart 
 
 3. Position bubbles according to price initially then run calculateOffset  *** L
 
 4. Build a simple bar chart for overall figure: spending by nationality, previous league, position etc. *** M
 
-5. Margins on graphs to give space for years/keys  XXX
+5. Margins on graphs to give space for years/keys   XXX DONE
 
-6. LH Col aloign badge with text *** L
+6. LH Col align badge with text/ should club appear over graphs? *** L   XXX DONE
 
 7. Add a drop down to navigate (SEE Olympic pages) *** M 
+
+8. Make maths work sor total spending *** H
+
+9 consider displaying all bubbles side-by-side a la http://www.theguardian.com/sport/ng-interactive/2016/aug/05/rio-olympics-2016-medal-table-and-results-in-full
 
 
 
 MC requests
 
-•Totals per club per season XXX
+•Totals per club per season  XXX DONE
 •Pics for star players
-•Key for graphs 
+•Key for graphs   XXX COLOURED TEXT
 •Bar charts
 •Say why seasons are empty for clubs with championship time
 

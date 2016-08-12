@@ -70,14 +70,15 @@ text {
 }
 
  .strikerate-title {
-  @include fs-data(4);
+  @include fs-data(2);
+  font-weight:600;
   fill: $neutral-1;
   
 }
 
 .strikerate-fee {
-  @include fs-headline(3);
-  fill: $neutral-1;
+  @include fs-data(2);
+  fill: $neutral-2;
   
 }
 .strikerate-label, .strikerate-title {
@@ -127,22 +128,25 @@ $sell-color-2: #005689;
 $buy-color-noFee:#63717a;
 $sell-color-noFee:#484f53;
 
-
+.neutral-txt{
+  color: $neutral-1;
+  fill: $neutral-1;
+}
 
 .buy{
     // stroke: #94a3b8;
     // stroke-opacity: 0.2;
     // stroke-width: 1.5;
-    fill: #c5d4ea;
-    fill-opacity: 0.9;
+    color:$buy-colour;
+    fill: $buy-colour;
 }  
 
 .sell{
     // stroke: #c78b00;
     // stroke-opacity: 0.2;
     // stroke-width: 2;
-    fill: #ffbb00;
-    fill-opacity: 0.9; 
+    color:$sell-colour;
+    fill: $sell-colour; 
 }
 
 .buy-hl{
@@ -196,7 +200,6 @@ $sell-color-noFee:#484f53;
     margin:0;
     display:inline-block;
     padding-bottom: 6px;
-    border-bottom: 1px solid $neutral-4;
 
   @include mq(mobileLandscape) {
         
@@ -209,8 +212,8 @@ $sell-color-noFee:#484f53;
 }
 
 .scatter-grid-holder svg circle{
-  stroke:$neutral-3;
-  stroke-width:1px;
+  // stroke:$neutral-3;
+  // stroke-width:1px;
   cursor:pointer;
 }
 

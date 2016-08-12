@@ -54,6 +54,8 @@ var arrTransfersByClubYear = [];
 
 var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
 
+var highestPrice = 0;
+
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
 export function init(el, context, config, mediator) {
@@ -112,8 +114,12 @@ function initData(r, yy){
     // var yearLabels = _.uniqBy(clubArr, 'd3Year');
     //console.log(yearLabels)
 
-
     var clubArr = _.groupBy(tempArr,'premClub') 
+
+    var highPriceCheck = d3.max(tempArr, function (d) { return d.cost; })
+
+    if (highPriceCheck > highestPrice ){ highestPrice = highPriceCheck }
+
 
     //buildDataView(allTransfers, 940);
 
@@ -131,12 +137,13 @@ function initData(r, yy){
                     }
                 })  
             team['transfers_'+ yy ] = arrays['Array' + yy];
+            //var tempSum = _.sumBy(objects, function(o) { return o.n; });
         })
 
-    //var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
+    var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
     if (yy == '2016'){
-       buildListView(clubArr ,tempArr, customScrollTo, yy, isoArr) //loop finished data ready
+       buildListView(clubArr ,tempArr, customScrollTo, yy, isoArr, highestPrice) //loop finished data ready
     }
      
 
@@ -270,10 +277,10 @@ function getMonday( date ) {
 }    
 
 
-function buildListView(obj,allTransfers,customScrollTo,yy,isoArr){ 
+function buildListView(obj,allTransfers,customScrollTo,yy,isoArr, highestPrice){ 
     //get 2015 transfers into all transfersArr   
 
-        var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy, isoArr);
+        var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy, isoArr, highestPrice);
 
 
     
