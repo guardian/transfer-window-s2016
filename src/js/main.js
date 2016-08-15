@@ -127,14 +127,6 @@ function initData(r, yy){
 
         _.each(isoArr , function(team,i){
 
-                    team.sell2014 = 0;
-                    team.sell2015 = 0;
-                    team.sell2016 = 0;
-                    team.buy2014 = 0;
-                    team.buy2015 = 0;
-                    team.buy2016 = 0;
-
-
                     var arrays = {
                     Array2014: [],
                     Array2015: [],

@@ -4,7 +4,6 @@ var customScrollTo;
 
 
 export default function clublistPrint(obj, allTransfers, globalSortOn, scrollFn, yy, isoArr, highestPrice) {
-    console.log(isoArr)
 
     customScrollTo = scrollFn;
 

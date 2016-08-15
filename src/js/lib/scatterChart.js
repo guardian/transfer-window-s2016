@@ -14,6 +14,8 @@ var yearsArr = [ "2016", "2015", "2014" ];
 
 var newArr, allSeasonsArr = [];
 
+var spendingTotalsArr = [];
+
 
  function getCircleClass(d){
           var c;
@@ -34,7 +36,18 @@ var newArr, allSeasonsArr = [];
 
 export default function scatterChart(a, s, highestPrice){
 
-  console.log(highestPrice)
+
+
+  _.each(a, function(obj){
+    var tempObj = {}
+      tempObj.premClub = obj.premClub;
+      tempObj.totalSales = 0;
+      tempObj.totalPurchases = 0;
+
+      spendingTotalsArr.push(tempObj)
+  })
+
+  console.log(spendingTotalsArr)
 
     
 
@@ -69,12 +82,22 @@ export default function scatterChart(a, s, highestPrice){
             tempObj.ss = item.premClub;
             tempObj.yy = year;
             tempObj.targetClip = ("scatterGrid_"+stripSpace(tempObj.ss)+"_"+year);
+            tempObj.salesFigure = 0;
+            tempObj.purchaseFigure = 0;
 
             if(year == "2014"){ tempObj.transfersArr = item.transfers_2014; }
             else if(year == "2015"){ tempObj.transfersArr = item.transfers_2015; }
             else if(year == "2016"){ tempObj.transfersArr = item.transfers_2016; } 
 
-            packCircles(tempObj.transfersArr, s, tempObj.ss, tempObj.targetClip, year, highestPrice)
+            _.each(tempObj.transfersArr, function(obj){
+                if(obj.buy && !isNaN(obj.cost)){ tempObj.purchaseFigure+=obj.cost };
+                if(obj.sell && !isNaN(obj.cost)){ tempObj.salesFigure += obj.cost };
+                
+            })
+            addTotals(tempObj)
+            packCircles(tempObj, s, tempObj.ss, tempObj.targetClip, year, highestPrice)
+
+
 
      })
 
@@ -87,12 +110,32 @@ export default function scatterChart(a, s, highestPrice){
 
 }
 
+function addTotals(tempObj){
+  _.each(spendingTotalsArr,function(clubObj){
+        if(clubObj.premClub == tempObj.ss){ 
+              clubObj.totalPurchases += tempObj.purchaseFigure;
+              clubObj.totalSales += tempObj.salesFigure;
+        }
+  })
+  _.each(spendingTotalsArr,function(item){
+      var n = item.totalPurchases/1000000;
+      var p = item.totalSales/1000000;
+      d3.select("#clubStatSpend_"+stripSpace(item.premClub)).html(n);
+
+      
+      d3.select("#clubStatSold_"+stripSpace(item.premClub)).html(p);
+  })
+    
+}
+
 function stripSpace(s){
     s = s.split(" ").join("_");
     return s;
 }
 
-function packCircles(a, s, ss, t, yy, highestPrice) {
+function packCircles(obj, s, ss, t, yy, highestPrice) {
+
+    var a = obj.transfersArr;
 
     //console.log("adding to --- #"+t)
     
@@ -534,7 +577,11 @@ function packCircles(a, s, ss, t, yy, highestPrice) {
                           });
                           spentText.text(spendNum/1000000)
                           soldText.text(sellNum/1000000)
-                          //console.log(quadroot)
+                          //
+
+                          //console.log(ss, yy, a)
+
+                          
                             
        
 }
