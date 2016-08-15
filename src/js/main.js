@@ -56,6 +56,8 @@ var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
 
 var highestPrice = 0;
 
+var yearsDone = [];
+
 //Add 1 of 'Hull City', 'Sheffield Wednesday',
 
 export function init(el, context, config, mediator) {
@@ -125,7 +127,15 @@ function initData(r, yy){
 
         _.each(isoArr , function(team,i){
 
-                var arrays = {
+                    team.sell2014 = 0;
+                    team.sell2015 = 0;
+                    team.sell2016 = 0;
+                    team.buy2014 = 0;
+                    team.buy2015 = 0;
+                    team.buy2016 = 0;
+
+
+                    var arrays = {
                     Array2014: [],
                     Array2015: [],
                     Array2016: []
@@ -133,16 +143,20 @@ function initData(r, yy){
 
                 _.each(clubArr, function(a){
                     if(a[0].premClub == team.premClub){
-                        arrays['Array' + yy] = a; //update array if there are transfers - Middlesbrough, Hull, Bournemouth etc. need an empty array for seasons out side prem
+                        arrays['Array' + yy] = a; //update array if there are transfers - Middlesbrough, Hull, Bournemouth etc. need an empty array for seasons outside prem
                     }
+
                 })  
             team['transfers_'+ yy ] = arrays['Array' + yy];
-            //var tempSum = _.sumBy(objects, function(o) { return o.n; });
+            
         })
+         
 
     var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
-    if (yy == '2016'){
+    yearsDone.push(yy)
+
+    if (yearsDone.length == 3){
        buildListView(clubArr ,tempArr, customScrollTo, yy, isoArr, highestPrice) //loop finished data ready
     }
      
@@ -213,6 +227,9 @@ function buildArray(r,yy){
                     itemOne.value = itemTwo.value = item.value;
                     itemOne.premClub = sellClub; 
                     itemTwo.premClub = buyClub; 
+
+                    itemOne.from = itemTwo.from = item.from;
+                    itemOne.to = itemTwo.to = item.to;
                     
                     tempArr.push(itemOne);
                     tempArr.push(itemTwo);
@@ -254,6 +271,7 @@ function buildArray(r,yy){
             if (o.premClub == item.premClub){ checkedArr.push(item) }
         })
     }) 
+
 
     return checkedArr;
 }
