@@ -15,7 +15,7 @@
 
 7. Add a drop down to navigate (SEE Olympic pages) *** M 
 
-8. Make maths work sor total spending *** H
+8. Make maths work for total spending *** H
 
 9 consider displaying all bubbles side-by-side a la http://www.theguardian.com/sport/ng-interactive/2016/aug/05/rio-olympics-2016-medal-table-and-results-in-full
 

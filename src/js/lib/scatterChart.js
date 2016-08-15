@@ -78,6 +78,8 @@ export default function scatterChart(a, s, highestPrice){
 
      })
 
+
+
   })
 
 
@@ -113,12 +115,14 @@ function packCircles(a, s, ss, t, yy, highestPrice) {
     var height = 170; 
 
     var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
+
+    
     
     var svg = d3.select("#"+t).append("svg").attr("width", width).attr("height", height + margin.Top);
     
     var digits = /(\d*)/;
 
-
+    console.log(t)
     //space in pixels from edges of SVG
 
     
@@ -499,7 +503,7 @@ function packCircles(a, s, ss, t, yy, highestPrice) {
 
                                       var newX = scaledX > width-120 ? 0 : width-120;
 
-                                      var detailTxt = d.dataObj.buy ? 'from '+ d.dataObj.from : 'to '+d.dataObj.to;
+                                      var detailTxt = d.dataObj.buy ? 'from '+ d.dataObj.from : 'to '+d.dataObj.to; 
 
                                       nameContainer
                                             // .transition().delay(100).duration(1000)

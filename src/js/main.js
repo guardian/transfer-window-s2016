@@ -114,22 +114,25 @@ function initData(r, yy){
     // var yearLabels = _.uniqBy(clubArr, 'd3Year');
     //console.log(yearLabels)
 
-    var clubArr = _.groupBy(tempArr,'premClub') 
+    var clubArr = _.groupBy(tempArr,'premClub');
+
+    //var totalFeez =_.sumBy(clubArr, function(o) { return o.cost; });
+
+    console.log(clubArr)
 
     var highPriceCheck = d3.max(tempArr, function (d) { return d.cost; })
 
     if (highPriceCheck > highestPrice ){ highestPrice = highPriceCheck }
 
-
-    //buildDataView(allTransfers, 940);
-
-        _.each(isoArr , function(team,i){
-
-                var arrays = {
+    var arrays = {
                     Array2014: [],
                     Array2015: [],
                     Array2016: []
                 };
+
+    //buildDataView(allTransfers, 940);
+
+        _.each(isoArr , function(team,i){
 
                 _.each(clubArr, function(a){
                     if(a[0].premClub == team.premClub){
@@ -142,11 +145,12 @@ function initData(r, yy){
 
     var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
 
-    if (yy == '2016'){
+    // if (arrays[0].length > 0 && arrays[1].length > 0 && arrays[2].length > 0){
        buildListView(clubArr ,tempArr, customScrollTo, yy, isoArr, highestPrice) //loop finished data ready
-    }
+    // }
      
-
+    // d3.select("#clubStatSpend_"+stripSpace(ss)).html("Buys");
+    // d3.select("#clubStatSold_"+stripSpace(ss)).html("Sells");
 
 }
 
@@ -201,6 +205,7 @@ function buildArray(r,yy){
                     itemOne.d3Date = itemTwo.d3Date = item.d3Date;
                     itemOne.date = itemTwo.date = item.date;
 
+
                     itemOne.formattedFee = itemTwo.formattedFee = item.formattedFee;
                     itemOne.imageGridURL = itemTwo.imageGridURL = item.imageGridURL;
                    
@@ -212,7 +217,10 @@ function buildArray(r,yy){
                     itemOne.price = itemTwo.price = item.price;
                     itemOne.value = itemTwo.value = item.value;
                     itemOne.premClub = sellClub; 
-                    itemTwo.premClub = buyClub; 
+                    itemTwo.premClub = buyClub;
+
+                    itemOne.to = itemTwo.to = item.to;
+                    itemOne.from = itemTwo.from = item.from;
                     
                     tempArr.push(itemOne);
                     tempArr.push(itemTwo);
