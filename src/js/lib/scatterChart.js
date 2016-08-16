@@ -5,7 +5,6 @@
 
 var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, height, xScale, yScale;
 
-var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
 var sellSolid = "rgba(0,86,137, 0.75)";  var buySolid = "rgba(75,198,223,0.75)";  // #484f53
 
 var windowYear;
@@ -21,7 +20,7 @@ var spendingTotalsArr = [];
           var c;
 
           if (d.sell){ c = 'fill-sell' }
-          if (d.buy) { c = 'fill-spend' } // fill-sell //fill-spend
+          if (d.buy) { c = 'fill-spend' }
 
           // if (d.sell && d.displayCost<1){  c = colorScaleSell(1)   } 
           // if (d.buy && d.displayCost<1){  c = colorScaleBuy(1)  }
@@ -36,8 +35,6 @@ var spendingTotalsArr = [];
 
 export default function scatterChart(a, s, highestPrice){
 
-
-
   _.each(a, function(obj){
     var tempObj = {}
       tempObj.premClub = obj.premClub;
@@ -47,33 +44,6 @@ export default function scatterChart(a, s, highestPrice){
       spendingTotalsArr.push(tempObj)
   })
 
-  console.log(spendingTotalsArr)
-
-    
-
-      // _.each(yearsArr, function(yy){
-
-      //   newArr = [];
-           
-      //       _.each(a, function(item){
-                
-      //           var tempObj = {}
-                  
-      //             tempObj.ss = item.premClub;
-      //             tempObj.yy = yy;
-      //             tempObj.targetClip = ("scatterGrid_"+stripSpace(tempObj.ss)+"_"+yy);
-      //               if(yy == "2014"){ tempObj.transfersArr = item.transfers_2014; }
-      //               else if(yy == "2015"){ tempObj.transfersArr = item.transfers_2015; }
-      //               else if(yy == "2016"){ tempObj.transfersArr = item.transfers_2016; }                  
-                  
-      //           if(tempObj.transfersArr){ newArr.push(tempObj) }   // console.log(yy,tempArr);
-                  
-      //         }) 
-            
-            
-      //      console.log(yy, newArr.length)
-
-      // })
       
   _.each(yearsArr, function(year){ // << problem here
      
@@ -96,17 +66,10 @@ export default function scatterChart(a, s, highestPrice){
             })
             addTotals(tempObj)
             packCircles(tempObj, s, tempObj.ss, tempObj.targetClip, year, highestPrice)
-
-
-
      })
 
   })
 
-
-
-
-      // packCircles(newArr,)
 
 }
 
@@ -578,9 +541,6 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                           spentText.text(spendNum/1000000)
                           soldText.text(sellNum/1000000)
                           //
-
-                          //console.log(ss, yy, a)
-
                           
                             
        

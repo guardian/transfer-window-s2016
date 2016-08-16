@@ -328,26 +328,26 @@ function roundDisplayNum(num,decimals) {clublistPrint
     return (num);
 }
 
-var elSticky = document.getElementById('filterAreaBG');
-var elStickyTop = elSticky.getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+// var elSticky = document.getElementById('filterAreaBG');
+// var elStickyTop = elSticky.getBoundingClientRect().top - document.body.getBoundingClientRect().top;
 
-window.addEventListener('scroll', function(){
+// window.addEventListener('scroll', function(){
 
-    console.log('scroll',document.documentElement.scrollTop)
-    if (document.documentElement.scrollTop > elStickyTop){
-        elSticky.style.position = 'fixed';
-        elSticky.style.top = '100px';
-    }
-    else
-    {
-        elSticky.style.position = 'static';
-        elSticky.style.top = 'auto';
-    }
-});
-
-
+//     console.log('scroll',document.documentElement.scrollTop)
+//     if (document.documentElement.scrollTop > elStickyTop){
+//         elSticky.style.position = 'fixed';
+//         elSticky.style.top = '100px';
+//     }
+//     else
+//     {
+//         elSticky.style.position = 'static';
+//         elSticky.style.top = 'auto';
+//     }
+// });
 
 
+
+iframeMessenger.enableAutoResize();
 
 }
 
@@ -355,4 +355,6 @@ function stripSpace(s){
     s = s.split(" ").join("_");
     return s;
 }
+
+
 
