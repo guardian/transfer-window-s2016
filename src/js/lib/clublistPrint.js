@@ -39,7 +39,7 @@ function constructInnerHtml(isoArr){
         s+="<div class='gv-stats-wrapper'>" //graph header
         s+="<img src='https://sport.guim.co.uk/football/crests/120/"+item.badgeRef+".png' width='auto' height='34px' style='display:inline-block; margin-right:12px;'>"
         s+="<div style='display:inline-block'><span class='dig-section-title-sub' style='display:inline-block;'>"+key+"</span>"
-        s+="<div style='width:100%' class='gv-stats-holder'><span id='clubStatSpend_"+stripSpace(key)+"'  class='fill-spend'>ADD</span> <span id='clubStatSold_"+stripSpace(key)+"' class='fill-sell'>ADD</span></div>"
+        s+="<div style='width:100%' class='gv-stats-holder'><span id='clubStatSpend_"+stripSpace(key)+"'  class='fill-spend'> </span> <span id='clubStatSold_"+stripSpace(key)+"' class='fill-sell'>ADD</span></div>"
         
         s+="</div>" //end graph header
         s+="</div>" 

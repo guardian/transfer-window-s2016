@@ -65,19 +65,19 @@ text {
 }
 
 .axis text, .strikerate-label {
-  @include fs-data(2);
+  @include fs-data(3);
   fill: $neutral-2;
 }
 
  .strikerate-title {
-  @include fs-data(2);
+  @include fs-data(3);
   font-weight:600;
   fill: $neutral-1;
   
 }
 
 .strikerate-fee {
-  @include fs-data(2);
+  @include fs-data(3);
   fill: $neutral-2;
   
 }
@@ -206,7 +206,7 @@ $sell-color-noFee:#484f53;
         
     }      
   @include mq(leftCol) {
-        padding-bottom: 24px;
+        padding-bottom: 0;
         margin-bottom: 12px; 
     }
 }

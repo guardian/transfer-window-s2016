@@ -3,9 +3,9 @@ figure.interactive {
     margin: 0;
     padding: 0;
 
-    font-size:12px;
 
-    //@include fs-bodyCopy(2);
+
+    @include fs-bodyCopy(2);
 }
 
 a {
@@ -82,7 +82,9 @@ a {
 }
 
 .dig-slice__inner__main {
+  
     overflow: hidden;
+
 }
 
 .dig-tag {
@@ -131,12 +133,12 @@ a {
 
 
 .dig-section-title-sub {
+@include fs-header(2);
 
-    @include fs-headline(3);
         padding-right: 10px;
 
     @include mq(tablet){
-        @include fs-headline(3);
+        
         padding-right: 90px;
     }    
     

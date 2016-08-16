@@ -1,0 +1,74 @@
+.gv-filter__inner {
+    margin: 0 auto;
+    box-sizing: border-box;
+
+    @each $bp in (tablet, desktop, leftCol, wide) {
+        @include mq($bp) {
+            max-width: map-get($mq-breakpoints, $bp);
+        }
+    }
+}
+
+.gv-container {
+    background-color: white;
+    border-bottom: 1px solid white;
+}
+
+.gv-header__inner,
+.gv-filter__inner {
+    // padding: 0 10px;
+    position: relative;
+
+    @include mq(mobileLandscape) {
+        // padding: 0 20px;
+    }
+    @include mq(leftCol) {
+        // padding-left: 180px;
+    }
+    @include mq(wide) {
+        // padding-left: 260px;
+    }
+}
+
+.gv-filter {
+    background-color: #f0dc00;
+    line-height: 35px;
+
+}
+
+.gv-filter__inner {
+    @include fs-bodyCopy(1);
+    // background-color: #fbe400;
+}
+
+.gv-filter__line {
+    display: block;
+    margin-bottom: 2px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+    @include mq(mobileLandscape) {
+        display: inline;
+    }
+}
+
+.gv-filter__choice {
+    @include fs-header(1);
+    background-color: rgba($buy-colour,0.2);
+    border: 0;
+    height: 35px;
+    outline: 0;
+    margin: 0 5px;
+    padding-left: 5px;
+    width: 160px;
+    cursor: pointer;
+
+    &[disabled] {
+        background-color: transparent;
+        color: #333;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        cursor: auto;
+    }
+}
