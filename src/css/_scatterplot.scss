@@ -66,7 +66,7 @@ text {
 
 .axis text, .strikerate-label {
   @include fs-data(3);
-  fill: $neutral-2;
+  fill: $neutral-3;
 }
 
  .strikerate-title {
@@ -196,7 +196,7 @@ $sell-color-noFee:#484f53;
 }
 
 .scatter-grid-holder{
-    width:320px;
+    width:310px;
     margin:0;
     display:inline-block;
     padding-bottom: 6px;

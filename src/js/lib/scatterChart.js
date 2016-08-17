@@ -36,8 +36,6 @@ var spendingTotalsArr = [];
 
 export default function scatterChart(a, s, highestPrice){
 
-
-
   _.each(a, function(obj){
     var tempObj = {}
       tempObj.premClub = obj.premClub;
@@ -95,6 +93,7 @@ export default function scatterChart(a, s, highestPrice){
                 
             })
             addTotals(tempObj)
+            addCopy(tempObj)
             packCircles(tempObj, s, tempObj.ss, tempObj.targetClip, year, highestPrice)
 
 
@@ -120,12 +119,18 @@ function addTotals(tempObj){
   _.each(spendingTotalsArr,function(item){
       var n = item.totalPurchases/1000000;
       var p = item.totalSales/1000000;
-      d3.select("#clubStatSpend_"+stripSpace(item.premClub)).html(n);
+      d3.select("#clubStatSpend_"+stripSpace(item.premClub)).html("In:"+n);
 
       
-      d3.select("#clubStatSold_"+stripSpace(item.premClub)).html(p);
+      d3.select("#clubStatSold_"+stripSpace(item.premClub)).html(" Out:"+p);
+
   })
     
+}
+var lipsum =" forage meggings marfa pabst portland. Waistcoat +1 gochujang pork belly, neutra health goth deep v cardigan bespoke mumblecore schlitz. Cardigan offal microdosing artisan thundercats flexitarian pop-up meggings.";
+
+function addCopy(tempObj){
+   d3.select("#clubDetails_"+stripSpace(tempObj.ss)).html("<b>"+tempObj.ss+"</b>"+lipsum)
 }
 
 function stripSpace(s){
@@ -152,8 +157,8 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
     var margin = {Top:10, Right: 20, Bottom:10, Left: 40} ;
     var marginSides = margin.Right + margin.Left;
  
-    var width = 300; 
-    var height = 170; 
+    var width = 290; 
+    var height = 160; 
 
     var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
     
@@ -188,9 +193,9 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
 
     xScale = d3.scale.linear()
         .domain([0,1])
-        .range([margin.Left, width-marginSides]);
+        .range([margin.Left, width-margin.Right]);
 
-    var startDate = timeFormat.parse(yy+'-05-01T12:00:00');
+    var startDate = timeFormat.parse(yy+'-04-20T12:00:00');
     var endDate = timeFormat.parse(yy+'-09-01T12:00:00');
 
 
@@ -208,14 +213,14 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
     var data = [];
 
     var data2 = a;
-    
         
         _.each(data2, function (d){
-            d.radius = Number(d.value/1000000)
-            
+            d.radius = Number(d.value/1000000)            
         });
 
         _.each(data2, function(d){
+            console.log(d.timeDate)
+
             var tempObj = {}
 
             tempObj.dataObj = d;
@@ -259,7 +264,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                       
                   svg.append("g")
                       .attr("class", "x axis")
-                      .attr("transform", function () { return ss == "Arsenal" ? "translate(0, "+(height+20)+" )" : "translate(0, "+height+" )"; })
+                      .attr("transform",  "translate(0, "+(height+20)+" )") //PICK OUT FIRST ENTRY -function () { return ss == "Arsenal" ? "translate(0, "+(height+20)+" )" : "translate(0, "+height+" )"; }
                       .call(xAxis);                      
                  
                       var dateLabel = svg.append('g')
@@ -331,14 +336,14 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                             .attr("width", 120)
                             .attr("height", 54)
                             .style("fill","#FFF")
-                            .style("stroke","#EEE")
-                            .style("stroke-width","1px")
+                            // .style("stroke","#EEE")
+                            // .style("stroke-width","1px")
                             .style("shape-rendering","crisp-edges");
 
                   var plName = nameContainer.append('text')
                         .attr('class','strikerate-title')
                         .attr('dx', 3)
-                        .attr('dy', 14)
+                        .attr('dy', 17)
 
                       plName.append('tspan')
                         .text(' ')
@@ -346,7 +351,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                   var plFee = nameContainer.append('text')
                         .attr('class','strikerate-fee')
                         .attr('dx', 3)
-                        .attr('dy', 28)
+                        .attr('dy', 35)
 
                       plFee.append('tspan')
                         .text(' ')
@@ -354,7 +359,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                   var plDetails = nameContainer.append('text')
                         .attr('class','strikerate-fee')
                         .attr('dx', 3)
-                        .attr('dy', 42)
+                        .attr('dy', 51)
 
                       plDetails.append('tspan')
                         .text(' ')

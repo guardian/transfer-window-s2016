@@ -36,6 +36,7 @@ function constructInnerHtml(isoArr){
         s+="</div>"
 
         s+="<div class='dig-slice__inner__main'>"
+        s+="<div class='gv-flex-4'>"
         s+="<div class='gv-stats-wrapper'>" //graph header
         s+="<img src='https://sport.guim.co.uk/football/crests/120/"+item.badgeRef+".png' width='auto' height='34px' style='display:inline-block; margin-right:12px;'>"
         s+="<div style='display:inline-block'><span class='dig-section-title-sub' style='display:inline-block;'>"+key+"</span>"
@@ -43,11 +44,18 @@ function constructInnerHtml(isoArr){
         
         s+="</div>" //end graph header
         s+="</div>" 
+
         s+= addChartHTML( key );    //addPlayerList removed    
+       
+        s+="</div>"
+        s+="<div class='gv-flex-3 gv-stats-wrapper fill-neutral no-margin no-border' id='clubDetails_"+stripSpace(key)+"'> </div>"
+        s+="</div>"
         
         s+="</div>"
-        s+="</div>"
-        s+="</div>"
+
+         
+
+         s+="</div>"
          //<span id='clubStatSpend_"+stripSpace(key)+"'></span>
      } );
 
@@ -55,6 +63,21 @@ function constructInnerHtml(isoArr){
 
 }
 
+
+// s+= "<div class='dig-slice__inner'>"
+// s+= "<div class='dig-slice__inner__left'>"
+// s+= "</div>"
+    
+
+// s+= "<div class='dig-slice__inner__main gv-flex-4' id='listEntry_"+stripSpace(key)+"'>"
+// s+="<div class='gv-stats-wrapper'>" //graph header
+// s+="<img src='https://sport.guim.co.uk/football/crests/120/"+item.badgeRef+".png' width='auto' height='34px' style='display:inline-block; margin-right:12px;'>"
+// s+="<div style='display:inline-block'><span class='dig-section-title-sub' style='display:inline-block;'>"+key+"</span>"
+// s+="<div style='width:100%' class='gv-stats-holder'><span id='clubStatSpend_"+stripSpace(key)+"'  class='fill-spend'> </span> <span id='clubStatSold_"+stripSpace(key)+"' class='fill-sell'>ADD</span></div>"
+// s+="</div>" //end graph header
+// s+= addChartHTML( key );        
+// s+= "</div>"
+// s+= "</div>"
 
 
 function formatPrice(s){
@@ -65,82 +88,15 @@ function formatPrice(s){
     return v;
 }
 
-function getFigures(a){
-    
-    var sell = 0;
-    var buy = 0;
-    var outputSell = false; 
-    var outputBuy = false;
-    var sellStr, buyStr;
-
-    _.each(a, function(o){
-        if(o.buy && !o.sell){
-            buy+=o.cost;
-            outputBuy = true;
-
-        }    
-        if(o.sell && !o.buy){
-            sell+=o.cost;
-            outputSell = true;
-        } 
-
-    })
-
-   buyStr =  buy > 0 ? "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>IN ("+buy/1000000+"m):</span></li>" : "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>IN :</span></li>";
-   sellStr =  sell > 0 ? "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading' style='font-weight:600'>OUT ("+sell/1000000+"m):</span></li>" : "<ul class='player-list'><li class='player-list__item'><span class='player-list__heading'  style='font-weight:600'>OUT :</span></li>";
-
-   if(!outputBuy){buyStr = " "}
-   if(!outputSell){sellStr = " "}
-
-
-    return [buyStr, sellStr];
-}
-
-
 function addChartHTML(k){
     return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2016'> </div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2015'> </div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2014'> </div>"; // no player list
 }
 
-function getPlayerList(a, k, yy){
-    var moneyFigures = getFigures(a);
-
-    var graphStr = " ";
-    var buyS = moneyFigures[0];
-    var sellS = moneyFigures[1];
-
-    _.each(a, function(o){
-        
-        if(o.buy && !o.sell){
-            // buyS += "<span>";
-            buyS += "<li class='player-list__item'>"; //style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
-            buyS += o.playername +", ";
-            buyS += formatPrice(o.price);
-            buyS += ";</li>" 
-        }
-
-        if(o.sell && !o.buy){
-            // sellS += "<span>";
-            sellS += "<li class='player-list__item'>"; // style='border-top-width: 8px; border-top-style: solid; border-top-color: rgba(77, 198, 221, 0.5);'
-            sellS += o.playername +", ";
-            sellS += formatPrice(o.price);
-            sellS += ";</li>" 
-        }    
-    });
-
-
-    buyS += "</ul>"; sellS += "</ul>"; 
-
-    // return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"'></div><div style='margin-bottom:20px'>"+graphStr+buyS+sellS+"</div>";
-
-    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2016'> </div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2015'> </div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2014'></div>"; // no player list
-}
 
 function stripSpace(s){
     s = s.split(" ").join("_");
     return s;
 }
-
-
 
 function addScatterGrids(a, globalSortOn, highestPrice){
 

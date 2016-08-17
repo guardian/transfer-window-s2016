@@ -56,9 +56,7 @@ var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
 
 var highestPrice = 0;
 
-var yearsDone = [];
-
-//Add 1 of 'Hull City', 'Sheffield Wednesday',
+var yearsDone = []; //use this to check all data is ready
 
 export function init(el, context, config, mediator) {
 
@@ -288,12 +286,9 @@ function getMonday( date ) {
 
 
 function buildListView(obj,allTransfers,customScrollTo,yy,isoArr, highestPrice){ 
-    //get 2015 transfers into all transfersArr   
 
         var listview = new clublistPrint(obj, allTransfers, globalSortOn,customScrollTo, yy, isoArr, highestPrice);
 
-
-    
 }
 
 function getZeroValueObjects(arrIn, sortStr){
@@ -331,23 +326,19 @@ function roundDisplayNum(num,decimals) {clublistPrint
 var elSticky = document.getElementById('filterAreaBG');
 var elStickyTop = elSticky.getBoundingClientRect().top - document.body.getBoundingClientRect().top;
 
-window.addEventListener('scroll', function(){
+    window.addEventListener('scroll', function(){
 
-    console.log('scroll',document.documentElement.scrollTop)
-    if (document.documentElement.scrollTop > elStickyTop){
-        elSticky.style.position = 'fixed';
-        elSticky.style.top = '100px';
-    }
-    else
-    {
-        elSticky.style.position = 'static';
-        elSticky.style.top = 'auto';
-    }
-});
-
-
-
-
+        console.log('scroll',document.documentElement.scrollTop)
+        if (document.documentElement.scrollTop > elStickyTop){
+            elSticky.style.position = 'fixed';
+            elSticky.style.top = '100px';
+        }
+        else
+        {
+            elSticky.style.position = 'static';
+            elSticky.style.top = 'auto';
+        }
+    });
 
 }
 
