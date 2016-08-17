@@ -497,6 +497,7 @@ function packCircles(t, a){
       
   //create data array//
   var svg = d3.select('#'+t).append("svg")
+  
 
   var data2 = JSON.parse(dataStrikerate).map(function(pl){
     pl.x = pl.rate_good;
