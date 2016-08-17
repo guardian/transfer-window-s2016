@@ -45,7 +45,6 @@ export default function scatterChart(a, s, highestPrice){
       spendingTotalsArr.push(tempObj)
   })
 
-  console.log(spendingTotalsArr)
 
     
 
@@ -219,7 +218,6 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
         });
 
         _.each(data2, function(d){
-            console.log(d.timeDate)
 
             var tempObj = {}
 
@@ -270,6 +268,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                       var dateLabel = svg.append('g')
                         .attr('class','strikerate-label')
                         .attr("transform", "translate( 0 , 0)");
+                         
 
                       var dateText = dateLabel.append('text')
                         .attr('class','strikerate-label neutral-txt')
@@ -333,7 +332,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                   var rectangle = nameContainer.append("rect")
                             .attr("x", 0)
                             .attr("y", 0)
-                            .attr("width", 120)
+                            .attr("width", width/2)
                             .attr("height", 54)
                             .style("fill","#FFF")
                             // .style("stroke","#EEE")
@@ -387,6 +386,27 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                   //already been positioned.
                   //This will be most efficient if you add the circles
                   //starting with the smallest.  
+
+
+                  d3.selectAll('g.tick')
+                        .filter(function(d){ var m = d.getMonth(); return m==8;  } ) //words = text.text().split(/\s+/)return d=='Sep';
+
+                          .select('line') //grab the tick line
+                          // .attr('marker-end','url(#markerArrowTop)')
+                          .style('stroke-dasharray','none')
+                          .style('stroke-width', 1); //or style directly with attributes or inline styles 
+
+                  d3.selectAll('g.tick')
+                        .filter(function(d){ var m = d.getMonth(); return m==8;  } ) //words = text.text().split(/\s+/)return d=='Sep';
+
+                          .select('text').text("window closed")
+                            //grab the tick line
+                          .attr('x',0-(height*0.75))
+                          .attr('y', -6)
+                          .attr('transform','rotate(90)')
+                          .style('text-anchor','start');
+
+
                   function findNeighbours(root, scaledX, scaledR, maxR) {
 
                       var neighbours = [];
@@ -545,9 +565,11 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                                       var newName = d.dataObj.playername; 
                                       var newFee = d.dataObj.formattedFee; 
 
-                                      var newX = scaledX > width-120 ? 0 : width-120;
+                                      var newX = scaledX > width-120 ? 0 : width/2;
 
                                       var detailTxt = d.dataObj.buy ? 'from '+ d.dataObj.from : 'to '+d.dataObj.to;
+
+                                      if (detailTxt == 'to ' || detailTxt == 'from '){ detailTxt = " "}; 
 
                                       nameContainer
                                             // .transition().delay(100).duration(1000)
@@ -555,6 +577,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                                             plName.text(newName);
                                             plFee.text(newFee);
                                             plDetails.text(detailTxt)
+                                              // .call(textWrap, 100);
 
                                    })
                                   .on("mouseleave", function(){
@@ -591,7 +614,31 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
        
 }
 
+function textWrap(text, width) {
 
+  console.log(text)
+  text.each(function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}
 
 
 

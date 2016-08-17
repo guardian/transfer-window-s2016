@@ -161,6 +161,10 @@ a {
     fill: $sell-colour;
 }
 
+.fill-deadline text{
+    stroke:  none;
+}
+
 .fill-neutral{
     color: $neutral-2; 
     fill: $neutral-2;
