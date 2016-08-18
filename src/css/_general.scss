@@ -137,9 +137,9 @@ a {
 
 
 .dig-section-title-sub {
-@include fs-header(2);
+@include fs-header(3);
 
-        padding-right: 10px;
+    padding-right: 10px;
 
     @include mq(tablet){
         
@@ -261,7 +261,7 @@ a {
 
 .gv-back-top-button{
     height: 27px;
-    width: 108px;
+    width: 120px;
     margin:$gs-baseline 0 0 0;
     padding:3px 0 0 15px;
     background-color: $neutral-7;
@@ -270,7 +270,10 @@ a {
 }
 
 .back-top-holder{
-    margin-left: 80px !important;
+
+     @include mq(tablet) {
+        margin-left: 160px !important;
+    }
 }
 
 .dig-sections {

@@ -88,7 +88,7 @@ function constructInnerHtml(isoArr){
 // s+= "</div>"
 
 function addDetails(key, playerPic){
-    var s = "<div class='gv-flex-2 gv-stats-wrapper fill-neutral no-margin no-border'>";
+    var s = "<div class='gv-flex-3'>";
     s+= "<div class='gv-player-pic' id='playerPic_"+stripSpace(key)+"' style='background-image:url("+playerPic+")' > </div>"; //background:url(https://interactive.guim.co.uk/2016/06/euros-player-pictures/England/Wayne_Rooney.jpg
     s+= "<div id='clubDetails_"+stripSpace(key)+"'></div>";
 
@@ -107,7 +107,7 @@ function formatPrice(s){
 }
 
 function addChartHTML(k){
-    return "<div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2016'> </div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2015'> </div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2014'> </div>"; // no player list
+    return "<div class='gv-flex-4'><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2016'> </div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2015'> </div><div class='scatter-grid-holder' id ='scatterGrid_"+stripSpace(k)+"_2014'> </div></div>"; // no player list
 }
 
 

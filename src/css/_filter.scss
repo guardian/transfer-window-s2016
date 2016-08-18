@@ -62,6 +62,12 @@
     padding-left: 5px;
     width: 160px;
     cursor: pointer;
+    margin-left: 0;
+
+     @include mq(mobileLandscape) {
+        margin-left: 160px;
+    }
+    
 
     &[disabled] {
         background-color: transparent;
