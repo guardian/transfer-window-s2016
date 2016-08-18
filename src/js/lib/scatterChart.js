@@ -36,6 +36,9 @@ var spendingTotalsArr = [];
 
 export default function scatterChart(a, s, highestPrice){
 
+
+
+
   _.each(a, function(obj){
     var tempObj = {}
       tempObj.premClub = obj.premClub;
@@ -44,6 +47,8 @@ export default function scatterChart(a, s, highestPrice){
 
       spendingTotalsArr.push(tempObj)
   })
+
+
 
 
     
@@ -77,6 +82,7 @@ export default function scatterChart(a, s, highestPrice){
      _.each(a, function(item){
             var tempObj = {};
             tempObj.ss = item.premClub;
+            tempObj.copyStr = item.copyStr;
             tempObj.yy = year;
             tempObj.targetClip = ("scatterGrid_"+stripSpace(tempObj.ss)+"_"+year);
             tempObj.salesFigure = 0;
@@ -118,10 +124,10 @@ function addTotals(tempObj){
   _.each(spendingTotalsArr,function(item){
       var n = item.totalPurchases/1000000;
       var p = item.totalSales/1000000;
-      d3.select("#clubStatSpend_"+stripSpace(item.premClub)).html("In:"+n);
+      d3.select("#clubStatSpend_"+stripSpace(item.premClub)).html(n);
 
       
-      d3.select("#clubStatSold_"+stripSpace(item.premClub)).html(" Out:"+p);
+      d3.select("#clubStatSold_"+stripSpace(item.premClub)).html(p);
 
   })
     
@@ -129,7 +135,11 @@ function addTotals(tempObj){
 var lipsum =" forage meggings marfa pabst portland. Waistcoat +1 gochujang pork belly, neutra health goth deep v cardigan bespoke mumblecore schlitz. Cardigan offal microdosing artisan thundercats flexitarian pop-up meggings.";
 
 function addCopy(tempObj){
-   d3.select("#clubDetails_"+stripSpace(tempObj.ss)).html("<b>"+tempObj.ss+"</b>"+lipsum)
+   d3.select("#clubDetails_"+stripSpace(tempObj.ss)).html(tempObj.copyStr)
+
+
+   // d3.select("#playerPic_"+stripSpace(tempObj.ss))
+   //  .style("background","url('https://interactive.guim.co.uk/2016/06/euros-player-pictures/England/Wayne_Rooney.jpg')")
 }
 
 function stripSpace(s){
@@ -603,8 +613,11 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                               //     .transition().delay(300*i).duration(250)
                               //     .attr("y1", (baselineHeight+d.offset));
                           });
-                          spentText.text(spendNum/1000000)
-                          soldText.text(sellNum/1000000)
+                          
+                         
+                         
+                          spentText.text(a.length>0 ? spendNum/1000000 : "Not in premier league").attr("class" , a.length>0 ? "strikerate-label buy" : "strikerate-label"); 
+                          soldText.text(a.length>0 ? sellNum/1000000 : " ")
                           //
 
                           //console.log(ss, yy, a)

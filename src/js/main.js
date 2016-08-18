@@ -36,33 +36,39 @@ var isoArr = [
     { premClub:'West Ham United', iso:'WHU', badgeRef:'43'}
 ];
 
+var imgPath = 'https://interactive.guim.co.uk/2016/08/transfer-window/premimages/'
 var Ractive = ractive;
 var _ = lodash;
 var shareFn = share('Interactive title', 'http://gu.com/p/URL', '#Interactive');
 
 //define globals
+var copyURL = 'https://interactive.guim.co.uk/docsdata-test/1EN3XY9iiJ1jsxtLcdEyfUdhsozq9WnyH6TQjUwDqzMM.json'
 var dataURL2016 = 'https://interactive.guim.co.uk/docsdata-test/1VW0QYe6WqmvxIQ2MoDUaFIbztySJxLQJ9UUIGSYSaNg.json'
 var dataURL2015 = 'https://interactive.guim.co.uk/docsdata-test/1OilCanhD6Xb3uN7fl-UvuRaCFpTuTgEk6CcBbr4OFYg.json'
 var dataURL2014 = 'https://interactive.guim.co.uk/docsdata-test/1YwSeSd_eNMFnzgPmXmwa-UfKCk6lMFG0Qd-1KSKtW48.json'
 
 var allTransfers;
-
 var leaguesArray, nationalitiesArray, clubD3Data, leagueD3Data, nationD3Data, ageD3Data, rowWidth;
 var globalSortOn;
-
 var arrTransfersByClubYear = [];     
-
 var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
-
 var highestPrice = 0;
-
 var yearsDone = []; //use this to check all data is ready
+
 
 export function init(el, context, config, mediator) {
 
     globalSortOn = 'premClub'; //initView
 
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
+
+    reqwest({
+        url: copyURL,
+        type: 'json',
+        crossOrigin: true,
+        success: (resp) => addCopyData(resp)
+        
+    });
 
     reqwest({
             url: dataURL2014,
@@ -85,6 +91,7 @@ export function init(el, context, config, mediator) {
             crossOrigin: true,
             success: (resp) => initData(resp,'2016')
         }); 
+    
 
 
 
@@ -100,6 +107,19 @@ function logData(r, yy){
     _.each(tempArr, function(item){
         //console.log(item)
     })
+
+}
+
+function addCopyData(r){
+    var allCopy = r.sheets.Sheet1;
+
+    _.each(isoArr, function(team){
+        _.each(allCopy, function (item){
+            if(team.premClub==item.club){ team.copyStr = item.copy; team.playerPic = imgPath+item.image; }
+        })
+    })
+
+    console.log(isoArr)
 
 }
 

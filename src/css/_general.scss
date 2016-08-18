@@ -39,6 +39,10 @@ a {
         padding: $gs-gutter;
     }
 
+    @include mq(tablet) {
+        padding:  $gs-gutter 0;
+    }
+
     @each $bp in (tablet, desktop, leftCol, wide) {
         @include mq($bp) {
             max-width: map-get($mq-breakpoints, $bp);
@@ -170,19 +174,11 @@ a {
     fill: $neutral-2;
 }
 
-.gv-stats-wrapper{
-    @include fs-data(3);
-    margin: 0 0 $gs-gutter;
-    padding: 3px 0;
-
-    border-top: 1px solid $neutral-4;
-}
-
 .no-border{
-    border:none;
+    border:none !important;
 }
 .no-margin{
-    margin:0;
+    margin:0 !important;
 }
 .gv-stats-holder{
 
@@ -246,21 +242,35 @@ a {
         color: #767676;
     }
 
-    position: absolute;
+  
     top: 0;
     right: 0;
 
     font-size: 12px;
-    line-height: 26px;
+    line-height: inherit;
     @include mq(leftCol) {
-        position: static;
-        font-size: 14px;
+     
+        font-size: 12px;
         line-height: inherit;
     }
 
     & > span {
         vertical-align: middle;
     }
+}
+
+.gv-back-top-button{
+    height: 27px;
+    width: 108px;
+    margin:$gs-baseline 0 0 0;
+    padding:3px 0 0 15px;
+    background-color: $neutral-7;
+    border-radius:50px;
+
+}
+
+.back-top-holder{
+    margin-left: 80px !important;
 }
 
 .dig-sections {

@@ -20,6 +20,28 @@
   
 }
 
+.gv-stats-wrapper{
+    @include fs-data(3);
+    margin: 0 0 $gs-gutter;
+    padding: 3px 0;
+
+    border-top: 1px solid $neutral-4;
+
+
+}
+
+.gv-player-pic{
+  float: left;
+  width:60px; 
+  height:60px; 
+  margin: 0 $gs-gutter $gs-baseline 0;
+  background: url(https://interactive.guim.co.uk/2016/06/euros-player-pictures/England/Wayne_Rooney.jpg);
+  background-size: 60px 60px; 
+  background-repeat: no-repeat;   
+  border-radius:30px;
+}
+
+
 text {
   pointer-events: none;
 }
