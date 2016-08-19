@@ -24,14 +24,13 @@
     @include fs-data(3);
     margin: 0;
     padding: 3px 0 $gs-baseline;
-    border-top: 1px solid $neutral-4;
 
-    @include mq(tablet){
-        padding: 3px 0 3px 160px;
+    @include mq(desktop){
+        padding: 3px 0 3px 170px;
     }    
     
-    @include mq(wide) {
-        // padding-left: 240px;
+    @include mq(leftCol) {
+        padding: 3px 0 3px 160px;
     }
 }
 
@@ -45,12 +44,12 @@
   background-repeat: no-repeat;   
   border-radius:1000px;
 
-  @include mq(tablet){
-    margin: 0 30px 12px 10px
+  @include mq(desktop){
+    margin: 0 30px 30px 10px
   }
 
   @include mq(leftCol){
-    margin: -24px 30px 12px 0px;
+    margin: -24px 30px 30px 0px;
   }
 }
 
@@ -230,12 +229,29 @@ $sell-color-noFee:#484f53;
   height:36px;
 }
 
+
+.scatter-grids-wrapper{
+  width:100%;
+  margin:0;
+
+   @include mq(tablet) {
+       margin:0 0 0 140px;
+        
+    }  
+
+  @include mq(desktop) {
+       margin:0;
+        
+    }  
+
+}
+
 .scatter-grid-holder{
     width:310px;
     margin:0;    
     padding-bottom: 6px;
 
-  @include mq(tablet) {
+  @include mq(desktop) {
         margin-left:160px;
         
     }      

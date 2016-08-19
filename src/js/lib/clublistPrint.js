@@ -32,10 +32,7 @@ function constructInnerHtml(isoArr){
         var key = item.premClub;
         s+="<div class='dig-slice' id='listEntry_"+stripSpace(key)+"'>"
         s+="<div class='dig-slice__inner'>"
-        s+="<div class='dig-slice__inner__left'>"
 
-        
-        s+="</div>"
 
         s+="<div class='dig-slice__inner__main'>"
         s+="<div class='gv-flex-4 no-margin'>"
@@ -48,8 +45,9 @@ function constructInnerHtml(isoArr){
         s+="</div>" //end graph header
         s+="</div>" 
         s+= addDetails ( key, item.playerPic );
+        s+= "<div class='scatter-grids-wrapper'>"
         s+= addChartHTML( key );    //addPlayerList removed    
-       
+        s+= "</div>"
         s+="</div>"
         
         s+="<div class='gv-flex-4 back-top-holder'>" 

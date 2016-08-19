@@ -8,6 +8,8 @@ export default function navList(obj, sortOn, scrollFn) {
 
          _.forOwn(obj, function(value, key) { 
 
+              console.log(obj)
+
               htmlStr += "<option value='"+ stripSpace(key)+"'>"+key+"</option>"
               
         })

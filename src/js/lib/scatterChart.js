@@ -3,6 +3,8 @@
  * This bit of code was shared originally at https://gist.github.com/benjchristensen/2657838
  */
 
+import swoopyArrow from './swoopyArrow';
+
 var data, sortOn, subSortOn, selectArr, axisLabels, customScrollTo, width, height, xScale, yScale;
 
 var sellNeutral = '#666'; var buyNeutral = '#AAA'; 
@@ -13,6 +15,8 @@ var windowYear;
 var yearsArr = [ "2016", "2015", "2014" ];
 
 var newArr, allSeasonsArr = [];
+
+var starManBubbles = [];
 
 var spendingTotalsArr = [];
 
@@ -44,6 +48,7 @@ export default function scatterChart(a, s, highestPrice){
       tempObj.premClub = obj.premClub;
       tempObj.totalSales = 0;
       tempObj.totalPurchases = 0;
+      tempObj.starMan = obj.starMan;
 
       spendingTotalsArr.push(tempObj)
   })
@@ -80,6 +85,8 @@ export default function scatterChart(a, s, highestPrice){
   _.each(yearsArr, function(year){ // << problem here
      
      _.each(a, function(item){
+
+
             var tempObj = {};
             tempObj.ss = item.premClub;
             tempObj.copyStr = item.copyStr;
@@ -87,7 +94,7 @@ export default function scatterChart(a, s, highestPrice){
             tempObj.targetClip = ("scatterGrid_"+stripSpace(tempObj.ss)+"_"+year);
             tempObj.salesFigure = 0;
             tempObj.purchaseFigure = 0;
-
+            if(year == "2016" && item.starMan){ tempObj.starMan = item.starMan; }
             if(year == "2014"){ tempObj.transfersArr = item.transfers_2014; }
             else if(year == "2015"){ tempObj.transfersArr = item.transfers_2015; }
             else if(year == "2016"){ tempObj.transfersArr = item.transfers_2016; } 
@@ -95,6 +102,7 @@ export default function scatterChart(a, s, highestPrice){
             _.each(tempObj.transfersArr, function(obj){
                 if(obj.buy && !isNaN(obj.cost)){ tempObj.purchaseFigure+=obj.cost };
                 if(obj.sell && !isNaN(obj.cost)){ tempObj.salesFigure += obj.cost };
+                if(year == "2016" && obj.playername == tempObj.starMan){ obj.starMan = tempObj.starMan; }
                 
             })
             addTotals(tempObj)
@@ -224,7 +232,8 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
     var data2 = a;
         
         _.each(data2, function (d){
-            d.radius = Number(d.value/1000000)            
+            d.radius = Number(d.value/1000000) 
+
         });
 
         _.each(data2, function(d){
@@ -238,6 +247,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
             
             tempObj.buy = d.buy;
             tempObj.sell = d.sell;
+            tempObj.starMan = d.starMan ? true : false;
 
             data.push(tempObj)
 
@@ -249,7 +259,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                       
                   //Set up SVG and axis//   
                   
-                 
+                  
                   var padding = 1; //space in pixels between circles
                   var minRadius = 4, maxRadius = 11;
                   var biggestFirst = true; //should largest circles be added first?
@@ -344,7 +354,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                             .attr("y", 0)
                             .attr("width", width/2)
                             .attr("height", 54)
-                            .style("fill","#FFF")
+                            .style("fill","rgba(255,255,255,0.7)")
                             // .style("stroke","#EEE")
                             // .style("stroke-width","1px")
                             .style("shape-rendering","crisp-edges");
@@ -526,7 +536,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                       };
                   }
                   
-
+                  
 
                       //Create circles!//
                   var maxR = 0;
@@ -552,6 +562,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
 
                             if(d.sell){ sellNum+=d.dataObj.cost}
                             if(d.buy){ spendNum+=d.dataObj.cost}
+
                               //for each circle, calculate it's position
                               //then add it to the quadtree
                               //so the following circles will avoid it.
@@ -559,31 +570,33 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                               //console.log("Bubble " + i);
 
                               var scaledX = xScale(d.x);  
-                              
+                              var offSetY = calculateOffset(maxR);
 
-                              d3.select(this)
+                              var currBubble = d3.select(this)
                                   .attr("cx", scaledX)
                                   
                                   // .transition().delay(300*i).duration(250)
-                                  .attr("cy", calculateOffset(maxR))
+                                  .attr("cy", offSetY)
                                   //.attr("cy", d.y)
                                   .attr("class", function(d){ return getCircleClass(d) })
                                   .style("fill-opacity","0.6")
                                   .on("mouseenter", function(d,e,i){  
                                       // nameContainer.html(d.playername + '<span>(from ' + d.to + ' goals in ' + d.from + ' matches)'+ d.formattedFee+'</span>');
-                                      var offset = this.getBoundingClientRect();
+                                     
                                       var newName = d.dataObj.playername; 
                                       var newFee = d.dataObj.formattedFee; 
 
-                                      var newX = scaledX > width-120 ? 0 : width/2;
+                                      var newX = scaledX > width/2 ? width/2 : scaledX;
+                                      var newY = currBubble.attr('cy') < 0 ? height*0.6 : 0;
 
+                                      
                                       var detailTxt = d.dataObj.buy ? 'from '+ d.dataObj.from : 'to '+d.dataObj.to;
 
                                       if (detailTxt == 'to ' || detailTxt == 'from '){ detailTxt = " "}; 
 
                                       nameContainer
                                             // .transition().delay(100).duration(1000)
-                                            .attr('style','transform: translateX( ' + newX +'px )');
+                                            .attr('style','transform: translate( ' + newX +'px, '+newY+'px )');
                                             plName.text(newName);
                                             plFee.text(newFee);
                                             plDetails.text(detailTxt)
@@ -594,6 +607,32 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                                      nameContainer
                                             .attr('style','display : none ');
                                   });
+
+                             //if(d.starMan){  annotate(d, currBubble) }     
+
+                              // function annotate(d){
+
+                              //   var xCoord = (d.x * width)
+                              //   var yCoord = (d.y * height)
+                              //   console.log(bubble.attr('cx'))
+
+                              //   console.log("["+xCoord+"],["+yCoord+"] --- ["+(d.x * width)+"],["+(d.y * height+"]")
+
+                              //   svg.append("path")
+                                
+                              //   var swoopy = swoopyArrow()
+                              //       .angle(Math.PI/4)
+                              //       .x(function(d) { return d[0]; })
+                              //       .y(function(d) { return d[1]; });
+
+                              //     svg.append("path")
+                              //       .attr('marker-end', 'url(#markerArrowTop)') 
+                              //       .datum([[0,0],[xCoord,xCoord]])                                  
+                              //       //.datum([ [ xCoord, yCoord ] , [ 0, height ]])
+                              //       .attr('fill','none')
+                              //       .attr('stroke','black')
+                              //       .attr("d", swoopy);
+                              // }
 
 
                               quadroot.add(d);
@@ -614,9 +653,9 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                               //     .attr("y1", (baselineHeight+d.offset));
                           });
                           
+                         //
                          
-                         
-                          spentText.text(a.length>0 ? spendNum/1000000 : "Not in premier league").attr("class" , a.length>0 ? "strikerate-label buy" : "strikerate-label"); 
+                          spentText.text(a.length>0 ? spendNum/1000000 : "Not in Premier League").attr("class" , a.length>0 ? "strikerate-label buy" : "strikerate-label"); 
                           soldText.text(a.length>0 ? sellNum/1000000 : " ")
                           //
 
@@ -626,6 +665,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                             
        
 }
+
 
 function textWrap(text, width) {
 

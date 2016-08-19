@@ -70,30 +70,7 @@ export function init(el, context, config, mediator) {
         
     });
 
-    reqwest({
-            url: dataURL2014,
-            type: 'json',
-            crossOrigin: true,
-            success: (resp) => initData(resp,'2014')
-            //initData(resp)
-        }); 
-
-    reqwest({
-            url: dataURL2015,
-            type: 'json',
-            crossOrigin: true,
-            success: (resp) => initData(resp,'2015')
-        }); 
-
-    reqwest({
-            url: dataURL2016,
-            type: 'json',
-            crossOrigin: true,
-            success: (resp) => initData(resp,'2016')
-        }); 
     
-
-
 
 function randomDate(start, end) {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
@@ -115,11 +92,31 @@ function addCopyData(r){
 
     _.each(isoArr, function(team){
         _.each(allCopy, function (item){
-            if(team.premClub==item.club){ team.copyStr = item.copy; team.playerPic = imgPath+item.image; }
+            if(team.premClub==item.club){ team.copyStr = item.copy; team.playerPic = imgPath+item.image; team.starMan = item.HighlightPlayer}
         })
     })
 
-    console.log(isoArr)
+    reqwest({
+            url: dataURL2014,
+            type: 'json',
+            crossOrigin: true,
+            success: (resp) => initData(resp,'2014')
+            //initData(resp)
+        }); 
+
+    reqwest({
+            url: dataURL2015,
+            type: 'json',
+            crossOrigin: true,
+            success: (resp) => initData(resp,'2015')
+        }); 
+
+    reqwest({
+            url: dataURL2016,
+            type: 'json',
+            crossOrigin: true,
+            success: (resp) => initData(resp,'2016')
+        }); 
 
 }
 
@@ -161,8 +158,10 @@ function initData(r, yy){
             
         })
          
-
-    var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
+    if(yy = "2016"){
+        var navList =  new navlist(clubArr, globalSortOn, customScrollTo)
+    }    
+        
 
     yearsDone.push(yy)
 
