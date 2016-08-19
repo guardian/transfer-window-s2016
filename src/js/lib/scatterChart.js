@@ -132,10 +132,10 @@ function addTotals(tempObj){
   _.each(spendingTotalsArr,function(item){
       var n = item.totalPurchases/1000000;
       var p = item.totalSales/1000000;
-      d3.select("#clubStatSpend_"+stripSpace(item.premClub)).html(n);
+      d3.select("#clubStatSpend_"+stripSpace(item.premClub)).html("£"+n+"m");
 
       
-      d3.select("#clubStatSold_"+stripSpace(item.premClub)).html(p);
+      d3.select("#clubStatSold_"+stripSpace(item.premClub)).html("£"+p+"m");
 
   })
     
@@ -173,6 +173,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
     //Author name and link to this page is sufficient attribution.
     var margin = {Top:10, Right: 20, Bottom:10, Left: 40} ;
     var marginSides = margin.Right + margin.Left;
+    var marginTopBot = margin.Top + margin.Bottom;
  
     var width = 290; 
     var height = 160; 
@@ -608,31 +609,24 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                                             .attr('style','display : none ');
                                   });
 
-                             //if(d.starMan){  annotate(d, currBubble) }     
+                             if(d.starMan){  annotate(d, currBubble) }     
 
-                              // function annotate(d){
+                              function annotate(dIn, currBubble){
+//"["+xCoord+"],["+yCoord+"]
+                               // console.log(d , "--- ["+(d.x * (width - marginSides))+"],["+(d.y * (height - marginTopBot))+"]");
 
-                              //   var xCoord = (d.x * width)
-                              //   var yCoord = (d.y * height)
-                              //   console.log(bubble.attr('cx'))
+                                var swoopy = swoopyArrow()
+                                  .angle(Math.PI/4)
+                                  .x(function(d) { console.log(d); return d[0]; })
+                                  .y(function(d) { return d[1]; });
 
-                              //   console.log("["+xCoord+"],["+yCoord+"] --- ["+(d.x * width)+"],["+(d.y * height+"]")
+                                svg.append("path")
+                                  .attr('marker-end', 'url(#markerArrowTop)')
+                                  .datum([[0,0],[(dIn.x * (width - marginSides)) - dIn.r,(dIn.x * (height - marginTopBot)) - dIn.r]])
+                                  .attr("d",  swoopy );
 
-                              //   svg.append("path")
-                                
-                              //   var swoopy = swoopyArrow()
-                              //       .angle(Math.PI/4)
-                              //       .x(function(d) { return d[0]; })
-                              //       .y(function(d) { return d[1]; });
-
-                              //     svg.append("path")
-                              //       .attr('marker-end', 'url(#markerArrowTop)') 
-                              //       .datum([[0,0],[xCoord,xCoord]])                                  
-                              //       //.datum([ [ xCoord, yCoord ] , [ 0, height ]])
-                              //       .attr('fill','none')
-                              //       .attr('stroke','black')
-                              //       .attr("d", swoopy);
-                              // }
+                                console.log(swoopy)
+                              }
 
 
                               quadroot.add(d);
@@ -654,9 +648,16 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                           });
                           
                          //
-                         
-                          spentText.text(a.length>0 ? spendNum/1000000 : "Not in Premier League").attr("class" , a.length>0 ? "strikerate-label buy" : "strikerate-label"); 
-                          soldText.text(a.length>0 ? sellNum/1000000 : " ")
+                          
+
+                         var spentTextStr = a.length>0 ? "£"+spendNum/1000000+"m" : "Not in Premier League";
+                         if( spentTextStr=="£0m"){ spentTextStr = "0" }     
+
+                         var soldTextStr = a.length>0 ? "£"+sellNum/1000000+"m" : " ";
+                         if( soldTextStr == "£0m"){ soldTextStr = "0" }                         
+
+                        spentText.text(spentTextStr).attr("class" , a.length>0 ? "strikerate-label buy" : "strikerate-label"); 
+                        soldText.text(soldTextStr);
                           //
 
                           //console.log(ss, yy, a)
