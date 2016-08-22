@@ -181,7 +181,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
     var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
     
     var svg = d3.select("#"+t).append("svg").attr("width", width).attr("height", height + margin.Top);
-    
+
     var digits = /(\d*)/;
 
 
@@ -284,7 +284,23 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                   svg.append("g")
                       .attr("class", "x axis")
                       .attr("transform",  "translate(0, "+(height+20)+" )") //PICK OUT FIRST ENTRY -function () { return ss == "Arsenal" ? "translate(0, "+(height+20)+" )" : "translate(0, "+height+" )"; }
-                      .call(xAxis);                      
+                      .call(xAxis); 
+
+
+                  svg.append('defs')
+                      .append("marker")
+                        .attr("id", "arrowhead")
+                        .attr("viewBox", "-10 -10 20 20")
+                        .attr("refX", 0)
+                        .attr("refY", 0)
+                        .attr("fill","#666")
+                        .attr("markerWidth", 14)
+                        .attr("markerHeight", 14)
+                        .attr("stroke-width", 1)
+                        .attr("orient", "auto")
+                      .append("polyline")
+                        .attr("stroke-linejoin", "bevel")
+                        .attr("points", "-6.75,-6.75 0,0 -6.75,6.75");                            
                  
                       var dateLabel = svg.append('g')
                         .attr('class','strikerate-label')
@@ -371,7 +387,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                   var plFee = nameContainer.append('text')
                         .attr('class','strikerate-fee')
                         .attr('dx', 3)
-                        .attr('dy', 35)
+                        .attr('dy', 34)
 
                       plFee.append('tspan')
                         .text(' ')
@@ -528,7 +544,6 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                                 //          + upperEnd + "," + lowerEnd);
                               }
                           }
-                              
                               //assign this circle the offset that is smaller
                               //in magnitude:
                           return d.offset = 
@@ -575,12 +590,13 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
 
                               var currBubble = d3.select(this)
                                   .attr("cx", scaledX)
+                                  .attr("id", function(d){ return "bubble_"+d.dataObj.ind; })
                                   
                                   // .transition().delay(300*i).duration(250)
                                   .attr("cy", offSetY)
                                   //.attr("cy", d.y)
                                   .attr("class", function(d){ return getCircleClass(d) })
-                                  .style("fill-opacity","0.6")
+                                  .style("fill-opacity","0.75")
                                   .on("mouseenter", function(d,e,i){  
                                       // nameContainer.html(d.playername + '<span>(from ' + d.to + ' goals in ' + d.from + ' matches)'+ d.formattedFee+'</span>');
                                      
@@ -609,24 +625,52 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                                             .attr('style','display : none ');
                                   });
 
-                             //if(d.starMan){  annotate(d, currBubble) }     
+                            if(d.starMan){  annotate(d, currBubble)  }     
 
-                              function annotate(dIn, currBubble){
-//"["+xCoord+"],["+yCoord+"]
-                               // console.log(d , "--- ["+(d.x * (width - marginSides))+"],["+(d.y * (height - marginTopBot))+"]");
+                      function annotate(dIn, currBubble){
+                      
+                            console.log()
+                             
+                             var xywh = currBubble[0][0].getBoundingClientRect();
 
-                                var swoopy = swoopyArrow()
-                                  .angle(Math.PI/4)
-                                  .x(function(d) { console.log(d); return d[0]; })
-                                  .y(function(d) { return d[1]; });
+                             var parentXywh = svg[0][0].getBoundingClientRect();
 
-                                svg.append("path")
-                                  .attr('marker-end', 'url(#markerArrowTop)')
-                                  .datum([[0,0],[(dIn.x * (width - marginSides)) - dIn.r,(dIn.x * (height - marginTopBot)) - dIn.r]])
-                                  .attr("d",  swoopy );
+                             var newY = (xywh.top - parentXywh.top) + (xywh.height/2);
 
-                                console.log(swoopy)
-                              }
+                             var swoopCoords = [ currBubble.attr('cx')-7, newY ]; //(xywh.width/2)
+
+                             //console.log(parentXywh, xywh)
+
+                              var swoopy = swoopyArrow()
+                                .angle(Math.PI/4)
+                                .x(function(d) { return d[0]; })
+                                .y(function(d) { return d[1]; });
+
+                              svg.append("path")
+                                .attr('marker-end', 'url(#arrowhead)')
+                                .datum([[margin.Left*2, 135 ],swoopCoords])
+                                .style("fill","none")
+                                .style("stroke","#666")
+                                .attr("d",  swoopy );
+
+                              var swoopyName = svg.append('text')
+                                .attr('class','strikerate-fee')
+                                .attr('dx', margin.Left*2)
+                                .attr('dy', 150)
+                                .attr('text-anchor','middle')
+
+                              swoopyName.append('tspan')
+                                .text(dIn.dataObj.playername)  
+
+                              var swoopyPictured = svg.append('text')                                
+                                .attr('text-anchor','middle')
+                                .attr('dx', margin.Left*2)
+                                .attr('dy', 168)
+                                .attr('class','strikerate-fee')
+
+                              swoopyPictured.append('tspan')
+                                .text("(pictured)")    
+                      }
 
 
                               quadroot.add(d);
