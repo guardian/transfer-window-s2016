@@ -609,7 +609,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
                                             .attr('style','display : none ');
                                   });
 
-                             if(d.starMan){  annotate(d, currBubble) }     
+                             //if(d.starMan){  annotate(d, currBubble) }     
 
                               function annotate(dIn, currBubble){
 //"["+xCoord+"],["+yCoord+"]
