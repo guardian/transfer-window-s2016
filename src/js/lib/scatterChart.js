@@ -637,7 +637,7 @@ function packCircles(obj, s, ss, t, yy, highestPrice) {
 
                              var newY = (xywh.top - parentXywh.top) + (xywh.height/2);
 
-                             var swoopCoords = [ currBubble.attr('cx')-7, newY ]; //(xywh.width/2)
+                             var swoopCoords = [ currBubble.attr('cx')-3, newY ]; //(xywh.width/2)
 
                              //console.log(parentXywh, xywh)
 

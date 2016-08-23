@@ -40,8 +40,8 @@ function constructInnerHtml(isoArr){
         // s+="<img src='https://sport.guim.co.uk/football/crests/120/"+item.badgeRef+".png' width='auto' height='34px' style='display:inline-block; margin-right:12px;'>"
         s+="<div style='display:inline-block'><span class='dig-section-title-sub' style='display:inline-block;'>"+key+"</span>"
 
-        s+= key=="Arsenal" ? "<div style='width:100%' class='gv-stats-holder'>Players in <span id='clubStatSpend_"+stripSpace(key)+"'  class='fill-spend'> </span>, players out <span id='clubStatSold_"+stripSpace(key)+"' class='fill-sell'>ADD</span></div>" : "<div style='width:100%' class='gv-stats-holder'>In <span id='clubStatSpend_"+stripSpace(key)+"'  class='fill-spend'> </span>, out <span id='clubStatSold_"+stripSpace(key)+"' class='fill-sell'>ADD</span></div>";
-        
+        //s+= key=="Arsenal" ? "<div style='width:100%' class='gv-stats-holder'>Players in <span id='clubStatSpend_"+stripSpace(key)+"'  class='fill-spend'> </span>, players out <span id='clubStatSold_"+stripSpace(key)+"' class='fill-sell'>ADD</span></div>" : "<div style='width:100%' class='gv-stats-holder'>In <span id='clubStatSpend_"+stripSpace(key)+"'  class='fill-spend'> </span>, out <span id='clubStatSold_"+stripSpace(key)+"' class='fill-sell'>ADD</span></div>";
+        s+= "<div style='width:100%' class='gv-stats-holder'>Total 2014–2016: players in <span id='clubStatSpend_"+stripSpace(key)+"'  class='fill-spend'> </span>, players out <span id='clubStatSold_"+stripSpace(key)+"' class='fill-sell'>ADD</span></div>"
         s+="</div>" //end graph header
         s+="</div>" 
         s+= addDetails ( key, item.playerPic );
